@@ -1,5 +1,5 @@
 # ==============================================================================
-# QUIZ CATÓLICO DOS FESTEJOS - VERSÃO WEB FINAL (STREAMLIT) ⛪🎵🎲
+# QUIZ CATÓLICO DOS FESTEJOS - VERSÃO WEB OFICIAL COMPLETA (STREAMLIT) ⛪🎵🎲
 # ==============================================================================
 
 import streamlit as st
@@ -76,6 +76,20 @@ def salvar_dados(perguntas, participantes, historico):
     with open(ARQUIVO_DADOS, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, indent=4)
 
+def carregar_config():
+    config_padrao = {"som_ativado": True, "tema_cor": "Azul Celeste"}
+    if os.path.exists(ARQUIVO_CONFIG):
+        try:
+            with open(ARQUIVO_CONFIG, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return config_padrao
+
+def salvar_config(config):
+    with open(ARQUIVO_CONFIG, "w", encoding="utf-8") as f:
+        json.dump(config, f, ensure_ascii=False, indent=4)
+
 if "pagina" not in st.session_state:
     st.session_state.pagina = "menu"
 if "participante" not in st.session_state:
@@ -98,6 +112,7 @@ if "resultado_dado" not in st.session_state:
     st.session_state.resultado_dado = None
 
 perguntas, participantes, historico = carregar_dados()
+config = carregar_config()
 
 # ==============================================================================
 # 1. MENU PRINCIPAL
@@ -119,6 +134,10 @@ if st.session_state.pagina == "menu":
             
         if st.button("📝 Gerir / Editar Perguntas"):
             st.session_state.pagina = "gerir_perguntas"
+            st.rerun()
+            
+        if st.button("⚙️ Configurações (Sons e Imagens)"):
+            st.session_state.pagina = "configuracoes"
             st.rerun()
             
         if st.button("📊 Histórico de Acertos e Prêmios"):
@@ -240,7 +259,7 @@ elif st.session_state.pagina == "jogo":
             st.info("[ Imagem 'nossa_senhora.png' não encontrada na pasta ]")
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (AGORA RETORNA AO MENU APÓS O PRÉMIO)
+# 4. SALA DO DADO PREMIADO
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
@@ -349,10 +368,10 @@ elif st.session_state.pagina == "historico":
         st.rerun()
 
 # ==============================================================================
-# 8. GERIR PERGUNTAS
+# 8. GERIR E EDITAR PERGUNTAS
 # ==============================================================================
 elif st.session_state.pagina == "gerir_perguntas":
-    st.markdown("<h2>📝 Gestão de Perguntas</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>📝 Gestão e Edição de Perguntas</h2>", unsafe_allow_html=True)
     
     with st.form("form_pergunta"):
         nova_p = st.text_input("Enunciado da Pergunta:")
@@ -375,10 +394,60 @@ elif st.session_state.pagina == "gerir_perguntas":
             else:
                 st.warning("Preencha todos os campos.")
                 
-    st.write("### Perguntas Cadastradas:")
+    st.write("---")
+    st.write("### 📋 Perguntas Cadastradas:")
+    
     for idx, item in enumerate(perguntas):
-        st.write(f"**{idx+1}. {item['pergunta']}** (Resp: {item['resposta']})")
+        col_txt, col_btn = st.columns([4, 1])
+        with col_txt:
+            st.write(f"**{idx+1}. {item['pergunta']}**")
+            st.caption(f"Opções: {', '.join(item['opcoes'])} | **Resp:** {item['resposta']}")
+        with col_btn:
+            if st.button("🗑️ Apagar", key=f"del_p_{idx}"):
+                perguntas.pop(idx)
+                salvar_dados(perguntas, participantes, historico)
+                st.rerun()
+        st.write("")
         
+    st.write("")
+    if st.button("⬅️ Voltar ao Menu"):
+        st.session_state.pagina = "menu"
+        st.rerun()
+
+# ==============================================================================
+# 9. CONFIGURAÇÕES (SONS E TROCA DE IMAGENS)
+# ==============================================================================
+elif st.session_state.pagina == "configuracoes":
+    st.markdown("<h2>⚙️ Painel de Configurações do Sistema</h2>", unsafe_allow_html=True)
+    st.write("Personaliza as preferências gerais e a imagem institucional do quiz.")
+    st.write("")
+
+    # Gestão de Sons / Áudio
+    som_atual = config.get("som_ativado", True)
+    novo_som = st.checkbox("🔊 Ativar Efeitos Sonoros / Áudio", value=som_atual)
+    
+    st.write("---")
+    st.write("### 🖼️ Imagem Institucional (Nossa Senhora)")
+    st.write("Podes carregar uma nova imagem para substituir a atual `nossa_senhora.png`:")
+    
+    if os.path.exists("nossa_senhora.png"):
+        st.image("nossa_senhora.png", width=200, caption="Imagem Atual")
+    else:
+        st.warning("Nenhuma imagem 'nossa_senhora.png' encontrada na pasta atualmente.")
+
+    uploaded_file = st.file_uploader("Carregar nova imagem (PNG / JPG)", type=["png", "jpg", "jpeg"])
+    
+    if uploaded_file is not None:
+        with open("nossa_senhora.png", "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.success("✨ Nova imagem guardada com sucesso! Atualiza a página para ver a alteração.")
+
+    st.write("")
+    if st.button("💾 Guardar Configurações"):
+        config["som_ativado"] = novo_som
+        salvar_config(config)
+        st.success("Configurações guardadas com sucesso!")
+
     st.write("")
     if st.button("⬅️ Voltar ao Menu"):
         st.session_state.pagina = "menu"
