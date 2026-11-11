@@ -13,7 +13,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Textos Maiores, Proporção Equilibrada e Cores Elegantes)
+# Estilos Visuais Aprimorados (Fontes Maiores, Imagem Equilibrada e Botões Centralizados)
 st.markdown("""
     <style>
     .stApp {
@@ -22,19 +22,21 @@ st.markdown("""
     }
     .main-card {
         background-color: #134074;
-        padding: 25px;
+        padding: 30px;
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
     .main-card h3 {
-        font-size: 26px !important;
+        font-size: 28px !important;
         line-height: 1.4 !important;
+        color: #FFFFFF !important;
     }
     .stRadio label {
-        font-size: 20px !important;
-        font-weight: 500 !important;
+        font-size: 22px !important;
+        font-weight: 600 !important;
         color: #FFFFFF !important;
+        padding: 6px 0px;
     }
     .stButton>button {
         background-color: #134074;
@@ -42,9 +44,11 @@ st.markdown("""
         font-weight: bold;
         border-radius: 8px;
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         border: 1px solid #1F618D;
         font-size: 18px;
+        display: block;
+        margin: 0 auto;
     }
     .stButton>button:hover {
         background-color: #1F618D;
@@ -96,17 +100,9 @@ def salvar_dados(perguntas, participantes, historico):
 def carregar_config():
     config_padrao = {
         "imagem_ns": "nossa_senhora.png",
-        "musica_menu": "",
-        "fundo_jogo": "",
-        "durante_dado": "",
-        "comemoracao_dado": "",
+        "youtube_url": "",
         "som_acerto": "",
-        "tipo_acerto": "Campainha Alegre / Aplausos",
         "som_erro": "",
-        "tipo_erro": "Bife Grave / Som Triste",
-        "som_tempo": "",
-        "tipo_tempo": "Alarme Contínuo",
-        "som_botao": "Silencioso",
         "tempo_pergunta": 30,
         "tempo_alerta": 4
     }
@@ -155,22 +151,12 @@ if "musica_pausada" not in st.session_state:
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Botão Global de Pausar Música no Canto Superior Direito (se houver trilha)
-col_global_1, col_global_2 = st.columns([10, 1])
-with col_global_2:
-    btn_label = "▶️ Tocar Música" if st.session_state.musica_pausada else "⏹️ Pausar Música"
-    if st.button(btn_label, key="btn_audio_global"):
-        st.session_state.musica_pausada = not st.session_state.musica_pausada
-        st.rerun()
-
-# Reprodução de Trilha Sonora de Fundo (se configurada e não pausada)
-if not st.session_state.musica_pausada:
-    if st.session_state.pagina == "menu" and config.get("musica_menu") and os.path.exists(config.get("musica_menu")):
-        st.audio(config.get("musica_menu"), autoplay=True, loop=True)
-    elif st.session_state.pagina == "jogo" and config.get("fundo_jogo") and os.path.exists(config.get("fundo_jogo")):
-        st.audio(config.get("fundo_jogo"), autoplay=True, loop=True)
-    elif st.session_state.pagina == "dado" and config.get("durante_dado") and os.path.exists(config.get("durante_dado")):
-        st.audio(config.get("durante_dado"), autoplay=True, loop=True)
+# Barra de Topo Global para YouTube Player se configurado
+col_top_1, col_top_2 = st.columns([8, 3])
+with col_top_2:
+    yt_url = config.get("youtube_url", "")
+    if yt_url:
+        st.video(yt_url)
 
 # ==============================================================================
 # 1. MENU PRINCIPAL
@@ -221,48 +207,50 @@ elif st.session_state.pagina == "selecionar_participante":
         escolha_lista = st.selectbox("Lista de Participantes:", ["-- Selecione da lista --"] + participantes, label_visibility="collapsed") if participantes else "-- Selecione da lista --"
         
         st.write("")
-        if st.button("▶️ Iniciar com este Participante"):
-            nome_final = ""
-            if escolha_lista != "-- Selecione da lista --":
-                nome_final = escolha_lista
-            elif nome_digitado.strip():
-                nome_final = nome_digitado.strip()
-                if nome_final not in participantes:
-                    participantes.append(nome_final)
-                    salvar_dados(perguntas, participantes, historico)
-            
-            if nome_final:
-                st.session_state.participante = nome_final
-                st.session_state.pergunta_idx = 0
-                st.session_state.pontuacao = 0
-                st.session_state.acertos = 0
-                st.session_state.respondido = False
-                st.session_state.dado_girado = False
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+        with col_btn2:
+            if st.button("▶️ Iniciar com este Participante"):
+                nome_final = ""
+                if escolha_lista != "-- Selecione da lista --":
+                    nome_final = escolha_lista
+                elif nome_digitado.strip():
+                    nome_final = nome_digitado.strip()
+                    if nome_final not in participantes:
+                        participantes.append(nome_final)
+                        salvar_dados(perguntas, participantes, historico)
                 
-                sessao = []
-                for p in perguntas:
-                    ops = list(p["opcoes"])
-                    random.shuffle(ops)
-                    sessao.append({"pergunta": p["pergunta"], "opcoes": ops, "resposta": p["resposta"]})
-                random.shuffle(sessao)
-                st.session_state.perguntas_sessao = sessao
-                
-                st.session_state.pagina = "jogo"
+                if nome_final:
+                    st.session_state.participante = nome_final
+                    st.session_state.pergunta_idx = 0
+                    st.session_state.pontuacao = 0
+                    st.session_state.acertos = 0
+                    st.session_state.respondido = False
+                    st.session_state.dado_girado = False
+                    
+                    sessao = []
+                    for p in perguntas:
+                        ops = list(p["opcoes"])
+                        random.shuffle(ops)
+                        sessao.append({"pergunta": p["pergunta"], "opcoes": ops, "resposta": p["resposta"]})
+                    random.shuffle(sessao)
+                    st.session_state.perguntas_sessao = sessao
+                    
+                    st.session_state.pagina = "jogo"
+                    st.rerun()
+                else:
+                    st.warning("Por favor, insira ou selecione um nome válido.")
+                    
+            if st.button("⬅️ Voltar ao Menu"):
+                st.session_state.pagina = "menu"
                 st.rerun()
-            else:
-                st.warning("Por favor, insira ou selecione um nome válido.")
-                
-        if st.button("⬅️ Voltar ao Menu"):
-            st.session_state.pagina = "menu"
-            st.rerun()
             
     with col_dir:
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            st.image(img_path, width=320)
+            st.image(img_path, width=280)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM TEXTOS MAIORES E IMAGEM PROPORCIONAL)
+# 3. TELA DO JOGO (COM BOTÕES CENTRALIZADOS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -286,43 +274,46 @@ elif st.session_state.pagina == "jogo":
             escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
             st.write("")
             
-            if not st.session_state.respondido:
-                if st.button("✅ Confirmar Resposta"):
-                    st.session_state.respondido = True
-                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                    
-                    if st.session_state.ultima_resposta_correta:
-                        st.session_state.pontuacao += 100
-                        st.session_state.acertos += 1
-                        if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
-                            st.audio(config.get("som_acerto"), autoplay=True)
-                    else:
-                        if config.get("som_erro") and os.path.exists(config.get("som_erro")):
-                            st.audio(config.get("som_erro"), autoplay=True)
-                    st.rerun()
-            else:
-                if st.session_state.ultima_resposta_correta:
-                    st.success("🎉 Resposta CORRETA! Parabéns!")
+            # Centralizar Botões de Ação na Coluna Esquerda
+            col_b1, col_b2, col_b3 = st.columns([1, 2, 1])
+            with col_b2:
+                if not st.session_state.respondido:
+                    if st.button("✅ Confirmar Resposta"):
+                        st.session_state.respondido = True
+                        st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                        
+                        if st.session_state.ultima_resposta_correta:
+                            st.session_state.pontuacao += 100
+                            st.session_state.acertos += 1
+                            if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
+                                st.audio(config.get("som_acerto"), autoplay=True)
+                        else:
+                            if config.get("som_erro") and os.path.exists(config.get("som_erro")):
+                                st.audio(config.get("som_erro"), autoplay=True)
+                        st.rerun()
                 else:
-                    st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
-                
-                if st.button("➡️ Próxima Pergunta"):
-                    st.session_state.respondido = False
-                    st.session_state.pergunta_idx += 1
+                    if st.session_state.ultima_resposta_correta:
+                        st.success("🎉 Resposta CORRETA! Parabéns!")
+                    else:
+                        st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
                     
-                    if st.session_state.acertos >= 3:
-                        st.session_state.acertos = 0
-                        st.session_state.dado_girado = False
-                        st.session_state.pagina = "dado"
-                    elif st.session_state.pergunta_idx >= total_p:
-                        st.session_state.pagina = "fim"
+                    if st.button("➡️ Próxima Pergunta"):
+                        st.session_state.respondido = False
+                        st.session_state.pergunta_idx += 1
+                        
+                        if st.session_state.acertos >= 3:
+                            st.session_state.acertos = 0
+                            st.session_state.dado_girado = False
+                            st.session_state.pagina = "dado"
+                        elif st.session_state.pergunta_idx >= total_p:
+                            st.session_state.pagina = "fim"
+                        st.rerun()
+                
+                st.write("")
+                if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
+                    st.session_state.respondido = False
+                    st.session_state.pagina = "menu"
                     st.rerun()
-            
-            st.write("")
-            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
-                st.session_state.respondido = False
-                st.session_state.pagina = "menu"
-                st.rerun()
         else:
             st.session_state.pagina = "fim"
             st.rerun()
@@ -331,7 +322,7 @@ elif st.session_state.pagina == "jogo":
         st.markdown("<h4 style='text-align: center;'>🌸 Imaculada Conceição</h4>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            st.image(img_path, width=320)
+            st.image(img_path, width=280)
 
 # ==============================================================================
 # 4. SALA DO DADO PREMIADO
@@ -389,7 +380,7 @@ elif st.session_state.pagina == "fim":
     if os.path.exists(img_path):
         col_img1, col_img2, col_img3 = st.columns([2, 1, 2])
         with col_img2:
-            st.image(img_path, width=280)
+            st.image(img_path, width=250)
             
     st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
     st.write("")
@@ -521,30 +512,38 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (MÚSICAS, IMAGEM & SONS)
+# 9. PAINEL DE CONFIGURAÇÕES (LINK DO YOUTUBE, UPLOAD DE SONS E IMAGEM)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
     st.markdown("<h2>⚙️ Painel de Configurações (Músicas, Imagem & Sons)</h2>", unsafe_allow_html=True)
+    st.write("Configure os links do YouTube, os ficheiros de som para acerto/aplausos e erro, e faça upload da imagem.")
     st.write("")
     
     col_cfg1, col_cfg2 = st.columns([2, 1])
     
     with col_cfg1:
-        img_ns_val = st.text_input("Caminho Imagem N. Senhora:", value=config.get("imagem_ns", "nossa_senhora.png"))
-        mus_menu_val = st.text_input("Trilha Sonora - Música Menu (Caminho ficheiro áudio):", value=config.get("musica_menu", ""))
-        fund_jogo_val = st.text_input("Trilha Sonora - Fundo Jogo (Caminho ficheiro áudio):", value=config.get("fundo_jogo", ""))
-        dur_dado_val = st.text_input("Trilha Sonora - Durante Dado (Caminho ficheiro áudio):", value=config.get("durante_dado", ""))
+        yt_input = st.text_input("🔗 Link do YouTube (Trilha Sonora / Vídeo de Fundo):", value=config.get("youtube_url", ""))
         
         st.write("---")
-        som_acerto_val = st.text_input("Som Acerto / Aplausos (Ficheiro de áudio):", value=config.get("som_acerto", ""))
-        tipo_acerto = st.selectbox("Efeito Padrão Acerto:", ["Campainha Alegre / Aplausos", "Campainha Simples", "Aplausos Fortes"], index=0)
+        st.markdown("### 🔊 Ficheiros de Efeitos Sonoros")
         
-        som_erro_val = st.text_input("Som Erro / Triste (Ficheiro de áudio):", value=config.get("som_erro", ""))
-        tipo_erro = st.selectbox("Efeito Padrão Erro:", ["Bife Grave / Som Triste", "Bip Baixo", "Silencioso"], index=0)
-        
-        som_tempo_val = st.text_input("Som Tempo Esgotado (Ficheiro de áudio):", value=config.get("som_tempo", ""))
-        som_botao_val = st.selectbox("Som ao Clicar nos Botões:", ["Silencioso", "Clique Leve", "Beep"], index=0)
-        
+        up_acerto = st.file_uploader("Carregar Som de Acerto / Aplausos (MP3 / WAV)", type=["mp3", "wav", "ogg"], key="up_acerto")
+        if up_acerto is not None:
+            with open("som_acerto.mp3", "wb") as f:
+                f.write(up_acerto.getbuffer())
+            config["som_acerto"] = "som_acerto.mp3"
+            salvar_config(config)
+            st.success("Som de acerto guardado!")
+
+        up_erro = st.file_uploader("Carregar Som de Erro / Triste (MP3 / WAV)", type=["mp3", "wav", "ogg"], key="up_erro")
+        if up_erro is not None:
+            with open("som_erro.mp3", "wb") as f:
+                f.write(up_erro.getbuffer())
+            config["som_erro"] = "som_erro.mp3"
+            salvar_config(config)
+            st.success("Som de erro guardado!")
+
+        st.write("---")
         tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
         tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
         
@@ -552,9 +551,9 @@ elif st.session_state.pagina == "configuracoes":
         st.markdown("### 🖼️ Pré-visualização da Imagem")
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            st.image(img_path, width=280)
+            st.image(img_path, width=250)
             
-        up_img = st.file_uploader("Carregar nova imagem", type=["png", "jpg", "jpeg"])
+        up_img = st.file_uploader("Carregar nova imagem institucional", type=["png", "jpg", "jpeg"], key="up_img_ns")
         if up_img is not None:
             with open("nossa_senhora.png", "wb") as f:
                 f.write(up_img.getbuffer())
@@ -567,13 +566,7 @@ elif st.session_state.pagina == "configuracoes":
     col_bot1, col_bot2 = st.columns([1, 1])
     with col_bot1:
         if st.button("💾 Salvar Configurações"):
-            config["imagem_ns"] = img_ns_val
-            config["musica_menu"] = mus_menu_val
-            config["fundo_jogo"] = fund_jogo_val
-            config["durante_dado"] = dur_dado_val
-            config["som_acerto"] = som_acerto_val
-            config["som_erro"] = som_erro_val
-            config["som_tempo"] = som_tempo_val
+            config["youtube_url"] = yt_input
             config["tempo_pergunta"] = int(tempo_perg_val)
             config["tempo_alerta"] = int(tempo_alerta_val)
             salvar_config(config)
