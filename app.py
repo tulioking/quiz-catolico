@@ -13,15 +13,15 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Interface Limpa, Centralizada e Moderna)
+# Estilos Visuais Ajustados (Esconde players de efeito, centraliza imagem e botões perfeitamente)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
     }
-    /* ESCONDER O PLAYER DE FUNDO DO YOUTUBE VISUALMENTE */
-    iframe[src*="youtube"]:not(.player-efeito) {
+    /* ESCONDER TODOS OS PLAYERS DE VÍDEO/ÁUDIO DE EFEITO VISUALMENTE */
+    iframe[src*="youtube"]:not(:first-child), video, audio {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
@@ -278,7 +278,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM PLAYERS DO YOUTUBE PARA ACERTO E ERRO)
+# 3. TELA DO JOGO (COM ÁUDIO AUTOMÁTICO INVISÍVEL)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -310,20 +310,21 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
+                        yt_acerto = config.get("youtube_acerto", "")
+                        if yt_acerto:
+                            url_ef = yt_acerto.replace("watch?v=", "embed/") + "?autoplay=1"
+                            st.markdown(f'<iframe src="{url_embed_ef := url_ef}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                    else:
+                        yt_erro = config.get("youtube_erro", "")
+                        if yt_erro:
+                            url_ef = yt_erro.replace("watch?v=", "embed/") + "?autoplay=1"
+                            st.markdown(f'<iframe src="{url_embed_ef := url_ef}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
-                    yt_acerto = config.get("youtube_acerto", "")
-                    if yt_acerto:
-                        st.markdown("🔊 **Ouve os Aplausos:**")
-                        st.video(yt_acerto)
                 else:
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
-                    yt_erro = config.get("youtube_erro", "")
-                    if yt_erro:
-                        st.markdown("🔊 **Ouve o Erro:**")
-                        st.video(yt_erro)
                 
                 if st.button("➡️ Próxima Pergunta"):
                     st.session_state.respondido = False
@@ -347,10 +348,13 @@ elif st.session_state.pagina == "jogo":
             st.rerun()
             
     with col_dir:
-        st.markdown("<h3 style='text-align: center;'>🌸 Imaculada Conceição</h3>", unsafe_allow_html=True)
+        # Coluna direita perfeitamente centralizada para a imagem institucional
+        st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            st.image(img_path, width=280)
+            col_img1, col_img2, col_img3 = st.columns([1, 4, 1])
+            with col_img2:
+                st.image(img_path, use_container_width=True)
 
 # ==============================================================================
 # 4. SALA DO DADO PREMIADO
@@ -386,7 +390,8 @@ elif st.session_state.pagina == "dado":
             
             yt_acerto = config.get("youtube_acerto", "")
             if yt_acerto:
-                st.video(yt_acerto)
+                url_ef = yt_acerto.replace("watch?v=", "embed/") + "?autoplay=1"
+                st.markdown(f'<iframe src="{url_ef}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
@@ -413,7 +418,7 @@ elif st.session_state.pagina == "fim":
     if os.path.exists(img_path):
         col_img1, col_img2, col_img3 = st.columns([2, 1, 2])
         with col_img2:
-            st.image(img_path, width=250)
+            st.image(img_path, use_container_width=True)
             
     st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
     st.write("")
