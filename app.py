@@ -1,22 +1,31 @@
 # ==============================================================================
-# QUIZ CATÓLICO DOS FESTEJOS - VERSÃO WEB (STREAMLIT) ⛪🎵🎲
+# QUIZ CATÓLICO DOS FESTEJOS - VERSÃO WEB OFICIAL COMPLETA (STREAMLIT) ⛪🎵🎲
 # ==============================================================================
 
 import streamlit as st
 import random
 import json
 import os
+import time
 
 ARQUIVO_DADOS = "dados_quiz_igreja.json"
 ARQUIVO_CONFIG = "config_quiz.json"
 
-st.set_page_config(page_title="Quiz Católico - Imaculada Conceição", page_icon="⛪", layout="centered")
+st.set_page_config(page_title="Quiz Católico - Imaculada Conceição", page_icon="⛪", layout="wide")
 
+# Estilos Visuais Elegantes
 st.markdown("""
     <style>
-    .main {
+    .stApp {
         background-color: #0B2545;
         color: white;
+    }
+    .main-card {
+        background-color: #134074;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        margin-bottom: 20px;
     }
     .stButton>button {
         background-color: #134074;
@@ -24,15 +33,26 @@ st.markdown("""
         font-weight: bold;
         border-radius: 8px;
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         border: none;
+        font-size: 16px;
     }
     .stButton>button:hover {
         background-color: #1F618D;
         color: white;
     }
-    h1, h2, h3 {
-        color: #FFFFFF;
+    h1, h2, h3, h4 {
+        color: #FFFFFF !important;
+    }
+    .dado-box {
+        font-size: 80px;
+        text-align: center;
+        font-weight: bold;
+        color: #F4D35E;
+        background-color: #134074;
+        padding: 20px;
+        border-radius: 15px;
+        margin: 20px 0;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -69,6 +89,14 @@ if "acertos" not in st.session_state:
     st.session_state.acertos = 0
 if "perguntas_sessao" not in st.session_state:
     st.session_state.perguntas_sessao = []
+if "respondido" not in st.session_state:
+    st.session_state.respondido = False
+if "ultima_resposta_correta" not in st.session_state:
+    st.session_state.ultima_resposta_correta = None
+if "dado_girado" not in st.session_state:
+    st.session_state.dado_girado = False
+if "resultado_dado" not in st.session_state:
+    st.session_state.resultado_dado = None
 
 perguntas, participantes, historico = carregar_dados()
 
@@ -77,7 +105,7 @@ perguntas, participantes, historico = carregar_dados()
 # ==============================================================================
 if st.session_state.pagina == "menu":
     st.markdown("<h1 style='text-align: center;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align: center; color: #8DA9C4;'>Sistema Oficial de Quiz Paroquial (Versão Web)</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center; color: #8DA9C4;'>Quiz Oficial Paroquial</h4>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -99,17 +127,13 @@ if st.session_state.pagina == "menu":
             st.rerun()
 
 # ==============================================================================
-# 2. SELECIONAR / INSERIR PARTICIPANTE
+# 2. SELECIONAR PARTICIPANTE
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     st.markdown("<h2>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
     
     nome_digitado = st.text_input("Digite o nome do participante:")
-    
-    if participantes:
-        escolha_lista = st.selectbox("Ou escolha da lista cadastrada:", ["-- Selecione da lista --"] + participantes)
-    else:
-        escolha_lista = "-- Selecione da lista --"
+    escolha_lista = st.selectbox("Ou escolha da lista cadastrada:", ["-- Selecione da lista --"] + participantes) if participantes else "-- Selecione da lista --"
         
     col1, col2 = st.columns(2)
     with col1:
@@ -128,6 +152,8 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.session_state.pergunta_idx = 0
                 st.session_state.pontuacao = 0
                 st.session_state.acertos = 0
+                st.session_state.respondido = False
+                st.session_state.dado_girado = False
                 
                 sessao = []
                 for p in perguntas:
@@ -148,72 +174,107 @@ elif st.session_state.pagina == "selecionar_participante":
             st.rerun()
 
 # ==============================================================================
-# 3. TELA DO JOGO (QUIZ)
+# 3. TELA DO JOGO
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    col_a, col_b, col_c = st.columns(3)
-    col_a.markdown(f"**Participante:** {st.session_state.participante}")
-    col_b.markdown(f"**Pontos:** {st.session_state.pontuacao}")
-    col_c.markdown(f"**Acertos:** {st.session_state.acertos}/3")
-    st.divider()
+    col_esq, col_dir = st.columns([2, 1])
     
-    if p_idx < total_p:
-        pergunta_atual = st.session_state.perguntas_sessao[p_idx]
+    with col_esq:
+        col_a, col_b, col_c = st.columns(3)
+        col_a.markdown(f"**Participante:** {st.session_state.participante}")
+        col_b.markdown(f"**Pontos:** {st.session_state.pontuacao}")
+        col_c.markdown(f"**Acertos:** {st.session_state.acertos}/3")
+        st.divider()
         
-        st.markdown(f"### Q{p_idx + 1}: {pergunta_atual['pergunta']}")
-        st.write("")
-        
-        escolha = st.radio("Escolha a alternativa correta:", pergunta_atual["opcoes"], key=f"q_{p_idx}")
-        
-        st.write("")
-        if st.button("✅ Confirmar Resposta"):
-            if escolha == pergunta_atual["resposta"]:
-                st.success("Resposta Correta! 🎉 (+100 pontos)")
-                st.session_state.pontuacao += 100
-                st.session_state.acertos += 1
-                
-                if st.session_state.acertos >= 3:
-                    st.session_state.acertos = 0
-                    st.session_state.pergunta_idx += 1
-                    st.session_state.pagina = "dado"
+        if p_idx < total_p:
+            p = st.session_state.perguntas_sessao[p_idx]
+            
+            st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
+            
+            escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}")
+            st.write("")
+            
+            if not st.session_state.respondido:
+                if st.button("✅ Confirmar Resposta"):
+                    st.session_state.respondido = True
+                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                    
+                    if st.session_state.ultima_resposta_correta:
+                        st.session_state.pontuacao += 100
+                        st.session_state.acertos += 1
                     st.rerun()
             else:
-                st.error(f"Resposta Incorreta! A correta era: {pergunta_atual['resposta']}")
+                if st.session_state.ultima_resposta_correta:
+                    st.success("🎉 Resposta CORRETA! Parabéns!")
+                else:
+                    st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
                 
-            st.session_state.pergunta_idx += 1
-            if st.session_state.pergunta_idx >= total_p:
-                st.session_state.pagina = "fim"
+                if st.button("➡️ Próxima Pergunta"):
+                    st.session_state.respondido = False
+                    st.session_state.pergunta_idx += 1
+                    
+                    if st.session_state.acertos >= 3:
+                        st.session_state.acertos = 0
+                        st.session_state.dado_girado = False
+                        st.session_state.pagina = "dado"
+                    elif st.session_state.pergunta_idx >= total_p:
+                        st.session_state.pagina = "fim"
+                    st.rerun()
+            
+            st.write("")
+            if st.button("🚪 Parar e Sair para o Menu"):
+                st.session_state.respondido = False
+                st.session_state.pagina = "menu"
+                st.rerun()
+        else:
+            st.session_state.pagina = "fim"
             st.rerun()
             
-        if st.button("🚪 Parar e Sair para o Menu"):
-            st.session_state.pagina = "menu"
-            st.rerun()
-    else:
-        st.session_state.pagina = "fim"
-        st.rerun()
+    with col_dir:
+        st.markdown("<h3 style='text-align: center;'>🌸 Imaculada Conceição</h3>", unsafe_allow_html=True)
+        if os.path.exists("nossa_senhora.png"):
+            st.image("nossa_senhora.png", use_container_width=True)
+        else:
+            st.info("[ Imagem 'nossa_senhora.png' não encontrada na pasta ]")
 
 # ==============================================================================
 # 4. SALA DO DADO PREMIADO
 # ==============================================================================
 elif st.session_state.pagina == "dado":
-    st.markdown("<h2 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h2>", unsafe_allow_html=True)
-    st.markdown(f"<h4 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Acertaste 3 perguntas seguidas!</h4>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Acertaste 3 perguntas seguidas!</h3>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🎲 GIRAR O DADO AGORA"):
-            resultado = random.randint(1, 6)
-            st.markdown(f"<h1 style='text-align: center; color: #2ECC71;'>【 {resultado} 】</h1>", unsafe_allow_html=True)
+        placeholder_dado = st.empty()
+        
+        if not st.session_state.dado_girado:
+            placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
+            if st.button("🎲 GIRAR O DADO AGORA"):
+                for _ in range(12):
+                    num_aleatorio = random.randint(1, 6)
+                    placeholder_dado.markdown(f"<div class='dado-box' style='color: #8DA9C4;'>【 {num_aleatorio} 】</div>", unsafe_allow_html=True)
+                    time.sleep(0.08)
+                
+                resultado_final = random.randint(1, 6)
+                st.session_state.resultado_dado = resultado_final
+                st.session_state.dado_girado = True
+                
+                reg = f"Participante: {st.session_state.participante} | Ganhou o Dado (Resultado: {resultado_final})"
+                historico.append(reg)
+                salvar_dados(perguntas, participantes, historico)
+                st.rerun()
+        else:
+            res = st.session_state.resultado_dado
+            placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
+            st.success(f"O participante {st.session_state.participante} tirou o número {res}!")
             
-            reg = f"Participante: {st.session_state.participante} | Ganhou o Dado (Resultado: {resultado})"
-            historico.append(reg)
-            salvar_dados(perguntas, participantes, historico)
-            
-            if st.button("➡️ Continuar Quiz / Finalizar"):
+            if st.button("➡️ Continuar Quiz"):
+                st.session_state.dado_girado = False
                 if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
                     st.session_state.pagina = "jogo"
                 else:
@@ -230,10 +291,16 @@ elif st.session_state.pagina == "fim":
         salvar_dados(perguntas, participantes, historico)
         
     st.markdown("<h1 style='text-align: center;'>🎉 PARABÉNS! 🎉</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align: center;'>Participante: {st.session_state.participante}</h3>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align: center; color: #F4D35E;'>Pontuação Final: {st.session_state.pontuacao} Pontos</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align: center;'>Participante: {st.session_state.participante}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align: center; color: #F4D35E;'>Pontuação Final: {st.session_state.pontuacao} Pontos</h2>", unsafe_allow_html=True)
     st.write("")
-    st.markdown("<p style='text-align: center; font-style: italic;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
+    
+    if os.path.exists("nossa_senhora.png"):
+        col_img1, col_img2, col_img3 = st.columns([2, 1, 2])
+        with col_img2:
+            st.image("nossa_senhora.png", use_container_width=True)
+            
+    st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
