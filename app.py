@@ -13,15 +13,15 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Esconde players de efeito, centraliza imagem e botões perfeitamente)
+# Estilos Visuais Aprimorados (Oculta absolutamente qualquer player indesejado do YouTube e centraliza tudo)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
     }
-    /* ESCONDER TODOS OS PLAYERS DE VÍDEO/ÁUDIO DE EFEITO VISUALMENTE */
-    iframe[src*="youtube"]:not(:first-child), video, audio {
+    /* ESCONDER RIGOROSAMENTE QUALQUER VÍDEO/PLAYER DO YOUTUBE DA TELA */
+    iframe[src*="youtube"], video, audio {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
@@ -172,14 +172,15 @@ if "musica_pausada" not in st.session_state:
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Controlo de Trilha Sonora / YouTube Oculto no Topo
-col_top_1, col_top_2 = st.columns([8, 3])
-with col_top_2:
-    yt_url = config.get("youtube_url", "")
-    if yt_url and not st.session_state.musica_pausada:
-        url_embed = yt_url.replace("watch?v=", "embed/") + "?autoplay=1&loop=1"
-        st.video(url_embed, format="video/mp4", autoplay=True)
-    
+# Gestão Oculta da Trilha Sonora de Fundo via YouTube
+yt_url = config.get("youtube_url", "")
+if yt_url and not st.session_state.musica_pausada:
+    vid_id = yt_url.split("v=")[-1].split("&")[0]
+    st.markdown(f'<iframe src="https://www.youtube.com/embed/{vid_id}?autoplay=1&loop=1&playlist={vid_id}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+
+# Botão de Pausa/Retomar Música discreto no canto superior
+col_t1, col_t2 = st.columns([9, 2])
+with col_t2:
     label_audio = "⏹️ Pausar Música" if not st.session_state.musica_pausada else "▶️ Retomar Música"
     if st.button(label_audio, key="btn_toggle_musica"):
         st.session_state.musica_pausada = not st.session_state.musica_pausada
@@ -280,7 +281,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM ÁUDIO AUTOMÁTICO INVISÍVEL)
+# 3. TELA DO JOGO (COM EFEITOS SONOROS AUTOMÁTICOS INVISÍVEIS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -314,13 +315,13 @@ elif st.session_state.pagina == "jogo":
                         st.session_state.acertos += 1
                         yt_acerto = config.get("youtube_acerto", "")
                         if yt_acerto:
-                            url_embed_ef = yt_acerto.replace("watch?v=", "embed/") + "?autoplay=1"
-                            st.markdown(f'<iframe src="{url_embed_ef}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                            v_id = yt_acerto.split("v=")[-1].split("&")[0]
+                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
                     else:
                         yt_erro = config.get("youtube_erro", "")
                         if yt_erro:
-                            url_embed_ef = yt_erro.replace("watch?v=", "embed/") + "?autoplay=1"
-                            st.markdown(f'<iframe src="{url_embed_ef}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                            v_id = yt_erro.split("v=")[-1].split("&")[0]
+                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
@@ -391,8 +392,8 @@ elif st.session_state.pagina == "dado":
             
             yt_acerto = config.get("youtube_acerto", "")
             if yt_acerto:
-                url_embed_ef = yt_acerto.replace("watch?v=", "embed/") + "?autoplay=1"
-                st.markdown(f'<iframe src="{url_embed_ef}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                v_id = yt_acerto.split("v=")[-1].split("&")[0]
+                st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
