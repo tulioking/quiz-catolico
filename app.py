@@ -13,18 +13,12 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais (Oculta absolutamente todos os vídeos/iframes indesejados mantendo apenas o som)
+# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Fontes Grandes)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
-    }
-    /* ESCONDER RIGOROSAMENTE QUALQUER VÍDEO DO YOUTUBE DA TELA */
-    iframe, video, audio {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
     }
     .placar-topo {
         font-size: 24px !important;
@@ -176,7 +170,7 @@ config = carregar_config()
 yt_url = config.get("youtube_url", "")
 if yt_url and not st.session_state.musica_pausada:
     v_id = yt_url.split("v=")[-1].split("&")[0]
-    st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1&loop=1&playlist={v_id}" allow="autoplay"></iframe>', unsafe_allow_html=True)
+    st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1&loop=1&playlist={v_id}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
 
 # Botão Discreto de Pausa da Música de Fundo no Topo
 col_t1, col_t2 = st.columns([9, 2])
@@ -258,7 +252,6 @@ elif st.session_state.pagina == "selecionar_participante":
                     sessao = []
                     for p in perguntas:
                         ops = list(p["opcoes"])
-                        random.shuffle(ops)
                         sessao.append({"pergunta": p["pergunta"], "opcoes": ops, "resposta": p["resposta"]})
                     random.shuffle(sessao)
                     st.session_state.perguntas_sessao = sessao
@@ -281,7 +274,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (EFEITOS SONOROS AUTOMÁTICOS INVISÍVEIS)
+# 3. TELA DO JOGO (COM ORDEM CORRETA A-D E EFEITOS SONOROS AUTOMÁTICOS INVISÍVEIS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -313,15 +306,21 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
+                        # Toca aplausos com o link de sucesso de forma invisível
                         yt_acerto = config.get("youtube_acerto", "")
                         if yt_acerto:
                             v_id = yt_acerto.split("v=")[-1].split("&")[0]
-                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                        else:
+                            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                     else:
+                        # Toca o quén-quén (trombeta triste) de forma invisível
                         yt_erro = config.get("youtube_erro", "")
                         if yt_erro:
                             v_id = yt_erro.split("v=")[-1].split("&")[0]
-                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                        else:
+                            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/sad-trombone.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
@@ -393,7 +392,9 @@ elif st.session_state.pagina == "dado":
             yt_acerto = config.get("youtube_acerto", "")
             if yt_acerto:
                 v_id = yt_acerto.split("v=")[-1].split("&")[0]
-                st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+            else:
+                st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
