@@ -13,7 +13,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais (Esconde o vídeo do YouTube visualmente, mantendo apenas a música a tocar)
+# Estilos Visuais Ajustados (Com Efeitos Sonoros Nativos de Erro e Acerto)
 st.markdown("""
     <style>
     .stApp {
@@ -177,7 +177,6 @@ col_top_1, col_top_2 = st.columns([8, 3])
 with col_top_2:
     yt_url = config.get("youtube_url", "")
     if yt_url and not st.session_state.musica_pausada:
-        # Adiciona parâmetros para tocar em loop e autoplay oculto
         url_embed = yt_url.replace("watch?v=", "embed/") + "?autoplay=1&loop=1"
         st.video(url_embed, format="video/mp4", autoplay=True)
     
@@ -279,7 +278,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 3. TELA DO JOGO
+# 3. TELA DO JOGO (COM APLAUSOS NO ACERTO E QUÉN-QUÉN-QUÉN NO ERRO)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -311,11 +310,17 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
+                        # Toca aplausos no acerto (ficheiro carregado ou som padrão web)
                         if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
                             st.audio(config.get("som_acerto"), autoplay=True)
+                        else:
+                            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                     else:
+                        # Toca o efeito quén-quén-quén (trombeta triste) no erro
                         if config.get("som_erro") and os.path.exists(config.get("som_erro")):
                             st.audio(config.get("som_erro"), autoplay=True)
+                        else:
+                            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/sad-trombone.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
@@ -351,7 +356,7 @@ elif st.session_state.pagina == "jogo":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO
+# 4. SALA DO DADO PREMIADO (COM APLAUSOS AO CONCLUIR)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
@@ -381,6 +386,13 @@ elif st.session_state.pagina == "dado":
         else:
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
+            
+            # Toca aplausos ao finalizar o dado
+            if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
+                st.audio(config.get("som_acerto"), autoplay=True)
+            else:
+                st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+                
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
             if st.button("🏠 Voltar ao Menu Inicial"):
