@@ -1,5 +1,5 @@
 # ==============================================================================
-# QUIZ CATÓLICO DOS FESTEJOS - VERSÃO WEB OFICIAL COMPLETA (STREAMLIT) ⛪🎵🎲
+# QUIZ CATÓLICO DOS FESTEJOS - VERSÃO WEB FINAL (STREAMLIT) ⛪🎵🎲
 # ==============================================================================
 
 import streamlit as st
@@ -13,7 +13,6 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Quiz Católico - Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Elegantes
 st.markdown("""
     <style>
     .stApp {
@@ -241,7 +240,7 @@ elif st.session_state.pagina == "jogo":
             st.info("[ Imagem 'nossa_senhora.png' não encontrada na pasta ]")
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO
+# 4. SALA DO DADO PREMIADO (AGORA RETORNA AO MENU APÓS O PRÉMIO)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
@@ -271,14 +270,11 @@ elif st.session_state.pagina == "dado":
         else:
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
-            st.success(f"O participante {st.session_state.participante} tirou o número {res}!")
+            st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
-            if st.button("➡️ Continuar Quiz"):
+            if st.button("🏠 Voltar ao Menu Inicial"):
                 st.session_state.dado_girado = False
-                if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
-                    st.session_state.pagina = "jogo"
-                else:
-                    st.session_state.pagina = "fim"
+                st.session_state.pagina = "menu"
                 st.rerun()
 
 # ==============================================================================
