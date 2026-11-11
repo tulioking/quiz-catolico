@@ -13,12 +13,18 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Ajustados (Fontes Gigantes nas Respostas e Botões Centralizados)
+# Estilos Visuais Ajustados (Tudo Grande, Ampliado e Centralizado)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
+    }
+    /* CABEÇALHO / PLACAR SUPERIOR GIGANTE */
+    .placar-topo {
+        font-size: 24px !important;
+        font-weight: bold !important;
+        color: #F4D35E !important;
     }
     .main-card {
         background-color: #134074;
@@ -32,7 +38,7 @@ st.markdown("""
         line-height: 1.4 !important;
         color: #FFFFFF !important;
     }
-    /* FORÇAR TAMANHO GIGANTE DAS ALTERNATIVAS DE RESPOSTA */
+    /* RESPOSTAS BEM GRANDES */
     .stRadio div[role="radiogroup"] label div p {
         font-size: 26px !important;
         font-weight: 700 !important;
@@ -41,7 +47,7 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* CENTRALIZAR E ESTILIZAR OS BOTÕES */
+    /* BOTÕES GRANDES E CENTRALIZADOS */
     .stButton {
         display: flex;
         justify-content: center;
@@ -50,11 +56,11 @@ st.markdown("""
         background-color: #134074;
         color: white;
         font-weight: bold;
-        border-radius: 8px;
-        width: 60%;
-        padding: 14px;
-        border: 1px solid #1F618D;
-        font-size: 20px;
+        border-radius: 10px;
+        width: 70%;
+        padding: 16px;
+        border: 2px solid #1F618D;
+        font-size: 22px !important;
         display: block;
         margin: 0 auto;
     }
@@ -215,40 +221,42 @@ elif st.session_state.pagina == "selecionar_participante":
         escolha_lista = st.selectbox("Lista de Participantes:", ["-- Selecione da lista --"] + participantes, label_visibility="collapsed") if participantes else "-- Selecione da lista --"
         
         st.write("")
-        if st.button("▶️ Iniciar com este Participante"):
-            nome_final = ""
-            if escolha_lista != "-- Selecione da lista --":
-                nome_final = escolha_lista
-            elif nome_digitado.strip():
-                nome_final = nome_digitado.strip()
-                if nome_final not in participantes:
-                    participantes.append(nome_final)
-                    salvar_dados(perguntas, participantes, historico)
-            
-            if nome_final:
-                st.session_state.participante = nome_final
-                st.session_state.pergunta_idx = 0
-                st.session_state.pontuacao = 0
-                st.session_state.acertos = 0
-                st.session_state.respondido = False
-                st.session_state.dado_girado = False
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+        with col_btn2:
+            if st.button("▶️ Iniciar com este Participante"):
+                nome_final = ""
+                if escolha_lista != "-- Selecione da lista --":
+                    nome_final = escolha_lista
+                elif nome_digitado.strip():
+                    nome_final = nome_digitado.strip()
+                    if nome_final not in participantes:
+                        participantes.append(nome_final)
+                        salvar_dados(perguntas, participantes, historico)
                 
-                sessao = []
-                for p in perguntas:
-                    ops = list(p["opcoes"])
-                    random.shuffle(ops)
-                    sessao.append({"pergunta": p["pergunta"], "opcoes": ops, "resposta": p["resposta"]})
-                random.shuffle(sessao)
-                st.session_state.perguntas_sessao = sessao
-                
-                st.session_state.pagina = "jogo"
+                if nome_final:
+                    st.session_state.participante = nome_final
+                    st.session_state.pergunta_idx = 0
+                    st.session_state.pontuacao = 0
+                    st.session_state.acertos = 0
+                    st.session_state.respondido = False
+                    st.session_state.dado_girado = False
+                    
+                    sessao = []
+                    for p in perguntas:
+                        ops = list(p["opcoes"])
+                        random.shuffle(ops)
+                        sessao.append({"pergunta": p["pergunta"], "opcoes": ops, "resposta": p["resposta"]})
+                    random.shuffle(sessao)
+                    st.session_state.perguntas_sessao = sessao
+                    
+                    st.session_state.pagina = "jogo"
+                    st.rerun()
+                else:
+                    st.warning("Por favor, insira ou selecione um nome válido.")
+                    
+            if st.button("⬅️ Voltar ao Menu"):
+                st.session_state.pagina = "menu"
                 st.rerun()
-            else:
-                st.warning("Por favor, insira ou selecione um nome válido.")
-                
-        if st.button("⬅️ Voltar ao Menu"):
-            st.session_state.pagina = "menu"
-            st.rerun()
             
     with col_dir:
         img_path = config.get("imagem_ns", "nossa_senhora.png")
@@ -256,17 +264,18 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM LETRAS GRANDES E BOTÕES CENTRALIZADOS)
+# 3. TELA DO JOGO (COM CABEÇALHO, RESPOSTAS E BOTÕES AMPLIADOS E CENTRALIZADOS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
+    # Cabeçalho Grande e Destacado
     c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
-    c1.markdown(f"**Participante:** {st.session_state.participante}")
-    c2.markdown(f"⏳ **Tempo:** {config.get('tempo_pergunta', 30)}s")
-    c3.markdown(f"**Pontos:** {st.session_state.pontuacao}")
-    c4.markdown(f"**Acertos:** {st.session_state.acertos}/3")
+    c1.markdown(f"<span class='placar-topo'>👤 Participante: {st.session_state.participante}</span>", unsafe_allow_html=True)
+    c2.markdown(f"<span class='placar-topo'>⏳ Tempo: {config.get('tempo_pergunta', 30)}s</span>", unsafe_allow_html=True)
+    c3.markdown(f"<span class='placar-topo'>⭐ Pontos: {st.session_state.pontuacao}</span>", unsafe_allow_html=True)
+    c4.markdown(f"<span class='placar-topo'>🎯 Acertos: {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
     st.divider()
     
     col_esq, col_dir = st.columns([2, 1])
@@ -280,43 +289,46 @@ elif st.session_state.pagina == "jogo":
             escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
             st.write("")
             
-            if not st.session_state.respondido:
-                if st.button("✅ Confirmar Resposta"):
-                    st.session_state.respondido = True
-                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                    
-                    if st.session_state.ultima_resposta_correta:
-                        st.session_state.pontuacao += 100
-                        st.session_state.acertos += 1
-                        if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
-                            st.audio(config.get("som_acerto"), autoplay=True)
-                    else:
-                        if config.get("som_erro") and os.path.exists(config.get("som_erro")):
-                            st.audio(config.get("som_erro"), autoplay=True)
-                    st.rerun()
-            else:
-                if st.session_state.ultima_resposta_correta:
-                    st.success("🎉 Resposta CORRETA! Parabéns!")
+            # Botões Centralizados e Ampliados
+            col_b1, col_b2, col_b3 = st.columns([1, 3, 1])
+            with col_b2:
+                if not st.session_state.respondido:
+                    if st.button("✅ Confirmar Resposta"):
+                        st.session_state.respondido = True
+                        st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                        
+                        if st.session_state.ultima_resposta_correta:
+                            st.session_state.pontuacao += 100
+                            st.session_state.acertos += 1
+                            if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
+                                st.audio(config.get("som_acerto"), autoplay=True)
+                        else:
+                            if config.get("som_erro") and os.path.exists(config.get("som_erro")):
+                                st.audio(config.get("som_erro"), autoplay=True)
+                        st.rerun()
                 else:
-                    st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
-                
-                if st.button("➡️ Próxima Pergunta"):
-                    st.session_state.respondido = False
-                    st.session_state.pergunta_idx += 1
+                    if st.session_state.ultima_resposta_correta:
+                        st.success("🎉 Resposta CORRETA! Parabéns!")
+                    else:
+                        st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
                     
-                    if st.session_state.acertos >= 3:
-                        st.session_state.acertos = 0
-                        st.session_state.dado_girado = False
-                        st.session_state.pagina = "dado"
-                    elif st.session_state.pergunta_idx >= total_p:
-                        st.session_state.pagina = "fim"
+                    if st.button("➡️ Próxima Pergunta"):
+                        st.session_state.respondido = False
+                        st.session_state.pergunta_idx += 1
+                        
+                        if st.session_state.acertos >= 3:
+                            st.session_state.acertos = 0
+                            st.session_state.dado_girado = False
+                            st.session_state.pagina = "dado"
+                        elif st.session_state.pergunta_idx >= total_p:
+                            st.session_state.pagina = "fim"
+                        st.rerun()
+                
+                st.write("")
+                if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
+                    st.session_state.respondido = False
+                    st.session_state.pagina = "menu"
                     st.rerun()
-            
-            st.write("")
-            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
-                st.session_state.respondido = False
-                st.session_state.pagina = "menu"
-                st.rerun()
         else:
             st.session_state.pagina = "fim"
             st.rerun()
