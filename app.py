@@ -13,7 +13,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Ajustados (Alinhamento perfeito, Botões Centralizados e Textos Gigantes)
+# Estilos Visuais Ajustados (Menu Centralizado, Botões Maiores e Estilizados)
 st.markdown("""
     <style>
     .stApp {
@@ -46,7 +46,7 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* FORÇAR CENTRALIZAÇÃO DE TODOS OS BOTÕES DE AÇÃO */
+    /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
     .stButton {
         display: flex;
         justify-content: center;
@@ -58,12 +58,12 @@ st.markdown("""
         font-weight: bold;
         border-radius: 10px;
         width: 100%;
-        max-width: 350px;
+        max-width: 450px;
         padding: 16px;
         border: 2px solid #1F618D;
         font-size: 20px !important;
         display: block;
-        margin: 0 auto;
+        margin: 8px auto;
     }
     .stButton>button:hover {
         background-color: #1F618D;
@@ -174,7 +174,7 @@ with col_top_2:
         st.video(yt_url)
 
 # ==============================================================================
-# 1. MENU PRINCIPAL
+# 1. MENU PRINCIPAL (PERFEITAMENTE CENTRALIZADO)
 # ==============================================================================
 if st.session_state.pagina == "menu":
     st.markdown("<h1 style='text-align: center;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
@@ -265,13 +265,12 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM BOTÕES PERFEITAMENTE CENTRALIZADOS NAS ZONAS INDICADAS)
+# 3. TELA DO JOGO
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    # Cabeçalho Grande e Destacado
     c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
     c1.markdown(f"<span class='placar-topo'>👤 Participante: {st.session_state.participante}</span>", unsafe_allow_html=True)
     c2.markdown(f"<span class='placar-topo'>⏳ Tempo: {config.get('tempo_pergunta', 30)}s</span>", unsafe_allow_html=True)
@@ -290,7 +289,6 @@ elif st.session_state.pagina == "jogo":
             escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
             st.write("")
             
-            # Botões perfeitamente centralizados exatamente onde marcaste na zona vermelha
             if not st.session_state.respondido:
                 if st.button("✅ Confirmar Resposta"):
                     st.session_state.respondido = True
