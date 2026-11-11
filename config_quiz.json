@@ -1,0 +1,16 @@
+{
+    "imagem_ns": "nossa_senhora.png",
+    "musica_menu": "",
+    "musica_jogo": "",
+    "musica_dado": "",
+    "musica_comemoracao": "",
+    "som_clique_botao": "Silencioso",
+    "tipo_som_acerto": "Campainha Alegre",
+    "tipo_som_erro": "Bife Grave",
+    "tipo_som_tempo": "Alarme Contínuo",
+    "som_acerto": "",
+    "som_erro": "",
+    "som_tempo_esgotado": "",
+    "tempo_limite": 30,
+    "tempo_alarme": 4
+}
