@@ -13,15 +13,15 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Efeitos Sonoros Integrados, Interface Limpa e Centralizada)
+# Estilos Visuais Aprimorados (Interface Limpa, Centralizada e Moderna)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
     }
-    /* ESCONDER O PLAYER DO YOUTUBE VISUALMENTE (Toca apenas o áudio de fundo) */
-    iframe[src*="youtube"] {
+    /* ESCONDER O PLAYER DE FUNDO DO YOUTUBE VISUALMENTE */
+    iframe[src*="youtube"]:not(.player-efeito) {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
@@ -122,8 +122,8 @@ def carregar_config():
     config_padrao = {
         "imagem_ns": "nossa_senhora.png",
         "youtube_url": "",
-        "som_acerto": "",
-        "som_erro": "",
+        "youtube_acerto": "",
+        "youtube_erro": "",
         "tempo_pergunta": 30,
         "tempo_alerta": 4
     }
@@ -172,7 +172,7 @@ if "musica_pausada" not in st.session_state:
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Controlo de Trilha Sonora / YouTube Oculto com Botão de Pausa no Topo
+# Controlo de Trilha Sonora / YouTube Oculto no Topo
 col_top_1, col_top_2 = st.columns([8, 3])
 with col_top_2:
     yt_url = config.get("youtube_url", "")
@@ -278,7 +278,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM EFEITOS SONOROS DIRETOS: APLAUSOS E QUÉN-QUÉN)
+# 3. TELA DO JOGO (COM PLAYERS DO YOUTUBE PARA ACERTO E ERRO)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -310,17 +310,20 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
-                        # Executa som de aplausos imediato
-                        st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
-                    else:
-                        # Executa som de erro quén-quén-quén imediato
-                        st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/sad-trombone.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
+                    yt_acerto = config.get("youtube_acerto", "")
+                    if yt_acerto:
+                        st.markdown("🔊 **Ouve os Aplausos:**")
+                        st.video(yt_acerto)
                 else:
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
+                    yt_erro = config.get("youtube_erro", "")
+                    if yt_erro:
+                        st.markdown("🔊 **Ouve o Erro:**")
+                        st.video(yt_erro)
                 
                 if st.button("➡️ Próxima Pergunta"):
                     st.session_state.respondido = False
@@ -350,7 +353,7 @@ elif st.session_state.pagina == "jogo":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (COM APLAUSOS AO CONCLUIR)
+# 4. SALA DO DADO PREMIADO
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
@@ -381,8 +384,9 @@ elif st.session_state.pagina == "dado":
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
-            # Toca aplausos ao finalizar o dado
-            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+            yt_acerto = config.get("youtube_acerto", "")
+            if yt_acerto:
+                st.video(yt_acerto)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
@@ -541,37 +545,20 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (LINK DO YOUTUBE, UPLOAD DE SONS E IMAGEM)
+# 9. PAINEL DE CONFIGURAÇÕES (LINKS DO YOUTUBE PARA EFEITOS E TRILHA)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
     st.markdown("<h2>⚙️ Painel de Configurações (Músicas, Imagem & Sons)</h2>", unsafe_allow_html=True)
-    st.write("Configure os links do YouTube, os ficheiros de som para acerto/aplausos e erro, e faça upload da imagem.")
+    st.write("Insere os links do YouTube para a trilha sonora de fundo, som de acerto/aplausos e som de erro.")
     st.write("")
     
     col_cfg1, col_cfg2 = st.columns([2, 1])
     
     with col_cfg1:
-        yt_input = st.text_input("🔗 Link do YouTube (Trilha Sonora / Vídeo de Fundo):", value=config.get("youtube_url", ""))
+        yt_input = st.text_input("🔗 Link do YouTube (Trilha Sonora de Fundo):", value=config.get("youtube_url", ""))
+        yt_acerto_input = st.text_input("🔗 Link do YouTube (Som de Acerto / Aplausos):", value=config.get("youtube_acerto", ""))
+        yt_erro_input = st.text_input("🔗 Link do YouTube (Som de Erro / Trombeta):", value=config.get("youtube_erro", ""))
         
-        st.write("---")
-        st.markdown("### 🔊 Ficheiros de Efeitos Sonoros")
-        
-        up_acerto = st.file_uploader("Carregar Som de Acerto / Aplausos (MP3 / WAV)", type=["mp3", "wav", "ogg"], key="up_acerto")
-        if up_acerto is not None:
-            with open("som_acerto.mp3", "wb") as f:
-                f.write(up_acerto.getbuffer())
-            config["som_acerto"] = "som_acerto.mp3"
-            salvar_config(config)
-            st.success("Som de acerto guardado!")
-
-        up_erro = st.file_uploader("Carregar Som de Erro / Triste (MP3 / WAV)", type=["mp3", "wav", "ogg"], key="up_erro")
-        if up_erro is not None:
-            with open("som_erro.mp3", "wb") as f:
-                f.write(up_erro.getbuffer())
-            config["som_erro"] = "som_erro.mp3"
-            salvar_config(config)
-            st.success("Som de erro guardado!")
-
         st.write("---")
         tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
         tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
@@ -596,6 +583,8 @@ elif st.session_state.pagina == "configuracoes":
     with col_bot1:
         if st.button("💾 Salvar Configurações"):
             config["youtube_url"] = yt_input
+            config["youtube_acerto"] = yt_acerto_input
+            config["youtube_erro"] = yt_erro_input
             config["tempo_pergunta"] = int(tempo_perg_val)
             config["tempo_alerta"] = int(tempo_alerta_val)
             salvar_config(config)
