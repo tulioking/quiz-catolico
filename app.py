@@ -13,18 +13,12 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Oculta absolutamente qualquer player indesejado do YouTube e centraliza tudo)
+# Estilos Visuais Aprimorados (Centralização perfeita, fontes grandes e layout limpo)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
-    }
-    /* ESCONDER RIGOROSAMENTE QUALQUER VÍDEO/PLAYER DO YOUTUBE DA TELA */
-    iframe[src*="youtube"], video, audio {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
     }
     .placar-topo {
         font-size: 24px !important;
@@ -172,19 +166,17 @@ if "musica_pausada" not in st.session_state:
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Gestão Oculta da Trilha Sonora de Fundo via YouTube
+# Gestão de Trilha Sonora de Fundo via YouTube (visível apenas o player de fundo)
 yt_url = config.get("youtube_url", "")
-if yt_url and not st.session_state.musica_pausada:
-    vid_id = yt_url.split("v=")[-1].split("&")[0]
-    st.markdown(f'<iframe src="https://www.youtube.com/embed/{vid_id}?autoplay=1&loop=1&playlist={vid_id}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
-
-# Botão de Pausa/Retomar Música discreto no canto superior
-col_t1, col_t2 = st.columns([9, 2])
-with col_t2:
-    label_audio = "⏹️ Pausar Música" if not st.session_state.musica_pausada else "▶️ Retomar Música"
-    if st.button(label_audio, key="btn_toggle_musica"):
-        st.session_state.musica_pausada = not st.session_state.musica_pausada
-        st.rerun()
+if yt_url:
+    col_v1, col_v2 = st.columns([6, 2])
+    with col_v2:
+        if not st.session_state.musica_pausada:
+            st.video(yt_url)
+        label_audio = "⏹️ Pausar Música de Fundo" if not st.session_state.musica_pausada else "▶️ Retomar Música de Fundo"
+        if st.button(label_audio, key="btn_toggle_musica"):
+            st.session_state.musica_pausada = not st.session_state.musica_pausada
+            st.rerun()
 
 # ==============================================================================
 # 1. MENU PRINCIPAL
@@ -281,7 +273,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM EFEITOS SONOROS AUTOMÁTICOS INVISÍVEIS)
+# 3. TELA DO JOGO (COM PLAYERS DE APLAUSOS E ERRO EXIBIDOS AO RESPONDER)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -313,21 +305,20 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
-                        yt_acerto = config.get("youtube_acerto", "")
-                        if yt_acerto:
-                            v_id = yt_acerto.split("v=")[-1].split("&")[0]
-                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
-                    else:
-                        yt_erro = config.get("youtube_erro", "")
-                        if yt_erro:
-                            v_id = yt_erro.split("v=")[-1].split("&")[0]
-                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
+                    yt_acerto = config.get("youtube_acerto", "")
+                    if yt_acerto:
+                        st.markdown("👏 **Dá play nos Aplausos:**")
+                        st.video(yt_acerto)
                 else:
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
+                    yt_erro = config.get("youtube_erro", "")
+                    if yt_erro:
+                        st.markdown("🎺 **Dá play no Erro (Trombeta):**")
+                        st.video(yt_erro)
                 
                 if st.button("➡️ Próxima Pergunta"):
                     st.session_state.respondido = False
@@ -392,8 +383,8 @@ elif st.session_state.pagina == "dado":
             
             yt_acerto = config.get("youtube_acerto", "")
             if yt_acerto:
-                v_id = yt_acerto.split("v=")[-1].split("&")[0]
-                st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
+                st.markdown("👏 **Dá play nos Aplausos do Prémio:**")
+                st.video(yt_acerto)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
