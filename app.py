@@ -11,8 +11,9 @@ import time
 ARQUIVO_DADOS = "dados_quiz_igreja.json"
 ARQUIVO_CONFIG = "config_quiz.json"
 
-st.set_page_config(page_title="Quiz Católico - Imaculada Conceição", page_icon="⛪", layout="wide")
+st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
+# Estilos Visuais Personalizados (Tema Azul Escuro Profundo e Cartões Elegantes)
 st.markdown("""
     <style>
     .stApp {
@@ -22,8 +23,8 @@ st.markdown("""
     .main-card {
         background-color: #134074;
         padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         margin-bottom: 20px;
     }
     .stButton>button {
@@ -33,12 +34,19 @@ st.markdown("""
         border-radius: 8px;
         width: 100%;
         padding: 12px;
-        border: none;
+        border: 1px solid #1F618D;
         font-size: 16px;
     }
     .stButton>button:hover {
         background-color: #1F618D;
         color: white;
+    }
+    .st-key-sair>button {
+        background-color: #E74C3C !important;
+        border: none !important;
+    }
+    .st-key-sair>button:hover {
+        background-color: #C0392B !important;
     }
     h1, h2, h3, h4 {
         color: #FFFFFF !important;
@@ -77,11 +85,26 @@ def salvar_dados(perguntas, participantes, historico):
         json.dump(dados, f, ensure_ascii=False, indent=4)
 
 def carregar_config():
-    config_padrao = {"som_ativado": True, "tema_cor": "Azul Celeste"}
+    config_padrao = {
+        "imagem_ns": "nossa_senhora.png",
+        "musica_menu": "",
+        "fundo_jogo": "",
+        "durante_dado": "",
+        "som_acerto": "Campainha Alegre",
+        "som_erro": "Bife Grave",
+        "som_tempo": "Alarme Contínuo",
+        "som_botao": "Silencioso",
+        "tempo_pergunta": 30,
+        "tempo_alerta": 4
+    }
     if os.path.exists(ARQUIVO_CONFIG):
         try:
             with open(ARQUIVO_CONFIG, "r", encoding="utf-8") as f:
-                return json.load(f)
+                cfg = json.load(f)
+                for k, v in config_padrao.items():
+                    if k not in cfg:
+                        cfg[k] = v
+                return cfg
         except Exception:
             pass
     return config_padrao
@@ -90,6 +113,7 @@ def salvar_config(config):
     with open(ARQUIVO_CONFIG, "w", encoding="utf-8") as f:
         json.dump(config, f, ensure_ascii=False, indent=4)
 
+# Inicialização de Estados da Sessão
 if "pagina" not in st.session_state:
     st.session_state.pagina = "menu"
 if "participante" not in st.session_state:
@@ -110,6 +134,8 @@ if "dado_girado" not in st.session_state:
     st.session_state.dado_girado = False
 if "resultado_dado" not in st.session_state:
     st.session_state.resultado_dado = None
+if "editando_idx" not in st.session_state:
+    st.session_state.editando_idx = None
 
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
@@ -119,7 +145,7 @@ config = carregar_config()
 # ==============================================================================
 if st.session_state.pagina == "menu":
     st.markdown("<h1 style='text-align: center;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align: center; color: #8DA9C4;'>Quiz Oficial Paroquial</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center; color: #8DA9C4;'>Quiz da Imaculada (Pressione F11 para tela cheia)</h4>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -132,17 +158,22 @@ if st.session_state.pagina == "menu":
             st.session_state.pagina = "cadastrar_participantes"
             st.rerun()
             
-        if st.button("📝 Gerir / Editar Perguntas"):
+        if st.button("📝 Cadastrar / Gerir / Editar Perguntas"):
             st.session_state.pagina = "gerir_perguntas"
-            st.rerun()
-            
-        if st.button("⚙️ Configurações (Sons e Imagens)"):
-            st.session_state.pagina = "configuracoes"
             st.rerun()
             
         if st.button("📊 Histórico de Acertos e Prêmios"):
             st.session_state.pagina = "historico"
             st.rerun()
+            
+        if st.button("⚙️ Configurações (Músicas, Imagem e Sons)"):
+            st.session_state.pagina = "configuracoes"
+            st.rerun()
+            
+        st.markdown('<div class="st-key-sair">', unsafe_allow_html=True)
+        if st.button("🚪 Sair / Fechar Sistema", key="sair_sis"):
+            st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 2. SELECIONAR PARTICIPANTE
@@ -150,12 +181,15 @@ if st.session_state.pagina == "menu":
 elif st.session_state.pagina == "selecionar_participante":
     st.markdown("<h2>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
     
-    nome_digitado = st.text_input("Digite o nome do participante:")
-    escolha_lista = st.selectbox("Ou escolha da lista cadastrada:", ["-- Selecione da lista --"] + participantes) if participantes else "-- Selecione da lista --"
+    col_esq, col_dir = st.columns([2, 1])
+    with col_esq:
+        nome_digitado = st.text_input("Selecione ou Insira o Participante:")
+        st.write("Ou escolha da lista cadastrada:")
         
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("▶️ Iniciar Quiz"):
+        escolha_lista = st.selectbox("Lista de Participantes:", ["-- Selecione da lista --"] + participantes, label_visibility="collapsed") if participantes else "-- Selecione da lista --"
+        
+        st.write("")
+        if st.button("▶️ Iniciar com este Participante"):
             nome_final = ""
             if escolha_lista != "-- Selecione da lista --":
                 nome_final = escolha_lista
@@ -186,33 +220,38 @@ elif st.session_state.pagina == "selecionar_participante":
             else:
                 st.warning("Por favor, insira ou selecione um nome válido.")
                 
-    with col2:
         if st.button("⬅️ Voltar ao Menu"):
             st.session_state.pagina = "menu"
             st.rerun()
+            
+    with col_dir:
+        if os.path.exists(config.get("imagem_ns", "nossa_senhora.png")):
+            st.image(config.get("imagem_ns", "nossa_senhora.png"), use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO
+# 3. TELA DO JOGO (COM FEEDBACK VISUAL E IMAGEM LATERAL)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
+    # Barra de Topo
+    c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
+    c1.markdown(f"**Participante:** {st.session_state.participante}")
+    c2.markdown(f"⏳ **Tempo:** {config.get('tempo_pergunta', 30)}s")
+    c3.markdown(f"**Pontos:** {st.session_state.pontuacao}")
+    c4.markdown(f"**Acertos:** {st.session_state.acertos}/3")
+    st.divider()
+    
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
-        col_a, col_b, col_c = st.columns(3)
-        col_a.markdown(f"**Participante:** {st.session_state.participante}")
-        col_b.markdown(f"**Pontos:** {st.session_state.pontuacao}")
-        col_c.markdown(f"**Acertos:** {st.session_state.acertos}/3")
-        st.divider()
-        
         if p_idx < total_p:
             p = st.session_state.perguntas_sessao[p_idx]
             
             st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
             
-            escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}")
+            escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
             st.write("")
             
             if not st.session_state.respondido:
@@ -243,7 +282,7 @@ elif st.session_state.pagina == "jogo":
                     st.rerun()
             
             st.write("")
-            if st.button("🚪 Parar e Sair para o Menu"):
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
                 st.session_state.respondido = False
                 st.session_state.pagina = "menu"
                 st.rerun()
@@ -253,10 +292,9 @@ elif st.session_state.pagina == "jogo":
             
     with col_dir:
         st.markdown("<h3 style='text-align: center;'>🌸 Imaculada Conceição</h3>", unsafe_allow_html=True)
-        if os.path.exists("nossa_senhora.png"):
-            st.image("nossa_senhora.png", use_container_width=True)
-        else:
-            st.info("[ Imagem 'nossa_senhora.png' não encontrada na pasta ]")
+        img_path = config.get("imagem_ns", "nossa_senhora.png")
+        if os.path.exists(img_path):
+            st.image(img_path, use_container_width=True)
 
 # ==============================================================================
 # 4. SALA DO DADO PREMIADO
@@ -310,10 +348,11 @@ elif st.session_state.pagina == "fim":
     st.markdown(f"<h2 style='text-align: center; color: #F4D35E;'>Pontuação Final: {st.session_state.pontuacao} Pontos</h2>", unsafe_allow_html=True)
     st.write("")
     
-    if os.path.exists("nossa_senhora.png"):
+    img_path = config.get("imagem_ns", "nossa_senhora.png")
+    if os.path.exists(img_path):
         col_img1, col_img2, col_img3 = st.columns([2, 1, 2])
         with col_img2:
-            st.image("nossa_senhora.png", use_container_width=True)
+            st.image(img_path, use_container_width=True)
             
     st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
     st.write("")
@@ -368,87 +407,137 @@ elif st.session_state.pagina == "historico":
         st.rerun()
 
 # ==============================================================================
-# 8. GERIR E EDITAR PERGUNTAS
+# 8. CADASTRAR / GERIR / EDITAR PERGUNTAS
 # ==============================================================================
 elif st.session_state.pagina == "gerir_perguntas":
     st.markdown("<h2>📝 Gestão e Edição de Perguntas</h2>", unsafe_allow_html=True)
     
-    with st.form("form_pergunta"):
-        nova_p = st.text_input("Enunciado da Pergunta:")
-        op1 = st.text_input("Opção 1:")
-        op2 = st.text_input("Opção 2:")
-        op3 = st.text_input("Opção 3:")
-        op4 = st.text_input("Opção 4:")
-        correta = st.text_input("Texto exato da Resposta Correta (igual a uma das opções):")
+    col_A, col_B = st.columns([2, 1])
+    with col_B:
+        if st.button("➕ Nova Pergunta"):
+            st.session_state.editando_idx = -1
+            st.rerun()
+            
+    if st.session_state.editando_idx is not None:
+        idx_edit = st.session_state.editando_idx
+        is_novo = (idx_edit == -1)
         
-        submitted = st.form_submit_button("💾 Salvar Nova Pergunta")
-        if submitted:
-            if nova_p and op1 and op2 and op3 and op4 and correta:
-                ops = [op1, op2, op3, op4]
-                if correta in ops:
-                    perguntas.append({"pergunta": nova_p, "opcoes": ops, "resposta": correta})
-                    salvar_dados(perguntas, participantes, historico)
-                    st.success("Pergunta adicionada com sucesso!")
+        titulo_form = "Adicionar Nova Pergunta" if is_novo else f"Editar Pergunta #{idx_edit + 1}"
+        st.write(f"### {titulo_form}")
+        
+        p_val = perguntas[idx_edit]["pergunta"] if not is_novo else ""
+        ops_val = perguntas[idx_edit]["opcoes"] if not is_novo else ["", "", "", ""]
+        resp_val = perguntas[idx_edit]["resposta"] if not is_novo else ""
+        
+        with st.form("form_edit_pergunta"):
+            nova_p = st.text_input("Enunciado da Pergunta:", value=p_val)
+            op1 = st.text_input("Opção 1:", value=ops_val[0] if len(ops_val)>0 else "")
+            op2 = st.text_input("Opção 2:", value=ops_val[1] if len(ops_val)>1 else "")
+            op3 = st.text_input("Opção 3:", value=ops_val[2] if len(ops_val)>2 else "")
+            op4 = st.text_input("Opção 4:", value=ops_val[3] if len(ops_val)>3 else "")
+            correta = st.text_input("Texto exato da Resposta Correta:", value=resp_val)
+            
+            btn_sub = st.form_submit_button("💾 Salvar Pergunta")
+            if btn_sub:
+                if nova_p and op1 and op2 and op3 and op4 and correta:
+                    ops = [op1, op2, op3, op4]
+                    if correta in ops:
+                        item_novo = {"pergunta": nova_p, "opcoes": ops, "resposta": correta}
+                        if is_novo:
+                            perguntas.append(item_novo)
+                        else:
+                            perguntas[idx_edit] = item_novo
+                        salvar_dados(perguntas, participantes, historico)
+                        st.session_state.editando_idx = None
+                        st.success("Pergunta salva com sucesso!")
+                        st.rerun()
+                    else:
+                        st.error("A resposta correta tem de coincidir exatamente com uma das 4 opções.")
                 else:
-                    st.error("A resposta correta tem de coincidir exatamente com uma das 4 opções.")
-            else:
-                st.warning("Preencha todos os campos.")
-                
+                    st.warning("Preencha todos os campos.")
+                    
+        if st.button("❌ Cancelar Edição"):
+            st.session_state.editando_idx = None
+            st.rerun()
+            
     st.write("---")
-    st.write("### 📋 Perguntas Cadastradas:")
+    st.write("### 📋 Lista de Perguntas Cadastradas:")
     
     for idx, item in enumerate(perguntas):
-        col_txt, col_btn = st.columns([4, 1])
+        col_txt, col_edit, col_del = st.columns([5, 1, 1])
         with col_txt:
-            st.write(f"**{idx+1}. {item['pergunta']}**")
-            st.caption(f"Opções: {', '.join(item['opcoes'])} | **Resp:** {item['resposta']}")
-        with col_btn:
-            if st.button("🗑️ Apagar", key=f"del_p_{idx}"):
+            st.write(f"**{idx+1}. {item['pergunta']}** (Resp: {item['resposta']})")
+        with col_edit:
+            if st.button("✏️", key=f"edit_p_{idx}"):
+                st.session_state.editando_idx = idx
+                st.rerun()
+        with col_del:
+            if st.button("🗑️", key=f"del_p_{idx}"):
                 perguntas.pop(idx)
                 salvar_dados(perguntas, participantes, historico)
                 st.rerun()
-        st.write("")
-        
+                
     st.write("")
     if st.button("⬅️ Voltar ao Menu"):
+        st.session_state.editando_idx = None
         st.session_state.pagina = "menu"
         st.rerun()
 
 # ==============================================================================
-# 9. CONFIGURAÇÕES (SONS E TROCA DE IMAGENS)
+# 9. PAINEL DE CONFIGURAÇÕES (MÚSICAS, IMAGENS E SONS)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
-    st.markdown("<h2>⚙️ Painel de Configurações do Sistema</h2>", unsafe_allow_html=True)
-    st.write("Personaliza as preferências gerais e a imagem institucional do quiz.")
+    st.markdown("<h2>⚙️ Painel de Configurações (Músicas, Imagem & Sons)</h2>", unsafe_allow_html=True)
     st.write("")
-
-    # Gestão de Sons / Áudio
-    som_atual = config.get("som_ativado", True)
-    novo_som = st.checkbox("🔊 Ativar Efeitos Sonoros / Áudio", value=som_atual)
     
-    st.write("---")
-    st.write("### 🖼️ Imagem Institucional (Nossa Senhora)")
-    st.write("Podes carregar uma nova imagem para substituir a atual `nossa_senhora.png`:")
+    col_cfg1, col_cfg2 = st.columns([2, 1])
     
-    if os.path.exists("nossa_senhora.png"):
-        st.image("nossa_senhora.png", width=200, caption="Imagem Atual")
-    else:
-        st.warning("Nenhuma imagem 'nossa_senhora.png' encontrada na pasta atualmente.")
-
-    uploaded_file = st.file_uploader("Carregar nova imagem (PNG / JPG)", type=["png", "jpg", "jpeg"])
-    
-    if uploaded_file is not None:
-        with open("nossa_senhora.png", "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.success("✨ Nova imagem guardada com sucesso! Atualiza a página para ver a alteração.")
+    with col_cfg1:
+        img_ns_val = st.text_input("Imagem N. Senhora:", value=config.get("imagem_ns", "nossa_senhora.png"))
+        mus_menu_val = st.text_input("Música Menu:", value=config.get("musica_menu", ""))
+        fund_jogo_val = st.text_input("Fundo Jogo:", value=config.get("fundo_jogo", ""))
+        dur_dado_val = st.text_input("Durante Dado:", value=config.get("durante_dado", ""))
+        com_dado_val = st.text_input("Comemoração Dado:", value="")
+        som_acerto_val = st.text_input("Som Acerto (Ficheiro):", value="")
+        tipo_acerto = st.selectbox("Tipo Som Acerto:", ["Campainha Alegre", "Aplausos", "Timbre Simples"], index=0)
+        som_erro_val = st.text_input("Som Erro (Ficheiro):", value="")
+        tipo_erro = st.selectbox("Tipo Som Erro:", ["Bife Grave", "Campainha Triste", "Silencioso"], index=0)
+        som_tempo_val = st.text_input("Tempo Esgotado (Ficheiro):", value="")
+        tipo_tempo = st.selectbox("Tipo Tempo Esgotado:", ["Alarme Contínuo", "Bip Curto"], index=0)
+        som_botao_val = st.selectbox("Som ao Clicar nos Botões:", ["Silencioso", "Clique Leve", "Beep"], index=0)
+        
+        tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
+        tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
+        
+    with col_cfg2:
+        st.markdown("### 🖼️ Pré-visualização da Imagem")
+        img_path = config.get("imagem_ns", "nossa_senhora.png")
+        if os.path.exists(img_path):
+            st.image(img_path, use_container_width=True)
+            
+        up_img = st.file_uploader("Carregar nova imagem", type=["png", "jpg", "jpeg"])
+        if up_img is not None:
+            with open("nossa_senhora.png", "wb") as f:
+                f.write(up_img.getbuffer())
+            config["imagem_ns"] = "nossa_senhora.png"
+            salvar_config(config)
+            st.success("Imagem atualizada com sucesso!")
+            st.rerun()
 
     st.write("")
-    if st.button("💾 Guardar Configurações"):
-        config["som_ativado"] = novo_som
-        salvar_config(config)
-        st.success("Configurações guardadas com sucesso!")
-
-    st.write("")
-    if st.button("⬅️ Voltar ao Menu"):
-        st.session_state.pagina = "menu"
-        st.rerun()
+    col_bot1, col_bot2 = st.columns([1, 1])
+    with col_bot1:
+        if st.button("💾 Salvar Configurações"):
+            config["imagem_ns"] = img_ns_val
+            config["musica_menu"] = mus_menu_val
+            config["fundo_jogo"] = fund_jogo_val
+            config["durante_dado"] = dur_dado_val
+            config["tempo_pergunta"] = int(tempo_perg_val)
+            config["tempo_alerta"] = int(tempo_alerta_val)
+            salvar_config(config)
+            st.success("Configurações salvas com sucesso!")
+            
+    with col_bot2:
+        if st.button("⬅️ Voltar ao Menu"):
+            st.session_state.pagina = "menu"
+            st.rerun()
