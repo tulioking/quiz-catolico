@@ -13,7 +13,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Personalizados (Tema Azul Escuro Profundo e Cartões Elegantes)
+# Estilos Visuais Aprimorados (Textos Maiores, Proporção Equilibrada e Cores Elegantes)
 st.markdown("""
     <style>
     .stApp {
@@ -22,10 +22,19 @@ st.markdown("""
     }
     .main-card {
         background-color: #134074;
-        padding: 30px;
+        padding: 25px;
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         margin-bottom: 20px;
+    }
+    .main-card h3 {
+        font-size: 26px !important;
+        line-height: 1.4 !important;
+    }
+    .stRadio label {
+        font-size: 20px !important;
+        font-weight: 500 !important;
+        color: #FFFFFF !important;
     }
     .stButton>button {
         background-color: #134074;
@@ -35,7 +44,7 @@ st.markdown("""
         width: 100%;
         padding: 12px;
         border: 1px solid #1F618D;
-        font-size: 16px;
+        font-size: 18px;
     }
     .stButton>button:hover {
         background-color: #1F618D;
@@ -90,9 +99,13 @@ def carregar_config():
         "musica_menu": "",
         "fundo_jogo": "",
         "durante_dado": "",
-        "som_acerto": "Campainha Alegre",
-        "som_erro": "Bife Grave",
-        "som_tempo": "Alarme Contínuo",
+        "comemoracao_dado": "",
+        "som_acerto": "",
+        "tipo_acerto": "Campainha Alegre / Aplausos",
+        "som_erro": "",
+        "tipo_erro": "Bife Grave / Som Triste",
+        "som_tempo": "",
+        "tipo_tempo": "Alarme Contínuo",
         "som_botao": "Silencioso",
         "tempo_pergunta": 30,
         "tempo_alerta": 4
@@ -136,9 +149,28 @@ if "resultado_dado" not in st.session_state:
     st.session_state.resultado_dado = None
 if "editando_idx" not in st.session_state:
     st.session_state.editando_idx = None
+if "musica_pausada" not in st.session_state:
+    st.session_state.musica_pausada = False
 
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
+
+# Botão Global de Pausar Música no Canto Superior Direito (se houver trilha)
+col_global_1, col_global_2 = st.columns([10, 1])
+with col_global_2:
+    btn_label = "▶️ Tocar Música" if st.session_state.musica_pausada else "⏹️ Pausar Música"
+    if st.button(btn_label, key="btn_audio_global"):
+        st.session_state.musica_pausada = not st.session_state.musica_pausada
+        st.rerun()
+
+# Reprodução de Trilha Sonora de Fundo (se configurada e não pausada)
+if not st.session_state.musica_pausada:
+    if st.session_state.pagina == "menu" and config.get("musica_menu") and os.path.exists(config.get("musica_menu")):
+        st.audio(config.get("musica_menu"), autoplay=True, loop=True)
+    elif st.session_state.pagina == "jogo" and config.get("fundo_jogo") and os.path.exists(config.get("fundo_jogo")):
+        st.audio(config.get("fundo_jogo"), autoplay=True, loop=True)
+    elif st.session_state.pagina == "dado" and config.get("durante_dado") and os.path.exists(config.get("durante_dado")):
+        st.audio(config.get("durante_dado"), autoplay=True, loop=True)
 
 # ==============================================================================
 # 1. MENU PRINCIPAL
@@ -225,17 +257,17 @@ elif st.session_state.pagina == "selecionar_participante":
             st.rerun()
             
     with col_dir:
-        if os.path.exists(config.get("imagem_ns", "nossa_senhora.png")):
-            st.image(config.get("imagem_ns", "nossa_senhora.png"), use_container_width=True)
+        img_path = config.get("imagem_ns", "nossa_senhora.png")
+        if os.path.exists(img_path):
+            st.image(img_path, width=320)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM FEEDBACK VISUAL E IMAGEM LATERAL)
+# 3. TELA DO JOGO (COM TEXTOS MAIORES E IMAGEM PROPORCIONAL)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    # Barra de Topo
     c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
     c1.markdown(f"**Participante:** {st.session_state.participante}")
     c2.markdown(f"⏳ **Tempo:** {config.get('tempo_pergunta', 30)}s")
@@ -262,6 +294,11 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
+                        if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
+                            st.audio(config.get("som_acerto"), autoplay=True)
+                    else:
+                        if config.get("som_erro") and os.path.exists(config.get("som_erro")):
+                            st.audio(config.get("som_erro"), autoplay=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
@@ -291,10 +328,10 @@ elif st.session_state.pagina == "jogo":
             st.rerun()
             
     with col_dir:
-        st.markdown("<h3 style='text-align: center;'>🌸 Imaculada Conceição</h3>", unsafe_allow_html=True)
+        st.markdown("<h4 style='text-align: center;'>🌸 Imaculada Conceição</h4>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            st.image(img_path, use_container_width=True)
+            st.image(img_path, width=320)
 
 # ==============================================================================
 # 4. SALA DO DADO PREMIADO
@@ -352,7 +389,7 @@ elif st.session_state.pagina == "fim":
     if os.path.exists(img_path):
         col_img1, col_img2, col_img3 = st.columns([2, 1, 2])
         with col_img2:
-            st.image(img_path, use_container_width=True)
+            st.image(img_path, width=280)
             
     st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
     st.write("")
@@ -484,7 +521,7 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (MÚSICAS, IMAGENS E SONS)
+# 9. PAINEL DE CONFIGURAÇÕES (MÚSICAS, IMAGEM & SONS)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
     st.markdown("<h2>⚙️ Painel de Configurações (Músicas, Imagem & Sons)</h2>", unsafe_allow_html=True)
@@ -493,17 +530,19 @@ elif st.session_state.pagina == "configuracoes":
     col_cfg1, col_cfg2 = st.columns([2, 1])
     
     with col_cfg1:
-        img_ns_val = st.text_input("Imagem N. Senhora:", value=config.get("imagem_ns", "nossa_senhora.png"))
-        mus_menu_val = st.text_input("Música Menu:", value=config.get("musica_menu", ""))
-        fund_jogo_val = st.text_input("Fundo Jogo:", value=config.get("fundo_jogo", ""))
-        dur_dado_val = st.text_input("Durante Dado:", value=config.get("durante_dado", ""))
-        com_dado_val = st.text_input("Comemoração Dado:", value="")
-        som_acerto_val = st.text_input("Som Acerto (Ficheiro):", value="")
-        tipo_acerto = st.selectbox("Tipo Som Acerto:", ["Campainha Alegre", "Aplausos", "Timbre Simples"], index=0)
-        som_erro_val = st.text_input("Som Erro (Ficheiro):", value="")
-        tipo_erro = st.selectbox("Tipo Som Erro:", ["Bife Grave", "Campainha Triste", "Silencioso"], index=0)
-        som_tempo_val = st.text_input("Tempo Esgotado (Ficheiro):", value="")
-        tipo_tempo = st.selectbox("Tipo Tempo Esgotado:", ["Alarme Contínuo", "Bip Curto"], index=0)
+        img_ns_val = st.text_input("Caminho Imagem N. Senhora:", value=config.get("imagem_ns", "nossa_senhora.png"))
+        mus_menu_val = st.text_input("Trilha Sonora - Música Menu (Caminho ficheiro áudio):", value=config.get("musica_menu", ""))
+        fund_jogo_val = st.text_input("Trilha Sonora - Fundo Jogo (Caminho ficheiro áudio):", value=config.get("fundo_jogo", ""))
+        dur_dado_val = st.text_input("Trilha Sonora - Durante Dado (Caminho ficheiro áudio):", value=config.get("durante_dado", ""))
+        
+        st.write("---")
+        som_acerto_val = st.text_input("Som Acerto / Aplausos (Ficheiro de áudio):", value=config.get("som_acerto", ""))
+        tipo_acerto = st.selectbox("Efeito Padrão Acerto:", ["Campainha Alegre / Aplausos", "Campainha Simples", "Aplausos Fortes"], index=0)
+        
+        som_erro_val = st.text_input("Som Erro / Triste (Ficheiro de áudio):", value=config.get("som_erro", ""))
+        tipo_erro = st.selectbox("Efeito Padrão Erro:", ["Bife Grave / Som Triste", "Bip Baixo", "Silencioso"], index=0)
+        
+        som_tempo_val = st.text_input("Som Tempo Esgotado (Ficheiro de áudio):", value=config.get("som_tempo", ""))
         som_botao_val = st.selectbox("Som ao Clicar nos Botões:", ["Silencioso", "Clique Leve", "Beep"], index=0)
         
         tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
@@ -513,7 +552,7 @@ elif st.session_state.pagina == "configuracoes":
         st.markdown("### 🖼️ Pré-visualização da Imagem")
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            st.image(img_path, use_container_width=True)
+            st.image(img_path, width=280)
             
         up_img = st.file_uploader("Carregar nova imagem", type=["png", "jpg", "jpeg"])
         if up_img is not None:
@@ -532,6 +571,9 @@ elif st.session_state.pagina == "configuracoes":
             config["musica_menu"] = mus_menu_val
             config["fundo_jogo"] = fund_jogo_val
             config["durante_dado"] = dur_dado_val
+            config["som_acerto"] = som_acerto_val
+            config["som_erro"] = som_erro_val
+            config["som_tempo"] = som_tempo_val
             config["tempo_pergunta"] = int(tempo_perg_val)
             config["tempo_alerta"] = int(tempo_alerta_val)
             salvar_config(config)
