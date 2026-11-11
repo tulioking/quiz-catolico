@@ -13,12 +13,18 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Ajustados (Menu Centralizado, Botões Maiores e Estilizados)
+# Estilos Visuais (Esconde o vídeo do YouTube visualmente, mantendo apenas a música a tocar)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
+    }
+    /* ESCONDER O PLAYER DO YOUTUBE VISUALMENTE (Toca apenas o áudio de fundo) */
+    iframe[src*="youtube"] {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
     }
     .placar-topo {
         font-size: 24px !important;
@@ -166,15 +172,22 @@ if "musica_pausada" not in st.session_state:
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Barra de Topo Global para YouTube Player se configurado
+# Controlo de Trilha Sonora / YouTube Oculto com Botão de Pausa no Topo
 col_top_1, col_top_2 = st.columns([8, 3])
 with col_top_2:
     yt_url = config.get("youtube_url", "")
-    if yt_url:
-        st.video(yt_url)
+    if yt_url and not st.session_state.musica_pausada:
+        # Adiciona parâmetros para tocar em loop e autoplay oculto
+        url_embed = yt_url.replace("watch?v=", "embed/") + "?autoplay=1&loop=1"
+        st.video(url_embed, format="video/mp4", autoplay=True)
+    
+    label_audio = "⏹️ Pausar Música" if not st.session_state.musica_pausada else "▶️ Retomar Música"
+    if st.button(label_audio, key="btn_toggle_musica"):
+        st.session_state.musica_pausada = not st.session_state.musica_pausada
+        st.rerun()
 
 # ==============================================================================
-# 1. MENU PRINCIPAL (PERFEITAMENTE CENTRALIZADO)
+# 1. MENU PRINCIPAL
 # ==============================================================================
 if st.session_state.pagina == "menu":
     st.markdown("<h1 style='text-align: center;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
@@ -260,6 +273,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.rerun()
             
     with col_dir:
+        st.markdown("<h3 style='text-align: center;'>🌸 Imaculada Conceição</h3>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
             st.image(img_path, width=280)
@@ -331,7 +345,7 @@ elif st.session_state.pagina == "jogo":
             st.rerun()
             
     with col_dir:
-        st.markdown("<h4 style='text-align: center;'>🌸 Imaculada Conceição</h4>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center;'>🌸 Imaculada Conceição</h3>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
             st.image(img_path, width=280)
