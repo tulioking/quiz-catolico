@@ -13,14 +13,13 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Ajustados (Tudo Grande, Ampliado e Centralizado)
+# Estilos Visuais Ajustados (Alinhamento perfeito, Botões Centralizados e Textos Gigantes)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
     }
-    /* CABEÇALHO / PLACAR SUPERIOR GIGANTE */
     .placar-topo {
         font-size: 24px !important;
         font-weight: bold !important;
@@ -38,7 +37,7 @@ st.markdown("""
         line-height: 1.4 !important;
         color: #FFFFFF !important;
     }
-    /* RESPOSTAS BEM GRANDES */
+    /* RESPOSTAS BEM GRANDES E LEGÍVEIS */
     .stRadio div[role="radiogroup"] label div p {
         font-size: 26px !important;
         font-weight: 700 !important;
@@ -47,20 +46,22 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* BOTÕES GRANDES E CENTRALIZADOS */
+    /* FORÇAR CENTRALIZAÇÃO DE TODOS OS BOTÕES DE AÇÃO */
     .stButton {
         display: flex;
         justify-content: center;
+        width: 100%;
     }
     .stButton>button {
         background-color: #134074;
         color: white;
         font-weight: bold;
         border-radius: 10px;
-        width: 70%;
+        width: 100%;
+        max-width: 350px;
         padding: 16px;
         border: 2px solid #1F618D;
-        font-size: 22px !important;
+        font-size: 20px !important;
         display: block;
         margin: 0 auto;
     }
@@ -264,7 +265,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, width=280)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM CABEÇALHO, RESPOSTAS E BOTÕES AMPLIADOS E CENTRALIZADOS)
+# 3. TELA DO JOGO (COM BOTÕES PERFEITAMENTE CENTRALIZADOS NAS ZONAS INDICADAS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -289,46 +290,44 @@ elif st.session_state.pagina == "jogo":
             escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
             st.write("")
             
-            # Botões Centralizados e Ampliados
-            col_b1, col_b2, col_b3 = st.columns([1, 3, 1])
-            with col_b2:
-                if not st.session_state.respondido:
-                    if st.button("✅ Confirmar Resposta"):
-                        st.session_state.respondido = True
-                        st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                        
-                        if st.session_state.ultima_resposta_correta:
-                            st.session_state.pontuacao += 100
-                            st.session_state.acertos += 1
-                            if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
-                                st.audio(config.get("som_acerto"), autoplay=True)
-                        else:
-                            if config.get("som_erro") and os.path.exists(config.get("som_erro")):
-                                st.audio(config.get("som_erro"), autoplay=True)
-                        st.rerun()
-                else:
-                    if st.session_state.ultima_resposta_correta:
-                        st.success("🎉 Resposta CORRETA! Parabéns!")
-                    else:
-                        st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
+            # Botões perfeitamente centralizados exatamente onde marcaste na zona vermelha
+            if not st.session_state.respondido:
+                if st.button("✅ Confirmar Resposta"):
+                    st.session_state.respondido = True
+                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
                     
-                    if st.button("➡️ Próxima Pergunta"):
-                        st.session_state.respondido = False
-                        st.session_state.pergunta_idx += 1
-                        
-                        if st.session_state.acertos >= 3:
-                            st.session_state.acertos = 0
-                            st.session_state.dado_girado = False
-                            st.session_state.pagina = "dado"
-                        elif st.session_state.pergunta_idx >= total_p:
-                            st.session_state.pagina = "fim"
-                        st.rerun()
-                
-                st.write("")
-                if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
-                    st.session_state.respondido = False
-                    st.session_state.pagina = "menu"
+                    if st.session_state.ultima_resposta_correta:
+                        st.session_state.pontuacao += 100
+                        st.session_state.acertos += 1
+                        if config.get("som_acerto") and os.path.exists(config.get("som_acerto")):
+                            st.audio(config.get("som_acerto"), autoplay=True)
+                    else:
+                        if config.get("som_erro") and os.path.exists(config.get("som_erro")):
+                            st.audio(config.get("som_erro"), autoplay=True)
                     st.rerun()
+            else:
+                if st.session_state.ultima_resposta_correta:
+                    st.success("🎉 Resposta CORRETA! Parabéns!")
+                else:
+                    st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
+                
+                if st.button("➡️ Próxima Pergunta"):
+                    st.session_state.respondido = False
+                    st.session_state.pergunta_idx += 1
+                    
+                    if st.session_state.acertos >= 3:
+                        st.session_state.acertos = 0
+                        st.session_state.dado_girado = False
+                        st.session_state.pagina = "dado"
+                    elif st.session_state.pergunta_idx >= total_p:
+                        st.session_state.pagina = "fim"
+                    st.rerun()
+            
+            st.write("")
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
+                st.session_state.respondido = False
+                st.session_state.pagina = "menu"
+                st.rerun()
         else:
             st.session_state.pagina = "fim"
             st.rerun()
