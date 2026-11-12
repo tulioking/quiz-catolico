@@ -39,7 +39,7 @@ def salvar_config(config_dict):
 
 config = carregar_config()
 
-# Estilos Visuais Aprimorados (Centralização Blindada para Projetor e Estabilidade Visual)
+# Estilos Visuais Aprimorados (Layout Centralizado, Ocultação de Players e Estabilidade Visual)
 st.markdown("""
     <style>
     .stApp {
@@ -82,38 +82,34 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* FORÇAR CENTRALIZAÇÃO ABSOLUTA DE TODOS OS BOTÕES E DO MENU */
-    div.stButton, [data-testid="stButton"] {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        width: 100% !important;
-        margin: 0 auto !important;
+    /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
+    .stButton {
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
-    div.stButton > button, [data-testid="stButton"] > button {
+    .stButton>button {
         background-color: #134074;
         color: white;
         font-weight: bold;
         border-radius: 10px;
-        width: 100% !important;
-        max-width: 500px !important;
-        padding: 16px !important;
+        width: 100%;
+        max-width: 450px;
+        padding: 16px;
         border: 2px solid #1F618D;
-        font-size: 22px !important;
-        display: block !important;
-        margin: 8px auto !important;
-        text-align: center !important;
+        font-size: 20px !important;
+        display: block;
+        margin: 8px auto;
     }
-    div.stButton > button:hover, [data-testid="stButton"] > button:hover {
+    .stButton>button:hover {
         background-color: #1F618D;
         color: white;
-        border-color: #F4D35E;
     }
-    .st-key-sair_sis button {
+    .st-key-sair>button {
         background-color: #E74C3C !important;
         border: none !important;
     }
-    .st-key-sair_sis button:hover {
+    .st-key-sair>button:hover {
         background-color: #C0392B !important;
     }
     h1, h2, h3, h4 {
@@ -219,43 +215,45 @@ def tocar_audio_invisivel(caminho_arquivo):
             st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64}"></audio>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 1. MENU PRINCIPAL (100% CENTRALIZADO PARA PROJETOR)
+# 1. MENU PRINCIPAL
 # ==============================================================================
 if st.session_state.pagina == "menu":
-    st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
-    st.markdown("<h1 style='text-align: center; font-size: 46px;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align: center; color: #8DA9C4; margin-bottom: 35px;'>Quiz da Imaculada (Pressione F11 para tela cheia)</h4>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center; color: #8DA9C4;'>Quiz da Imaculada (Pressione F11 para tela cheia)</h4>", unsafe_allow_html=True)
+    st.write("")
     
-    col1, col2, col3 = st.columns([1.2, 1.6, 1.2])
+    col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("▶️ Jogar / Iniciar Quiz", use_container_width=True):
+        if st.button("▶️ Jogar / Iniciar Quiz"):
             st.session_state.pagina = "selecionar_participante"
             st.rerun()
             
-        if st.button("👥 Cadastrar Participantes", use_container_width=True):
+        if st.button("👥 Cadastrar Participantes"):
             st.session_state.pagina = "cadastrar_participantes"
             st.rerun()
             
-        if st.button("📝 Cadastrar / Gerir / Editar Perguntas", use_container_width=True):
+        if st.button("📝 Cadastrar / Gerir / Editar Perguntas"):
             st.session_state.pagina = "gerir_perguntas"
             st.rerun()
             
-        if st.button("📊 Histórico de Acertos e Prêmios", use_container_width=True):
+        if st.button("📊 Histórico de Acertos e Prêmios"):
             st.session_state.pagina = "historico"
             st.rerun()
             
-        if st.button("⚙️ Configurações (Imagem & Tempos)", use_container_width=True):
+        if st.button("⚙️ Configurações (Imagem & Tempos)"):
             st.session_state.pagina = "configuracoes"
             st.rerun()
             
-        if st.button("🚪 Sair / Fechar Sistema", key="sair_sis", use_container_width=True):
+        st.markdown('<div class="st-key-sair">', unsafe_allow_html=True)
+        if st.button("🚪 Sair / Fechar Sistema", key="sair_sis"):
             st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 2. SELECIONAR PARTICIPANTE
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
-    st.markdown("<h2 style='text-align: center; margin-bottom: 25px;'>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
     
     col_esq, col_dir = st.columns([2, 1])
     
@@ -271,7 +269,7 @@ elif st.session_state.pagina == "selecionar_participante":
         st.write("")
         col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
         with col_btn2:
-            if st.button("▶️ Iniciar com este Participante", use_container_width=True):
+            if st.button("▶️ Iniciar com este Participante"):
                 nome_final = ""
                 if escolha_lista != "-- Selecione da lista --":
                     nome_final = escolha_lista
@@ -303,7 +301,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 else:
                     st.warning("Por favor, insira ou selecione um nome válido.")
                     
-            if st.button("⬅️ Voltar ao Menu", use_container_width=True):
+            if st.button("⬅️ Voltar ao Menu"):
                 st.session_state.pagina = "menu"
                 st.rerun()
 
@@ -328,6 +326,8 @@ elif st.session_state.pagina == "jogo":
     col_esq, col_dir = st.columns([2, 1])
     
     # 2º RENDERIZAMOS A IMAGEM DA SANTA IMEDIATAMENTE (ANTES DO LOOP DO RELÓGIO!)
+    # Assim, mesmo quando o st.rerun() do cronómetro interromper a execução em col_esq,
+    # a coluna da direita já foi desenhada no ecrã em todas as perguntas!
     with col_dir:
         mostrar_santa()
 
@@ -336,4 +336,332 @@ elif st.session_state.pagina == "jogo":
         p = st.session_state.perguntas_sessao[p_idx]
         
         c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1])
-        c1.markdown(f"<span class='placar-topo
+        c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
+        placeholder_tempo = c2.empty()
+        c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
+        c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
+        st.divider()
+
+        st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
+        
+        if not st.session_state.respondido:
+            escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
+            st.write("")
+            
+            if st.button("✅ Confirmar Resposta"):
+                st.session_state.respondido = True
+                st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                
+                if st.session_state.ultima_resposta_correta:
+                    st.session_state.pontuacao += 100
+                    st.session_state.acertos += 1
+                st.rerun()
+            
+            st.write("")
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
+                st.session_state.respondido = False
+                st.session_state.pagina = "menu"
+                st.rerun()
+
+            # Relógio dinâmico segundo a segundo (fica no fim de col_esq para não bloquear nada)
+            if st.session_state.tempo_restante > 0:
+                classe_cor = "placar-alerta" if st.session_state.tempo_restante <= config.get("tempo_alerta", 4) else "placar-topo"
+                placeholder_tempo.markdown(f"<span class='{classe_cor}'>⏳ {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
+                time.sleep(1)
+                st.session_state.tempo_restante -= 1
+                st.rerun()
+            else:
+                st.session_state.respondido = True
+                st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                if st.session_state.ultima_resposta_correta:
+                    st.session_state.pontuacao += 100
+                    st.session_state.acertos += 1
+                st.rerun()
+        else:
+            placeholder_tempo.markdown("<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
+            
+            if st.session_state.ultima_resposta_correta:
+                st.success("🎉 Resposta CORRETA! Parabéns!")
+                tocar_audio_invisivel(SOM_ACERTO)
+            else:
+                st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
+                tocar_audio_invisivel(SOM_ERRO)
+            
+            st.write("")
+            if st.button("➡️ Próxima Pergunta"):
+                st.session_state.respondido = False
+                st.session_state.pergunta_idx += 1
+                st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+                
+                if st.session_state.acertos >= 3:
+                    st.session_state.acertos = 0
+                    st.session_state.dado_girado = False
+                    st.session_state.pagina = "dado"
+                elif st.session_state.pergunta_idx >= total_p:
+                    st.session_state.pagina = "fim"
+                st.rerun()
+            
+            st.write("")
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo_resp"):
+                st.session_state.respondido = False
+                st.session_state.pagina = "menu"
+                st.rerun()
+
+# ==============================================================================
+# 4. SALA DO DADO PREMIADO
+# ==============================================================================
+elif st.session_state.pagina == "dado":
+    st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Acertaste 3 perguntas seguidas!</h3>", unsafe_allow_html=True)
+    st.write("")
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        placeholder_dado = st.empty()
+        
+        if not st.session_state.dado_girado:
+            placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
+            if st.button("🎲 GIRAR O DADO AGORA"):
+                tocar_audio_invisivel(SOM_DADO)
+                
+                # Rotação de 36 passos
+                for _ in range(36):
+                    num_aleatorio = random.randint(1, 6)
+                    placeholder_dado.markdown(f"<div class='dado-box' style='color: #8DA9C4;'>【 {num_aleatorio} 】</div>", unsafe_allow_html=True)
+                    time.sleep(0.1)
+                
+                resultado_final = random.randint(1, 6)
+                st.session_state.resultado_dado = resultado_final
+                st.session_state.dado_girado = True
+                
+                reg = f"Participante: {st.session_state.participante} | Ganhou o Dado (Resultado: {resultado_final})"
+                historico.append(reg)
+                salvar_dados(perguntas, participantes, historico)
+                st.rerun()
+        else:
+            res = st.session_state.resultado_dado
+            placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
+            
+            tocar_audio_invisivel(SOM_ACERTO)
+                
+            st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
+            
+            if st.button("🏠 Voltar ao Menu Inicial"):
+                st.session_state.dado_girado = False
+                st.session_state.pagina = "menu"
+                st.rerun()
+
+# ==============================================================================
+# 5. TELA FINAL / AGRADECIMENTO
+# ==============================================================================
+elif st.session_state.pagina == "fim":
+    reg_final = f"Participante: {st.session_state.participante} | Pontuação Final: {st.session_state.pontuacao} Pontos"
+    if reg_final not in historico:
+        historico.append(reg_final)
+        salvar_dados(perguntas, participantes, historico)
+        
+    st.markdown("<h1 style='text-align: center;'>🎉 PARABÉNS! 🎉</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align: center;'>Participante: {st.session_state.participante}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align: center; color: #F4D35E;'>Pontuação Final: {st.session_state.pontuacao} Pontos</h2>", unsafe_allow_html=True)
+    st.write("")
+    
+    mostrar_santa()
+            
+    st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px; margin-top: 15px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
+    st.write("")
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🏠 Voltar ao Menu Inicial"):
+            st.session_state.pagina = "menu"
+            st.rerun()
+
+# ==============================================================================
+# 6. CADASTRAR PARTICIPANTES (COM OPÇÃO DE REMOVER)
+# ==============================================================================
+elif st.session_state.pagina == "cadastrar_participantes":
+    st.markdown("<h2>👥 Gestão de Participantes</h2>", unsafe_allow_html=True)
+    novo_p = st.text_input("Nome do novo participante:")
+    if st.button("Adicionar à Lista"):
+        if novo_p.strip() and novo_p.strip() not in participantes:
+            participantes.append(novo_p.strip())
+            salvar_dados(perguntas, participantes, historico)
+            st.success(f"Participante '{novo_p.strip()}' cadastrado com sucesso!")
+            st.rerun()
+        else:
+            st.warning("Insira um nome válido ou já existente.")
+            
+    st.write("### Participantes Atuais:")
+    if participantes:
+        for p in list(participantes):
+            col_p1, col_p2 = st.columns([4, 1])
+            with col_p1:
+                st.write(f"- {p}")
+            with col_p2:
+                if st.button("🗑️ Remover", key=f"del_part_{p}"):
+                    participantes.remove(p)
+                    salvar_dados(perguntas, participantes, historico)
+                    st.success(f"Participante '{p}' removido!")
+                    st.rerun()
+    else:
+        st.info("Nenhum participante cadastrado.")
+        
+    st.write("")
+    if st.button("⬅️ Voltar ao Menu"):
+        st.session_state.pagina = "menu"
+        st.rerun()
+
+# ==============================================================================
+# 7. HISTÓRICO (COM OPÇÃO DE APAGAR ITENS SELECIONADOS)
+# ==============================================================================
+elif st.session_state.pagina == "historico":
+    st.markdown("<h2>📊 Histórico de Acertos e Prêmios</h2>", unsafe_allow_html=True)
+    if historico:
+        st.write("Selecione os itens que pretende apagar:")
+        itens_para_apagar = []
+        for idx, item in enumerate(historico):
+            if st.checkbox(item, key=f"chk_hist_{idx}"):
+                itens_para_apagar.append(item)
+        
+        st.write("")
+        col_h1, col_h2 = st.columns([1, 1])
+        with col_h1:
+            if itens_para_apagar and st.button("🗑️ Apagar Selecionados"):
+                for it in itens_para_apagar:
+                    historico.remove(it)
+                salvar_dados(perguntas, participantes, historico)
+                st.success("Itens selecionados apagados com sucesso!")
+                st.rerun()
+        with col_h2:
+            if st.button("🗑️ Limpar Todo o Histórico"):
+                historico.clear()
+                salvar_dados(perguntas, participantes, historico)
+                st.rerun()
+    else:
+        st.info("Ainda não existem registos no histórico.")
+        
+    st.write("")
+    if st.button("⬅️ Voltar ao Menu"):
+        st.session_state.pagina = "menu"
+        st.rerun()
+
+# ==============================================================================
+# 8. CADASTRAR / GERIR / EDITAR PERGUNTAS
+# ==============================================================================
+elif st.session_state.pagina == "gerir_perguntas":
+    st.markdown("<h2>📝 Gestão e Edição de Perguntas</h2>", unsafe_allow_html=True)
+    
+    col_A, col_B = st.columns([2, 1])
+    with col_B:
+        if st.button("➕ Nova Pergunta"):
+            st.session_state.editando_idx = -1
+            st.rerun()
+            
+    if st.session_state.editando_idx is not None:
+        idx_edit = st.session_state.editando_idx
+        is_novo = (idx_edit == -1)
+        
+        titulo_form = "Adicionar Nova Pergunta" if is_novo else f"Editar Pergunta #{idx_edit + 1}"
+        st.write(f"### {titulo_form}")
+        
+        p_val = perguntas[idx_edit]["pergunta"] if not is_novo else ""
+        ops_val = perguntas[idx_edit]["opcoes"] if not is_novo else ["", "", "", ""]
+        resp_val = perguntas[idx_edit]["resposta"] if not is_novo else ""
+        
+        with st.form("form_edit_pergunta"):
+            nova_p = st.text_input("Enunciado da Pergunta:", value=p_val)
+            op1 = st.text_input("Opção 1:", value=ops_val[0] if len(ops_val)>0 else "")
+            op2 = st.text_input("Opção 2:", value=ops_val[1] if len(ops_val)>1 else "")
+            op3 = st.text_input("Opção 3:", value=ops_val[2] if len(ops_val)>2 else "")
+            op4 = st.text_input("Opção 4:", value=ops_val[3] if len(ops_val)>3 else "")
+            correta = st.text_input("Texto exato da Resposta Correta:", value=resp_val)
+            
+            btn_sub = st.form_submit_button("💾 Salvar Pergunta")
+            if btn_sub:
+                if nova_p and op1 and op2 and op3 and op4 and correta:
+                    ops = [op1, op2, op3, op4]
+                    if correta in ops:
+                        item_novo = {"pergunta": nova_p, "opcoes": ops, "resposta": correta}
+                        if is_novo:
+                            perguntas.append(item_novo)
+                        else:
+                            perguntas[idx_edit] = item_novo
+                        salvar_dados(perguntas, participantes, historico)
+                        st.session_state.editando_idx = None
+                        st.success("Pergunta salva com sucesso!")
+                        st.rerun()
+                    else:
+                        st.error("A resposta correta tem de coincidir exatamente com uma das 4 opções.")
+                else:
+                    st.warning("Preencha todos os campos.")
+                    
+        if st.button("❌ Cancelar Edição"):
+            st.session_state.editando_idx = None
+            st.rerun()
+            
+    st.write("---")
+    st.write("### 📋 Lista de Perguntas Cadastradas:")
+    
+    for idx, item in enumerate(perguntas):
+        col_txt, col_edit, col_del = st.columns([5, 1, 1])
+        with col_txt:
+            st.write(f"**{idx+1}. {item['pergunta']}** (Resp: {item['resposta']})")
+        with col_edit:
+            if st.button("✏️", key=f"edit_p_{idx}"):
+                st.session_state.editando_idx = idx
+                st.rerun()
+        with col_del:
+            if st.button("🗑️", key=f"del_p_{idx}"):
+                perguntas.pop(idx)
+                salvar_dados(perguntas, participantes, historico)
+                st.rerun()
+                
+    st.write("")
+    if st.button("⬅️ Voltar ao Menu"):
+        st.session_state.editando_idx = None
+        st.session_state.pagina = "menu"
+        st.rerun()
+
+# ==============================================================================
+# 9. PAINEL DE CONFIGURAÇÕES (IMAGEM, TAMANHO EM TEMPO REAL & TEMPOS)
+# ==============================================================================
+elif st.session_state.pagina == "configuracoes":
+    st.markdown("<h2>⚙️ Painel de Configurações (Imagem & Tempos)</h2>", unsafe_allow_html=True)
+    st.write("Gere a imagem institucional, o tamanho dela na tela e os tempos do quiz.")
+    st.write("")
+    
+    col_cfg1, col_cfg2 = st.columns([2, 1])
+    
+    with col_cfg1:
+        tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
+        tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
+        tamanho_img_val = st.slider("Tamanho da Imagem da Santa (Largura em Pixels):", min_value=200, max_value=600, value=config.get("tamanho_imagem", 360), step=10)
+        
+        up_img = st.file_uploader("Carregar nova imagem institucional", type=["png", "jpg", "jpeg"], key="up_img_ns")
+        if up_img is not None:
+            with open("nossa_senhora.png", "wb") as f:
+                f.write(up_img.getbuffer())
+            config["imagem_ns"] = "nossa_senhora.png"
+            salvar_config(config)
+            st.success("Imagem atualizada com sucesso!")
+            st.rerun()
+
+    with col_cfg2:
+        st.markdown("<h4 style='text-align: center;'>🖼️ Pré-visualização em Tempo Real</h4>", unsafe_allow_html=True)
+        mostrar_santa(largura_custom=tamanho_img_val)
+
+    st.write("")
+    col_bot1, col_bot2 = st.columns([1, 1])
+    with col_bot1:
+        if st.button("💾 Salvar Configurações"):
+            config["tempo_pergunta"] = int(tempo_perg_val)
+            config["tempo_alerta"] = int(tempo_alerta_val)
+            config["tamanho_imagem"] = int(tamanho_img_val)
+            salvar_config(config)
+            st.success("Configurações salvas com sucesso! As alterações já estão aplicadas.")
+            st.rerun()
+            
+    with col_bot2:
+        if st.button("⬅️ Voltar ao Menu"):
+            st.session_state.pagina = "menu"
+            st.rerun()
