@@ -14,7 +14,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Fontes Grandes)
+# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Compacto para o Player)
 st.markdown("""
     <style>
     .stApp {
@@ -46,6 +46,11 @@ st.markdown("""
     }
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
+    }
+    /* COMPACTAR O MINI PLAYER DE ÁUDIO NO TOPO */
+    audio {
+        height: 32px !important;
+        width: 160px !important;
     }
     /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
     .stButton {
@@ -277,7 +282,7 @@ elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    # Placar Superior e Mini Player de Fundo Discreto ao Lado dos Acertos
+    # Placar Superior e Mini Player de Fundo Discreto ao Lado
     c1, c2, c3, c4, c5 = st.columns([2, 1, 1, 1, 1.5])
     c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
     placeholder_tempo = c2.empty()
@@ -286,7 +291,7 @@ elif st.session_state.pagina == "jogo":
     
     with c5:
         if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
-            st.markdown("<span style='font-size: 11px; color: #8DA9C4;'>⏱️ Som do Tempo:</span>", unsafe_allow_html=True)
+            st.markdown("<span style='font-size: 10px; color: #8DA9C4;'>⏱️ Som do Tempo:</span>", unsafe_allow_html=True)
             st.audio(SOM_TIC_TAK, autoplay=True, loop=True)
 
     st.divider()
@@ -303,7 +308,7 @@ elif st.session_state.pagina == "jogo":
                 escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
                 st.write("")
                 
-                col_b1, col_b2 = st.columns(2)
+                col_b1, col_b2 = st.columns([2, 2])
                 with col_b1:
                     if st.button("✅ Confirmar Resposta"):
                         st.session_state.respondido = True
@@ -312,9 +317,6 @@ elif st.session_state.pagina == "jogo":
                         if st.session_state.ultima_resposta_correta:
                             st.session_state.pontuacao += 100
                             st.session_state.acertos += 1
-                            tocar_audio_invisivel(SOM_ACERTO) #[cite: 22]
-                        else:
-                            tocar_audio_invisivel(SOM_ERRO) #[cite: 21]
                         st.rerun()
                 
                 # Relógio dinâmico segundo a segundo
@@ -326,18 +328,20 @@ elif st.session_state.pagina == "jogo":
                 else:
                     st.session_state.respondido = True
                     st.session_state.ultima_resposta_correta = False
-                    tocar_audio_invisivel(SOM_ERRO) #[cite: 21]
                     st.rerun()
             else:
                 placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
                 
+                # Toca o som respetivo de forma garantida assim que entra no modo respondido
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
+                    tocar_audio_invisivel(SOM_ACERTO)
                 else:
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
+                    tocar_audio_invisivel(SOM_ERRO)
                 
                 st.write("")
-                col_res1, col_res2 = st.columns(2)
+                col_res1, col_res2 = st.columns([2, 2])
                 with col_res1:
                     if st.button("➡️ Próxima Pergunta"):
                         st.session_state.respondido = False
@@ -384,7 +388,7 @@ elif st.session_state.pagina == "dado":
         if not st.session_state.dado_girado:
             placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
             if st.button("🎲 GIRAR O DADO AGORA"):
-                tocar_audio_invisivel(SOM_DADO) #[cite: 21, 22]
+                tocar_audio_invisivel(SOM_DADO)
                 
                 # Dobro de tempo de rotação do dado (24 passos)
                 for _ in range(24):
@@ -404,7 +408,7 @@ elif st.session_state.pagina == "dado":
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
-            tocar_audio_invisivel(SOM_ACERTO) #[cite: 22]
+            tocar_audio_invisivel(SOM_ACERTO)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
