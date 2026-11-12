@@ -386,11 +386,11 @@ elif st.session_state.pagina == "dado":
             if st.button("🎲 GIRAR O DADO AGORA"):
                 tocar_audio_invisivel(SOM_DADO)
                 
-                # Dobro de tempo de rotação do dado (24 passos)
-                for _ in range(24):
+                # Triplo do tempo de rotação do dado (36 passos)
+                for _ in range(36):
                     num_aleatorio = random.randint(1, 6)
                     placeholder_dado.markdown(f"<div class='dado-box' style='color: #8DA9C4;'>【 {num_aleatorio} 】</div>", unsafe_allow_html=True)
-                    time.sleep(0.08)
+                    time.sleep(0.1)
                 
                 resultado_final = random.randint(1, 6)
                 st.session_state.resultado_dado = resultado_final
