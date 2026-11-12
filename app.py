@@ -14,7 +14,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Ocultação de Players)
+# Estilos Visuais Aprimorados (Layout Limpo, Centralizado, Controlo de Imagem e Ocultação de Players)
 st.markdown("""
     <style>
     .stApp {
@@ -272,12 +272,10 @@ elif st.session_state.pagina == "selecionar_participante":
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            col_img1, col_img2, col_img3 = st.columns([1, 4, 1])
-            with col_img2:
-                st.image(img_path, use_container_width=True)
+            st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM SELEÇÃO AUTOMÁTICA SE O TEMPO ACABAR)
+# 3. TELA DO JOGO (COM IMAGEM FIXA E GARANTIDA EM TODAS AS PERGUNTAS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -289,6 +287,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
+    # Definimos as duas colunas principais lado a lado para o layout nunca perder a imagem
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -324,7 +323,6 @@ elif st.session_state.pagina == "jogo":
                     st.session_state.tempo_restante -= 1
                     st.rerun()
                 else:
-                    # Tempo esgotado: avalia automaticamente a opção que estava marcada
                     st.session_state.respondido = True
                     st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
                     if st.session_state.ultima_resposta_correta:
@@ -365,7 +363,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # Coluna da direita fixa em absolutamente todas as perguntas
+    # Coluna da direita renderizada estaticamente em todas as rondas, com tamanho controlado
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
@@ -469,17 +467,31 @@ elif st.session_state.pagina == "cadastrar_participantes":
         st.rerun()
 
 # ==============================================================================
-# 7. HISTÓRICO
+# 7. HISTÓRICO (COM OPÇÃO DE APAGAR ITENS SELECIONADOS)
 # ==============================================================================
 elif st.session_state.pagina == "historico":
     st.markdown("<h2>📊 Histórico de Acertos e Prêmios</h2>", unsafe_allow_html=True)
     if historico:
-        for item in historico:
-            st.write(f"- {item}")
-        if st.button("🗑️ Limpar Histórico"):
-            historico.clear()
-            salvar_dados(perguntas, participantes, historico)
-            st.rerun()
+        st.write("Selecione os itens que pretende apagar:")
+        itens_para_apagar = []
+        for idx, item in enumerate(historico):
+            if st.checkbox(item, key=f"chk_hist_{idx}"):
+                itens_para_apagar.append(item)
+        
+        st.write("")
+        col_h1, col_h2 = st.columns([1, 1])
+        with col_h1:
+            if itens_para_apagar and st.button("🗑️ Apagar Selecionados"):
+                for it in itens_para_apagar:
+                    historico.remove(it)
+                salvar_dados(perguntas, participantes, historico)
+                st.success("Itens selecionados apagados com sucesso!")
+                st.rerun()
+        with col_h2:
+            if st.button("🗑️ Limpar Todo o Histórico"):
+                historico.clear()
+                salvar_dados(perguntas, participantes, historico)
+                st.rerun()
     else:
         st.info("Ainda não existem registos no histórico.")
         
