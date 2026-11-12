@@ -53,12 +53,12 @@ st.markdown("""
         height: 0 !important;
     }
     .placar-topo {
-        font-size: 24px !important;
+        font-size: 22px !important;
         font-weight: bold !important;
         color: #F4D35E !important;
     }
     .placar-alerta {
-        font-size: 26px !important;
+        font-size: 24px !important;
         font-weight: bold !important;
         color: #FF4B4B !important;
     }
@@ -122,7 +122,7 @@ st.markdown("""
         color: #0B2545 !important;
         border: 3px solid #FFFFFF !important;
         font-size: 24px !important;
-        max-width: 420px !important;
+        max-width: 500px !important;
         width: 100% !important;
         margin: 10px auto !important;
         box-shadow: 0 0 20px rgba(244, 211, 94, 0.7) !important;
@@ -167,6 +167,22 @@ def salvar_dados(perguntas, participantes, historico):
 def limpar_prefixo_opcao(texto):
     """Remove 'A) ', 'B. ', 'c - ' do início para reordenar A, B, C, D limpo."""
     return re.sub(r'^[A-Da-d][\)\.\-]\s*', '', texto.strip())
+
+def formatar_tempo_partida(segundos_totais):
+    """Formata os segundos totais da partida em MMm SSs."""
+    segundos_int = max(0, int(segundos_totais))
+    minutos = segundos_int // 60
+    segundos = segundos_int % 60
+    return f"{minutos:02d}m {segundos:02d}s"
+
+def obter_tempo_decorrido():
+    """Retorna o tempo total decorrido desde o início da partida."""
+    if st.session_state.get("tempo_final_congelado") is not None:
+        return st.session_state.tempo_final_congelado
+    inicio = st.session_state.get("inicio_partida")
+    if inicio is None:
+        return 0
+    return int(time.time() - inicio)
 
 # Função blindada em Base64 HTML: nunca some no st.rerun(), não pisca e fica 100% centralizada
 def mostrar_santa(largura_custom=None):
@@ -417,6 +433,14 @@ if "pontuacao" not in st.session_state:
     st.session_state.pontuacao = 0
 if "acertos" not in st.session_state:
     st.session_state.acertos = 0
+if "total_acertos_partida" not in st.session_state:
+    st.session_state.total_acertos_partida = 0
+if "total_erros_partida" not in st.session_state:
+    st.session_state.total_erros_partida = 0
+if "inicio_partida" not in st.session_state:
+    st.session_state.inicio_partida = None
+if "tempo_final_congelado" not in st.session_state:
+    st.session_state.tempo_final_congelado = None
 if "perguntas_sessao" not in st.session_state:
     st.session_state.perguntas_sessao = []
 if "respondido" not in st.session_state:
@@ -433,6 +457,10 @@ if "tempo_restante" not in st.session_state:
     st.session_state.tempo_restante = 30
 if "baloes_mostrados" not in st.session_state:
     st.session_state.baloes_mostrados = False
+if "dado_disponivel" not in st.session_state:
+    st.session_state.dado_disponivel = False
+if "historico_salvo_partida" not in st.session_state:
+    st.session_state.historico_salvo_partida = False
 
 perguntas, participantes, historico = carregar_dados()
 
@@ -516,9 +544,15 @@ elif st.session_state.pagina == "selecionar_participante":
                     st.session_state.pergunta_idx = 0
                     st.session_state.pontuacao = 0
                     st.session_state.acertos = 0
+                    st.session_state.total_acertos_partida = 0
+                    st.session_state.total_erros_partida = 0
+                    st.session_state.inicio_partida = time.time()
+                    st.session_state.tempo_final_congelado = None
+                    st.session_state.historico_salvo_partida = False
                     st.session_state.respondido = False
                     st.session_state.dado_girado = False
                     st.session_state.baloes_mostrados = False
+                    st.session_state.dado_disponivel = False
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
                     letras_fixas = ["A)", "B)", "C)", "D)"]
@@ -561,13 +595,14 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.rerun()
 
 # ==============================================================================
-# 3. TELA DO JOGO (SEM OPÇÃO PRÉ-MARCADA E COM BOTÃO DO DADO IMEDIATO NOS 3 ACERTOS)
+# 3. TELA DO JOGO (CRONÔMETRO DA PARTIDA, ACERTOS/ERROS E DECISÃO DO DADO)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
     if p_idx >= total_p:
+        st.session_state.tempo_final_congelado = obter_tempo_decorrido()
         st.session_state.pagina = "fim"
         st.rerun()
 
@@ -587,12 +622,19 @@ elif st.session_state.pagina == "jogo":
     # 3º Agora processamos a pergunta e o cronómetro na coluna da esquerda
     with col_esq:
         p = st.session_state.perguntas_sessao[p_idx]
+        tempo_total_fmt = formatar_tempo_partida(obter_tempo_decorrido())
         
-        c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1])
+        c1, c2, c3, c4, c5 = st.columns([1.4, 1, 1.1, 1, 1.3])
         c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
         placeholder_tempo = c2.empty()
-        c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
-        c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
+        c3.markdown(f"<span class='placar-topo'>⏱️ {tempo_total_fmt}</span>", unsafe_allow_html=True)
+        c4.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao}</span>", unsafe_allow_html=True)
+        
+        icone_trofeu = "🏆" if st.session_state.dado_disponivel else ""
+        c5.markdown(
+            f"<span class='placar-topo'>✅{st.session_state.total_acertos_partida} ❌{st.session_state.total_erros_partida} | 🎯{st.session_state.acertos}/3{icone_trofeu}</span>",
+            unsafe_allow_html=True
+        )
         st.divider()
 
         st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
@@ -615,18 +657,23 @@ elif st.session_state.pagina == "jogo":
                     aviso_selecao.warning("⚠️ Selecione uma alternativa antes de confirmar!")
                 else:
                     st.session_state.respondido = True
-                    st.session_state.baloes_mostrados = False
                     st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
                     
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
+                        st.session_state.total_acertos_partida += 1
+                        if st.session_state.acertos >= 3:
+                            st.session_state.dado_disponivel = True
+                    else:
+                        st.session_state.total_erros_partida += 1
                     st.rerun()
             
             st.write("")
-            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo", use_container_width=True):
+            if st.button("🚪 Parar e Finalizar Partida", key="sair_jogo", use_container_width=True):
                 st.session_state.respondido = False
-                st.session_state.pagina = "menu"
+                st.session_state.tempo_final_congelado = obter_tempo_decorrido()
+                st.session_state.pagina = "fim"
                 st.rerun()
 
             # Relógio dinâmico segundo a segundo (alerta vermelho automático nos últimos 5s)
@@ -638,11 +685,15 @@ elif st.session_state.pagina == "jogo":
                 st.rerun()
             else:
                 st.session_state.respondido = True
-                st.session_state.baloes_mostrados = False
                 st.session_state.ultima_resposta_correta = (escolha is not None and escolha == p["resposta"])
                 if st.session_state.ultima_resposta_correta:
                     st.session_state.pontuacao += 100
                     st.session_state.acertos += 1
+                    st.session_state.total_acertos_partida += 1
+                    if st.session_state.acertos >= 3:
+                        st.session_state.dado_disponivel = True
+                else:
+                    st.session_state.total_erros_partida += 1
                 st.rerun()
         else:
             placeholder_tempo.markdown("<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
@@ -656,15 +707,39 @@ elif st.session_state.pagina == "jogo":
             
             st.write("")
             
-            # SE ATINGIU 3 ACERTOS, MOSTRA IMEDIATAMENTE O BOTÃO DO DADO PREMIADO!
-            if st.session_state.acertos >= 3:
+            # SE JÁ CONQUISTOU OS 3 ACERTOS (AGORA OU ANTES), EXIBE O BOTÃO DO DADO JUNTO COM O PRÓXIMA PERGUNTA!
+            if st.session_state.dado_disponivel:
                 if not st.session_state.baloes_mostrados:
                     st.balloons()
                     st.session_state.baloes_mostrados = True
                 
-                st.markdown("<h3 style='text-align: center; color: #F4D35E;'>🏆 3 ACERTOS! GANHOU DIREITO AO DADO PREMIADO! 🏆</h3>", unsafe_allow_html=True)
+                if st.session_state.ultima_resposta_correta:
+                    st.markdown(
+                        f"<h3 style='text-align: center; color: #F4D35E;'>🏆 DADO PREMIADO LIBERADO ({st.session_state.acertos} ACERTOS)!<br>"
+                        f"<span style='font-size: 20px; color: #8DA9C4;'>Quer continuar respondendo o desafio ou girar o dado agora?</span></h3>",
+                        unsafe_allow_html=True
+                    )
+                else:
+                    st.markdown(
+                        "<h3 style='text-align: center; color: #F4D35E;'>🏆 Fim da sequência! Mas você já garantiu seu Dado Premiado! 🏆</h3>",
+                        unsafe_allow_html=True
+                    )
+                
+                # Botão para continuar respondendo (se ainda houver perguntas na lista)
+                if st.session_state.pergunta_idx + 1 < total_p:
+                    if st.button("➡️ Próxima Pergunta (Continuar Desafio)", use_container_width=True):
+                        st.session_state.respondido = False
+                        st.session_state.pergunta_idx += 1
+                        st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+                        st.rerun()
+                else:
+                    st.info("🎉 Você respondeu todas as perguntas cadastradas no sistema!")
+                
+                # Botão dourado sempre à espera da decisão de parar e girar o dado!
                 if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado", use_container_width=True):
                     st.session_state.acertos = 0
+                    st.session_state.dado_disponivel = False
+                    st.session_state.baloes_mostrados = False
                     st.session_state.respondido = False
                     st.session_state.pergunta_idx += 1
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
@@ -678,21 +753,23 @@ elif st.session_state.pagina == "jogo":
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
                     if st.session_state.pergunta_idx >= total_p:
+                        st.session_state.tempo_final_congelado = obter_tempo_decorrido()
                         st.session_state.pagina = "fim"
                     st.rerun()
             
             st.write("")
-            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo_resp", use_container_width=True):
+            if st.button("🚪 Parar e Finalizar Partida", key="sair_jogo_resp", use_container_width=True):
                 st.session_state.respondido = False
-                st.session_state.pagina = "menu"
+                st.session_state.tempo_final_congelado = obter_tempo_decorrido()
+                st.session_state.pagina = "fim"
                 st.rerun()
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (DADO 3D REALISTA E BOTÃO 100% CENTRALIZADO)
+# 4. SALA DO DADO PREMIADO (DADO 3D REALISTA E REGISTRO COMPLETO NO HISTÓRICO)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}!</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Chegou a hora de lançar o dado!</h3>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -716,9 +793,18 @@ elif st.session_state.pagina == "dado":
                 st.session_state.resultado_dado = resultado_final
                 st.session_state.dado_girado = True
                 
-                reg = f"Participante: {st.session_state.participante} | Ganhou o Dado (Resultado: {resultado_final})"
+                tempo_gasto_fmt = formatar_tempo_partida(obter_tempo_decorrido())
+                reg = (
+                    f"Participante: {st.session_state.participante} | "
+                    f"Pontos: {st.session_state.pontuacao} | "
+                    f"Acertos: {st.session_state.total_acertos_partida} | "
+                    f"Erros: {st.session_state.total_erros_partida} | "
+                    f"Tempo: {tempo_gasto_fmt} | "
+                    f"Dado: Saiu {resultado_final}"
+                )
                 historico.append(reg)
                 salvar_dados(perguntas, participantes, historico)
+                st.session_state.historico_salvo_partida = True
                 st.rerun()
         else:
             res = st.session_state.resultado_dado
@@ -734,26 +820,48 @@ elif st.session_state.pagina == "dado":
             if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
                 if st.button("▶️ Continuar Quiz (Próxima Pergunta)", use_container_width=True):
                     st.session_state.dado_girado = False
+                    st.session_state.historico_salvo_partida = False
                     st.session_state.pagina = "jogo"
                     st.rerun()
                     
-            if st.button("🏠 Voltar ao Menu Inicial", use_container_width=True):
+            if st.button("🏁 Encerrar Partida e Ver Resumo Final", use_container_width=True):
                 st.session_state.dado_girado = False
-                st.session_state.pagina = "menu"
+                st.session_state.tempo_final_congelado = obter_tempo_decorrido()
+                st.session_state.pagina = "fim"
                 st.rerun()
 
 # ==============================================================================
-# 5. TELA FINAL / AGRADECIMENTO
+# 5. TELA FINAL / AGRADECIMENTO (COM RESUMO DE TEMPO, ACERTOS E ERROS)
 # ==============================================================================
 elif st.session_state.pagina == "fim":
-    reg_final = f"Participante: {st.session_state.participante} | Pontuação Final: {st.session_state.pontuacao} Pontos"
-    if reg_final not in historico:
+    if st.session_state.tempo_final_congelado is None:
+        st.session_state.tempo_final_congelado = obter_tempo_decorrido()
+        
+    tempo_final_fmt = formatar_tempo_partida(st.session_state.tempo_final_congelado)
+    
+    if not st.session_state.historico_salvo_partida:
+        reg_final = (
+            f"Participante: {st.session_state.participante} | "
+            f"Pontos: {st.session_state.pontuacao} | "
+            f"Acertos: {st.session_state.total_acertos_partida} | "
+            f"Erros: {st.session_state.total_erros_partida} | "
+            f"Tempo Total: {tempo_final_fmt}"
+        )
         historico.append(reg_final)
         salvar_dados(perguntas, participantes, historico)
+        st.session_state.historico_salvo_partida = True
         
-    st.markdown("<h1 style='text-align: center;'>🎉 PARABÉNS! 🎉</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>🎉 FIM DA PARTIDA! PARABÉNS! 🎉</h1>", unsafe_allow_html=True)
     st.markdown(f"<h2 style='text-align: center;'>Participante: {st.session_state.participante}</h2>", unsafe_allow_html=True)
-    st.markdown(f"<h2 style='text-align: center; color: #F4D35E;'>Pontuação Final: {st.session_state.pontuacao} Pontos</h2>", unsafe_allow_html=True)
+    st.markdown(
+        f"<h3 style='text-align: center; color: #F4D35E;'>"
+        f"⭐ {st.session_state.pontuacao} Pontos &nbsp;|&nbsp; "
+        f"✅ {st.session_state.total_acertos_partida} Acertos &nbsp;|&nbsp; "
+        f"❌ {st.session_state.total_erros_partida} Erros &nbsp;|&nbsp; "
+        f"⏱️ Tempo: {tempo_final_fmt}"
+        f"</h3>",
+        unsafe_allow_html=True
+    )
     st.write("")
     
     mostrar_santa()
@@ -763,6 +871,13 @@ elif st.session_state.pagina == "fim":
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
+        if st.session_state.dado_disponivel:
+            if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado", use_container_width=True):
+                st.session_state.dado_disponivel = False
+                st.session_state.dado_girado = False
+                st.session_state.pagina = "dado"
+                st.rerun()
+                
         if st.button("🏠 Voltar ao Menu Inicial", use_container_width=True):
             st.session_state.pagina = "menu"
             st.rerun()
@@ -806,7 +921,7 @@ elif st.session_state.pagina == "cadastrar_participantes":
 # 7. HISTÓRICO (COM OPÇÃO DE APAGAR ITENS SELECIONADOS)
 # ==============================================================================
 elif st.session_state.pagina == "historico":
-    st.markdown("<h2>📊 Histórico de Acertos e Prêmios</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>📊 Histórico de Acertos, Tempos e Prêmios</h2>", unsafe_allow_html=True)
     if historico:
         st.write("Selecione os itens que pretende apagar:")
         itens_para_apagar = []
