@@ -52,7 +52,7 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* CONTROLAR O TAMANHO DA IMAGEM INSTITUCIONAL PARA NUNCA FICAR GIGANTE */
+    /* CONTROLAR O TAMANHO E CENTRALIZAÇÃO DA IMAGEM INSTITUCIONAL */
     [data-testid="stImage"] img {
         max-width: 380px !important;
         margin: 0 auto !important;
@@ -295,7 +295,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Sempre criamos as duas colunas principais em primeiro lugar no frame
+    # Criamos sempre as duas colunas estruturais em primeiro lugar
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -371,7 +371,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # Coluna da direita renderizada de forma permanente e blindada em todas as rondas
+    # Coluna da direita renderizada fora de qualquer condicional de jogo, garantindo presença e tamanho perfeitos
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
