@@ -7,18 +7,25 @@ import random
 import json
 import os
 import time
+import base64
 
 ARQUIVO_DADOS = "dados_quiz_igreja.json"
 ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Fontes Grandes)
+# Estilos Visuais Aprimorados (Oculta qualquer player visível e centraliza perfeitamente)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
+    }
+    /* OCULTAR TODOS OS PLAYERS VISÍVEIS DE ÁUDIO E VÍDEO */
+    audio, video, iframe[src*="youtube"] {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
     }
     .placar-topo {
         font-size: 24px !important;
@@ -157,11 +164,13 @@ if "resultado_dado" not in st.session_state:
     st.session_state.resultado_dado = None
 if "editando_idx" not in st.session_state:
     st.session_state.editando_idx = None
+if "tempo_restante" not in st.session_state:
+    st.session_state.tempo_restante = 30
 
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Ficheiros de áudio locais exatos baseados no repositório[cite: 21, 22]
+# Ficheiros de áudio locais exatos baseados no repositório
 SOM_TIC_TAK = "tictak.mp3"
 SOM_DADO = "paramomentododado.mp3"
 SOM_ACERTO = "ElevenLabs_Efeito_sonoro_de_aplausos_altos_indicando_uma_resposta.mp3"
@@ -235,6 +244,7 @@ elif st.session_state.pagina == "selecionar_participante":
                     st.session_state.acertos = 0
                     st.session_state.respondido = False
                     st.session_state.dado_girado = False
+                    st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
                     sessao = []
                     for p in perguntas:
@@ -261,19 +271,24 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM ÁUDIO TIC-TAK DE FUNDO E EFEITOS LOCAIS)
+# 3. TELA DO JOGO (COM CRONÓMETRO FUNCIONAL E TIC-TAK)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    # Toca o áudio tictak.mp3 em loop discreto durante o jogo[cite: 21]
-    if os.path.exists(SOM_TIC_TAK):
-        st.audio(SOM_TIC_TAK, autoplay=True, loop=True)
-    
+    # Toca o áudio tictak.mp3 invisível em background durante a pergunta
+    if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
+        with open(SOM_TIC_TAK, "rb") as f:
+            b64_str = base64.b64encode(f.read()).decode("utf-8")
+            st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_str}"></audio>', unsafe_allow_html=True)
+
     c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
     c1.markdown(f"<span class='placar-topo'>👤 Participante: {st.session_state.participante}</span>", unsafe_allow_html=True)
-    c2.markdown(f"<span class='placar-topo'>⏳ Tempo: {config.get('tempo_pergunta', 30)}s</span>", unsafe_allow_html=True)
+    
+    # Placeholder dinâmico para o cronómetro funcionar segundo a segundo
+    placeholder_tempo = c2.empty()
+    
     c3.markdown(f"<span class='placar-topo'>⭐ Pontos: {st.session_state.pontuacao}</span>", unsafe_allow_html=True)
     c4.markdown(f"<span class='placar-topo'>🎯 Acertos: {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
     st.divider()
@@ -286,10 +301,10 @@ elif st.session_state.pagina == "jogo":
             
             st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
             
-            escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
-            st.write("")
-            
             if not st.session_state.respondido:
+                escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
+                st.write("")
+                
                 if st.button("✅ Confirmar Resposta"):
                     st.session_state.respondido = True
                     st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
@@ -298,20 +313,44 @@ elif st.session_state.pagina == "jogo":
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
                         if os.path.exists(SOM_ACERTO):
-                            st.audio(SOM_ACERTO, autoplay=True)[cite: 22]
+                            with open(SOM_ACERTO, "rb") as f:
+                                b64_a = base64.b64encode(f.read()).decode("utf-8")
+                                st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_a}"></audio>', unsafe_allow_html=True)
                     else:
                         if os.path.exists(SOM_ERRO):
-                            st.audio(SOM_ERRO, autoplay=True)[cite: 21]
+                            with open(SOM_ERRO, "rb") as f:
+                                b64_e = base64.b64encode(f.read()).decode("utf-8")
+                                st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_e}"></audio>', unsafe_allow_html=True)
+                    st.rerun()
+                
+                # Relógio a correr se ainda não respondeu
+                if st.session_state.tempo_restante > 0:
+                    placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Tempo: {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
+                    time.sleep(1)
+                    st.session_state.tempo_restante -= 1
+                    st.rerun()
+                else:
+                    # Tempo esgotado conta como erro automático
+                    st.session_state.respondido = True
+                    st.session_state.ultima_resposta_correta = False
+                    if os.path.exists(SOM_ERRO):
+                        with open(SOM_ERRO, "rb") as f:
+                            b64_e = base64.b64encode(f.read()).decode("utf-8")
+                            st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_e}"></audio>', unsafe_allow_html=True)
                     st.rerun()
             else:
+                placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Tempo: Encerrado</span>", unsafe_allow_html=True)
+                
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
                 else:
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
                 
+                st.write("")
                 if st.button("➡️ Próxima Pergunta"):
                     st.session_state.respondido = False
                     st.session_state.pergunta_idx += 1
+                    st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
                     if st.session_state.acertos >= 3:
                         st.session_state.acertos = 0
@@ -353,9 +392,10 @@ elif st.session_state.pagina == "dado":
         if not st.session_state.dado_girado:
             placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
             if st.button("🎲 GIRAR O DADO AGORA"):
-                # Toca o áudio especial do momento do dado ao apertar o botão[cite: 21, 22]
                 if os.path.exists(SOM_DADO):
-                    st.audio(SOM_DADO, autoplay=True)
+                    with open(SOM_DADO, "rb") as f:
+                        b64_d = base64.b64encode(f.read()).decode("utf-8")
+                        st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_d}"></audio>', unsafe_allow_html=True)
                 
                 for _ in range(12):
                     num_aleatorio = random.randint(1, 6)
@@ -374,9 +414,10 @@ elif st.session_state.pagina == "dado":
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
-            # Toca aplausos ao concluir o resultado do dado[cite: 22]
             if os.path.exists(SOM_ACERTO):
-                st.audio(SOM_ACERTO, autoplay=True)
+                with open(SOM_ACERTO, "rb") as f:
+                    b64_ac = base64.b64encode(f.read()).decode("utf-8")
+                    st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_ac}"></audio>', unsafe_allow_html=True)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
