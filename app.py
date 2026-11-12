@@ -438,26 +438,38 @@ elif st.session_state.pagina == "jogo":
                 st.rerun()
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO
+# 4. SALA DO DADO PREMIADO (COM DADO REAL GIRANDO E MOSTRANDO AS FACES)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}!</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Conquistaste os 3 acertos!</h3>", unsafe_allow_html=True)
     st.write("")
+    
+    FACES_DADO = {1: "⚀", 2: "⚁", 3: "⚂", 4: "⚃", 5: "⚄", 6: "⚅"}
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         placeholder_dado = st.empty()
         
         if not st.session_state.dado_girado:
-            placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
+            placeholder_dado.markdown("<div class='dado-box' style='font-size: 130px;'>🎲</div>", unsafe_allow_html=True)
             if st.button("🎲 GIRAR O DADO AGORA", key="btn_ir_dado"):
                 tocar_audio_invisivel(SOM_DADO)
                 
-                # Rotação de 36 passos
-                for _ in range(36):
+                # Rotação de 36 passos com dado real girando em diferentes ângulos
+                angulos = [-25, -12, 0, 12, 25, 18, -18, 8, -8]
+                for passo in range(36):
                     num_aleatorio = random.randint(1, 6)
-                    placeholder_dado.markdown(f"<div class='dado-box' style='color: #8DA9C4;'>【 {num_aleatorio} 】</div>", unsafe_allow_html=True)
+                    face_atual = FACES_DADO[num_aleatorio]
+                    ang = angulos[passo % len(angulos)]
+                    escala = 1.12 if passo % 2 == 0 else 0.95
+                    placeholder_dado.markdown(
+                        f"<div class='dado-box'>"
+                        f"<div style='display: inline-block; font-size: 150px; line-height: 1; color: #FFFFFF; "
+                        f"transform: rotate({ang}deg) scale({escala});'>{face_atual}</div>"
+                        f"</div>",
+                        unsafe_allow_html=True
+                    )
                     time.sleep(0.1)
                 
                 resultado_final = random.randint(1, 6)
@@ -470,12 +482,19 @@ elif st.session_state.pagina == "dado":
                 st.rerun()
         else:
             res = st.session_state.resultado_dado
-            placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
+            face_final = FACES_DADO.get(res, "🎲")
+            placeholder_dado.markdown(
+                f"<div class='dado-box' style='border-color: #2ECC71;'>"
+                f"<div style='font-size: 165px; line-height: 1; color: #2ECC71; text-shadow: 0 0 25px rgba(46,204,113,0.6);'>{face_final}</div>"
+                f"<div style='font-size: 32px; color: #F4D35E; margin-top: 10px;'>🎉 SAIU O NÚMERO {res}! 🎉</div>"
+                f"</div>",
+                unsafe_allow_html=True
+            )
             
             tocar_audio_invisivel(SOM_ACERTO)
             st.balloons()
                 
-            st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
+            st.success(f"O participante {st.session_state.participante} tirou o dado {face_final} (número {res}) e ganhou o prémio!")
             st.write("")
             
             if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
