@@ -19,7 +19,7 @@ def carregar_config():
         "imagem_ns": "nossa_senhora.png",
         "tempo_pergunta": 30,
         "tempo_alerta": 4,
-        "tamanho_imagem": 360  # Tamanho padrão perfeito da imagem
+        "tamanho_imagem": 360
     }
     if os.path.exists(ARQUIVO_CONFIG):
         try:
@@ -35,7 +35,7 @@ def carregar_config():
 
 config = carregar_config()
 
-# Estilos Visuais com Centralização Perfeita e Tamanho Dinâmico da Imagem Configurado pelo Utilizador
+# Estilos Visuais Aprimorados (Layout Centralizado, Ocultação de Players e Tamanho Dinâmico da Imagem)
 st.markdown(f"""
     <style>
     .stApp {{
@@ -73,7 +73,7 @@ st.markdown(f"""
     .stRadio div[role="radiogroup"] label {{
         padding: 12px 0px !important;
     }}
-    /* IMAGEM CENTRALIZADA E CONTROLADA DINAMICAMENTE */
+    /* IMAGEM CENTRALIZADA E COM TAMANHO CONFIGURÁVEL */
     [data-testid="stImage"] img {{
         max-width: {config.get("tamanho_imagem", 360)}px !important;
         margin: 0 auto !important;
@@ -285,7 +285,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM AS DUAS COLUNAS FIXAS E IMAGEM SEMPRE PRESENTE)
+# 3. TELA DO JOGO (COM COLUNAS GLOBAIS FIXAS: A IMAGEM NUNCA SOME)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -297,7 +297,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # CRIAMOS AS DUAS COLUNAS NO TOPO, GARANTINDO QUE A DIREITA COM A IMAGEM NUNCA SOME
+    # CRIAMOS AS COLUNAS AQUI NO TOPO, ANTES DE QUALQUER CONDICIONAL DE PERGUNTA OU RESPOSTA
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -373,7 +373,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # Coluna da direita com a imagem perfeitamente centrada e presente em todas as perguntas
+    # COLUNA DA DIREITA GERAL E FIXA: EXIBE A IMAGEM EM TODAS AS PERGUNTAS DO INÍCIO AO FIM
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
