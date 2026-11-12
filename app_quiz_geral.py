@@ -1,5 +1,5 @@
 # ==============================================================================
-# SUPER QUIZ MULTI-TEMAS (1.800 PERGUNTAS + NÍVEIS DE DIFICULDADE) 🎲🏆🔥
+# SUPER QUIZ MULTI-TEMAS (2.100 PERGUNTAS + 4 NÍVEIS EM 4 GRANDES TEMAS) 🎲🏆🔥
 # ==============================================================================
 
 import streamlit as st
@@ -14,7 +14,8 @@ import re
 ARQUIVO_DADOS = "dados_quiz_geral.json"
 ARQUIVO_CONFIG = "config_quiz_geral.json"
 
-TEMAS_COM_DIFICULDADE = ["⛪ Igreja", "🎨 Desenhos", "⚔️ Animes"]
+# Temas que possuem os 4 níveis de dificuldade (400 perguntas cada!)
+TEMAS_COM_DIFICULDADE = ["⛪ Igreja", "🦸 Super-Heróis", "🎨 Desenhos", "⚔️ Animes"]
 NIVEIS_DIFICULDADE = ["🟢 Fácil", "🟡 Normal", "🟠 Hard", "🔴 Impossível"]
 
 MULTIPLICADOR_PONTOS = {
@@ -94,14 +95,14 @@ INFO_MODOS = {
     "🎲 Misturadão (Todos os Temas)": {
         "cor_fundo": "#1F1147", "cor_card": "#341F6F", "cor_texto": "#FFFFFF",
         "cor_destaque": "#00F5D4", "cor_botao": "#4E2A84", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#00F5D4",
-        "icone": "🎲", "titulo_card": "🌟 Desafio Misturadão", "sub_card": "Todas as 1.800 Perguntas Juntas num Só Jogo!",
+        "icone": "🎲", "titulo_card": "🌟 Desafio Misturadão", "sub_card": "Todas as 2.100 Perguntas Juntas num Só Jogo!",
         "img_padrao": "tema_misturadao.png",
         "msg_final": "Incrível! Você encarou o desafio supremo de todos os temas e provou que sabe de tudo um pouco! 🎲👑"
     }
 }
 
 # ==============================================================================
-# GERADOR DE PERGUNTAS NATURAIS (COM 4 NÍVEIS PARA IGREJA, DESENHOS E ANIMES)
+# GERADOR DE PERGUNTAS NATURAIS (COM 4 NÍVEIS EM IGREJA, HERÓIS, DESENHOS E ANIMES)
 # ==============================================================================
 def montar_100_perguntas(fatos, templates):
     todas_respostas = list(dict.fromkeys([f[2] for f in fatos]))
@@ -214,7 +215,7 @@ def construir_bancos_completos():
         ("o Código de Direito Canônico atual", "o ano em que foi promulgado por São João Paulo II", "Promulgado em 25 de janeiro de 1983"),
         ("a Encíclica Rerum Novarum de 1891", "o Papa autor e o tema central deste marco histórico", "Papa Leão XIII, inaugurando a Doutrina Social da Igreja"),
         ("a Encíclica Fides et Ratio", "as duas asas que elevam o espírito humano à verdade segundo João Paulo II", "A Fé e a Razão"),
-        ("as 36 Doutoras e Doutores da Igreja", "as três primeiras mulheres proclamadas Doutoras da Igreja em 1970 e 1997", "Santa Teresa d'Ávila, Santa Catarina de Sena e Santa Teresinha de Lisieux"),
+        ("as Doutoras da Igreja", "as três primeiras mulheres proclamadas Doutoras da Igreja", "Santa Teresa d'Ávila, Santa Catarina de Sena e Santa Teresinha de Lisieux"),
         ("o Concílio de Calcedônia no ano 451", "a definição cristológica central estabelecida pelos bispos", "Cristo é uma só Pessoa em duas naturezas: verdadeiro Deus e verdadeiro Homem"),
         ("o papiro Rylands P52", "a importância arqueológica deste fragmento bíblico", "O fragmento mais antigo do Novo Testamento (Evangelho de São João)"),
         ("a Oração Eucarística II", "o santo teólogo do século III em cujos escritos ela se baseia", "Santo Hipólito de Roma"),
@@ -228,7 +229,99 @@ def construir_bancos_completos():
     ]
 
     # --------------------------------------------------------------------------
-    # 2. DESENHOS — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
+    # 2. SUPER-HERÓIS — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
+    # --------------------------------------------------------------------------
+    herois_facil = [
+        ("o Homem-Aranha", "o animal que picou Peter Parker e lhe deu superpoderes", "Uma aranha radioativa"),
+        ("o Batman", "a cidade sombria que ele jurou proteger do crime", "Gotham City"),
+        ("o Superman", "o símbolo famoso estampado no peito do seu uniforme azul", "Um grande S vermelho e amarelo"),
+        ("o Hulk", "a cor da pele do herói quando Bruce Banner fica furioso", "Verde"),
+        ("o Homem de Ferro", "o que Tony Stark veste para voar e combater os vilões", "Uma armadura tecnológica de metal"),
+        ("o Capitão América", "a arma de defesa que ele carrega no braço com uma estrela", "Um escudo redondo indestrutível"),
+        ("o deus Thor", "o elemento da natureza que ele controla com seu martelo", "Raios e trovões"),
+        ("a Mulher-Maravilha", "o objeto dourado que obriga qualquer pessoa a dizer a verdade", "Laço da Verdade"),
+        ("o Flash", "o superpoder principal que o torna famoso no mundo inteiro", "Supervelocidade para correr na velocidade da luz"),
+        ("o Aquaman", "a habilidade especial que ele possui nos oceanos", "Respirar debaixo d'água e comandar criaturas marinhas"),
+        ("o Wolverine", "o que sai das mãos dele quando vai para a batalha", "Três garras afiadas de metal em cada mão"),
+        ("o Batman", "o veículo famoso todo preto e cheio de armas que ele dirige", "Batmóvel"),
+        ("o Homem-Aranha", "a frase famosa que seu Tio Ben lhe ensinou sobre responsabilidade", "Com grandes poderes vêm grandes responsabilidades"),
+        ("o Superman", "a pedra verde espacial que tira todas as forças dele", "Kryptonita"),
+        ("o parceiro do Batman", "o jovem ajudante acrobata que luta ao lado do Homem-Morcego", "Robin"),
+        ("o vilão Coringa", "a aparência característica do maior inimigo do Batman", "Cabelo verde, rosto branco e um sorriso de palhaço"),
+        ("os Vingadores", "a equipe de heróis formada por Homem de Ferro, Thor, Hulk e Capitão América", "Os Heróis Mais Poderosos da Terra da Marvel"),
+        ("a Liga da Justiça", "a equipe formada por Superman, Batman, Mulher-Maravilha e Flash", "A principal equipe de super-heróis da DC"),
+        ("o Pantera Negra", "o traje escuro com garras que o rei de Wakanda utiliza", "Uniforme da Pantera Negra"),
+        ("o Groot", "a única frase que essa árvore alienígena dos Guardiões da Galáxia fala", "Eu sou o Groot!")
+    ]
+    herois_normal = [
+        ("o Homem de Ferro", "a identidade secreta bilionária do herói na Marvel", "Tony Stark"),
+        ("o Batman", "o nome do mordomo fiel que cuida de Bruce Wayne na Mansão Wayne", "Alfred Pennyworth"),
+        ("o Homem-Aranha", "o nome do jornal onde Peter Parker trabalhava tirando fotos", "Clarim Diário, chefiado por J. Jonah Jameson"),
+        ("o Superman", "o planeta natal que explodiu quando ele ainda era um bebê", "Planeta Krypton"),
+        ("o deus Thor", "o nome do seu martelo mágico e do seu irmão adotivo trapaceiro", "Mjolnir e Loki"),
+        ("o Pantera Negra", "o metal raríssimo que caiu em Wakanda num meteoro", "Vibranium"),
+        ("o vilão Thanos", "quantas Joias do Infinito existem para completar a Manopla", "6 Joias: Espaço, Mente, Realidade, Poder, Tempo e Alma"),
+        ("os X-Men", "o líder telepata cadeirante e seu rival que controla o magnetismo", "Professor Charles Xavier e Magneto"),
+        ("a série The Boys", "o líder arrogante dos Sete que tem poderes parecidos com o Superman", "Capitão Pátria (Homelander)"),
+        ("a animação Invencível (Invincible)", "o nome do pai alienígena Viltrumita de Mark Grayson", "Omni-Man (Nolan Grayson)"),
+        ("o Doutor Estranho", "a profissão que Stephen Strange exercia antes de sofrer o acidente nas mãos", "Neurocirurgião renomado"),
+        ("a Viúva Negra e o Gavião Arqueiro", "os nomes verdadeiros dessa dupla de agentes da S.H.I.E.L.D.", "Natasha Romanoff e Clint Barton"),
+        ("o Deadpool", "o nome verdadeiro do mercenário tagarela que se regenera de tudo", "Wade Wilson"),
+        ("o Quarteto Fantástico", "os quatro integrantes da família de heróis", "Sr. Fantástico, Mulher Invisível, Tocha Humana e o Coisa"),
+        ("o Lanterna Verde", "o piloto de testes que foi o primeiro humano da Tropa dos Lanternas Verdes", "Hal Jordan"),
+        ("o Demolidor (Daredevil)", "a profissão que o herói cego Matt Murdock exerce durante o dia", "Advogado em Hell's Kitchen"),
+        ("o Homem-Formiga", "o ex-ladrão carismático que assume o traje nos filmes da Marvel", "Scott Lang"),
+        ("o Feiticeiro Shazam", "o nome do garoto órfão que grita a palavra mágica para virar adulto", "Billy Batson"),
+        ("os Guardiões da Galáxia", "o guaxinim geneticamente modificado mestre em armas e tecnologia", "Rocket Raccoon"),
+        ("a Feiticeira Escarlate", "o nome verdadeiro da heroína Wanda e do androide por quem ela se apaixona", "Wanda Maximoff e Visão")
+    ]
+    herois_hard = [
+        ("o Soldado Invernal", "o nome completo do melhor amigo de infância de Steve Rogers", "James Buchanan 'Bucky' Barnes"),
+        ("o Batman", "os nomes dos quatro primeiros jovens que assumiram o manto de Robin nos quadrinhos", "Dick Grayson, Jason Todd, Tim Drake e Damian Wayne"),
+        ("a saga Guerra Civil da Marvel", "o motivo da divisão entre o time do Capitão América e o time do Homem de Ferro", "A Lei de Registro de Super-Humanos após a tragédia em Stamford"),
+        ("a série The Boys", "a substância química azul criada pela Vought que dá superpoderes aos bebês", "Composto V"),
+        ("Invencível (Invincible)", "a regra brutal do Império Viltrumita revelada por Omni-Man", "Conquistar planetas para expandir o império onde apenas os fortes sobrevivem"),
+        ("o Wolverine", "o nome verdadeiro de nascimento de Logan no século XIX no Canadá", "James Howlett"),
+        ("Vingadores: Guerra Infinita", "o machado real forjado em Nidavellir para Thor enfrentar Thanos", "Rompe-Tormentas (Stormbreaker)"),
+        ("a Batgirl / Oráculo", "o vilão que atirou em Barbara Gordon na obra 'A Piada Mortal'", "O Coringa"),
+        ("a queda do Morcego", "o vilão estrategista movido pela droga Veneno que quebrou a coluna do Batman", "Bane"),
+        ("a morte do Superman", "o monstro pré-histórico kryptoniano que matou o Superman nos quadrinhos de 1992", "Apocalipse (Doomsday)"),
+        ("a saga Ponto de Ignição (Flashpoint)", "quem se torna o Batman nessa linha do tempo alterada por Barry Allen", "Thomas Wayne (o pai de Bruce Wayne)"),
+        ("Watchmen", "o físico nuclear azul quase onipotente criado em um acidente de laboratório", "Doutor Manhattan (Jon Osterman)"),
+        ("o Homem-Aranha", "o primeiro grande amor de Peter Parker que morreu na ponte George Washington", "Gwen Stacy, jogada pelo Duende Verde"),
+        ("o simbionte Venom", "o jornalista rival de Peter Parker que se tornou o primeiro hospedeiro famoso do Venom", "Eddie Brock"),
+        ("o Cavaleiro da Lua (Moon Knight)", "o deus egípcio da Lua de quem Marc Spector se torna o avatar", "Khonshu"),
+        ("o Justiceiro (Punisher)", "o nome verdadeiro do ex-fuzileiro naval que combate o crime sem piedade", "Frank Castle"),
+        ("o surfista prateado", "o devorador de mundos gigante de quem Norrin Radd era arauto", "Galactus"),
+        ("o Doutor Destino (Doctor Doom)", "o país fictício do leste europeu governado com mão de ferro por Victor Von Doom", "Latvéria"),
+        ("a inteligência artificial Ultron", "quem criou o robô Ultron originalmente nos quadrinhos clássicos da Marvel", "Hank Pym (o Homem-Formiga original)"),
+        ("a Tropa dos Lanternas", "as emoções que alimentam os anéis Amarelo, Vermelho e Azul", "Medo (Amarelo/Sinestro), Ira (Vermelho/Atrocitus) e Esperança (Azul)")
+    ]
+    herois_impossivel = [
+        ("a estreia do Superman", "a revista e o ano exato em que o primeiro super-herói da história apareceu", "Action Comics #1, publicada em junho de 1938"),
+        ("a estreia do Batman", "a revista de 1939 e a dupla de criadores (incluindo o coautor injustiçado por décadas)", "Detective Comics #27, criado por Bob Kane e Bill Finger"),
+        ("a estreia do Homem-Aranha", "a revista antológica de 1962 onde Stan Lee e Steve Ditko lançaram o herói", "Amazing Fantasy #15"),
+        ("o Universo Principal da Marvel", "o número oficial da Terra principal onde ocorrem as histórias canônicas dos quadrinhos", "Terra-616"),
+        ("o nome de batismo kryptoniano", "o nome original do Superman dado por seu pai biológico Jor-El e sua mãe Lara", "Kal-El"),
+        ("o mordomo do Homem de Ferro", "o nome do mordomo humano da família Stark que inspirou a sigla J.A.R.V.I.S. e o Visão", "Edwin Jarvis"),
+        ("o segundo Robin (Jason Todd)", "como a DC Comics decidiu o destino de Jason Todd em 1988 na saga 'Morte em Família'", "Através de uma votação por telefone feita pelos próprios leitores"),
+        ("a primeira aparição do Wolverine", "em qual revista de outro herói o Wolverine estreou em 1974 antes de entrar nos X-Men", "The Incredible Hulk #180 e #181"),
+        ("o criador de Invencível (Invincible)", "o roteirista que criou tanto 'Invincible' quanto 'The Walking Dead'", "Robert Kirkman (com arte de Cory Walker e Ryan Ottley)"),
+        ("os criadores de The Boys", "o roteirista e o desenhista dos quadrinhos originais lançados em 2006", "Garth Ennis e Darick Robertson"),
+        ("Watchmen", "o roteirista lendário britânico autor de Watchmen, V de Vingança e A Piada Mortal", "Alan Moore"),
+        ("O Cavaleiro das Trevas (1986)", "o autor e desenhista que revolucionou o Batman e o Demolidor nos anos 80", "Frank Miller"),
+        ("o Rei dos Quadrinhos", "o lendário desenhista cocriador do Capitão América, Quarteto Fantástico, X-Men, Hulk e Novos Deuses", "Jack Kirby"),
+        ("a Equação Antivida", "o tirano governante do planeta Apokolips obcecado por essa equação na DC", "Darkseid (Uxas)"),
+        ("Guerras Secretas (1984)", "a entidade cósmica que sequestrou heróis e vilões para lutarem no Mundo Bélico", "Beyonder"),
+        ("Crise nas Infinitas Terras (1985)", "o vilão cósmico devorador de universos que destruiu o multiverso original da DC", "Anti-Monitor"),
+        ("o escudo do Capitão América nos quadrinhos", "a liga metálica exata do escudo redondo nos quadrinhos (diferente do cinema)", "Uma liga única de Vibranium com Ferro/Aço (Proto-Adamantium)"),
+        ("a inscrição no martelo Mjolnir", "o encantamento exato gravado por Odin na lateral do martelo de Thor", "Aquele que empunhar este martelo, se for digno, possuirá o poder de Thor"),
+        ("o nome verdadeiro do Coringa", "o pseudônimo de comediante fracassado sugerido em 'A Piada Mortal' e o filme de 1989", "Jack Napier / Capuz Vermelho"),
+        ("a entidade suprema da Marvel", "o ser onipotente que está acima do Tribunal Vivo e de todas as entidades cósmicas", "The One Above All (Aquele Acima de Tudo)")
+    ]
+
+    # --------------------------------------------------------------------------
+    # 3. DESENHOS — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
     # --------------------------------------------------------------------------
     desenhos_facil = [
         ("Bob Esponja", "o formato da casa onde ele mora no fundo do mar", "Um abacaxi"),
@@ -315,12 +408,12 @@ def construir_bancos_completos():
         ("Os Padrinhos Mágicos", "o nome do professor de Timmy obcecado em provar que fadas existem", "Sr. Denzel Crocker"),
         ("Jovens Titãs", "o nome do pai demônio interdimensional da heroína Ravena", "Trigon"),
         ("Corrida Maluca", "quem pilotava o Carro-Tronco (número 10) na corrida", "Rufus Lenhador e o castor Dentes-de-Serra"),
-        (" Os Flintstones", "o nome do pequeno alienígena verde que apenas Fred e Barney viam", "Gazoo"),
+        ("Os Flintstones", "o nome do pequeno alienígena verde que apenas Fred e Barney viam", "Gazoo"),
         ("He-Man e os Mestres do Universo", "o verdadeiro nome do Príncipe de Eternia e do seu tigre", "Príncipe Adam e Pacato (Gato Guerreiro)")
     ]
 
     # --------------------------------------------------------------------------
-    # 3. ANIMES — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
+    # 4. ANIMES — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
     # --------------------------------------------------------------------------
     animes_facil = [
         ("Dragon Ball Z", "o nome do protagonista criado na Terra que busca as Esferas do Dragão", "Son Goku"),
@@ -405,7 +498,7 @@ def construir_bancos_completos():
         ("Death Note", "o nome verdadeiro completo de L revelado na enciclopédia oficial", "L Lawliet"),
         ("Hunter x Hunter", "o jogo de tabuleiro estratégico em que o Rei Meruem nunca venceu Komugi", "Gungi"),
         ("Fullmetal Alchemist", "a data gravada dentro do relógio de bolso de prata de Edward Elric", "Don't Forget 3.Oct.11 (Não esqueça 3 de outubro de 1911)"),
-        ("Neon Genesis Evangelion", "o significado da sigla NERV e o nome do pai de Shinji Ikari", "Gendo Ikari"),
+        ("Neon Genesis Evangelion", "o nome do comandante da NERV e pai de Shinji Ikari", "Gendo Ikari"),
         ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro de Gêmeos que assumiu o lugar do Grande Mestre", "Saga de Gêmeos"),
         ("Monster", "o nome do neurocirurgião japonês que salvou a vida do menino Johan Liebert", "Dr. Kenzo Tenma"),
         ("Berserk", "o nome do artefato em forma de rosto vermelho que ativa a Mão de Deus no Eclipse", "Behelit Carmesim (O Ovo do Rei)")
@@ -414,33 +507,6 @@ def construir_bancos_completos():
     # --------------------------------------------------------------------------
     # DEMAIS TEMAS (100 PERGUNTAS CADA)
     # --------------------------------------------------------------------------
-    fatos_herois = [
-        ("o Homem de Ferro", "a identidade secreta do herói na Marvel", "Tony Stark"),
-        ("o Batman", "a identidade secreta do protetor de Gotham", "Bruce Wayne"),
-        ("o Homem-Aranha", "o nome do jovem fotógrafo por trás da máscara", "Peter Parker"),
-        ("o Superman", "o nome terrestre adotado pelo herói em Metrópolis", "Clark Kent"),
-        ("o Capitão América", "o soldado que recebeu o soro do supersoldado", "Steve Rogers"),
-        ("a Mulher-Maravilha", "o nome da princesa guerreira de Themyscira", "Diana Prince"),
-        ("o Hulk", "o cientista que se transforma ao ficar furioso", "Bruce Banner"),
-        ("o deus Thor", "o nome do seu famoso martelo mágico", "Mjolnir"),
-        ("o Pantera Negra", "o reino africano avançado que ele governa", "Wakanda"),
-        ("o Wolverine", "o metal indestrutível que reveste suas garras", "Adamantium"),
-        ("o herói Flash", "a identidade do velocista escarlate da Liga da Justiça", "Barry Allen"),
-        ("o Aquaman", "o reino submerso que ele governa nos oceanos", "Atlântida"),
-        ("o Lanterna Verde", "a fonte de poder usada pela Tropa espacial", "Anel do Poder movido pela força de vontade"),
-        ("o Doutor Estranho", "o título místico que ele exerce para proteger a Terra", "Mago Supremo"),
-        ("a Viúva Negra", "o nome verdadeiro da famosa espiã dos Vingadores", "Natasha Romanoff"),
-        ("o Gavião Arqueiro", "a arma principal que ele domina com precisão absoluta", "Arco e flechas especiais"),
-        ("o vilão Thanos", "o artefato usado para reunir as 6 Joias do Infinito", "Manopla do Infinito"),
-        ("o vilão Coringa", "o super-herói que é seu maior arqui-inimigo", "Batman"),
-        ("o vilão Lex Luthor", "o herói que ele tenta derrotar em Metrópolis", "Superman"),
-        ("o Professor Xavier", "a famosa equipe de mutantes que ele fundou", "X-Men"),
-        ("o Quarteto Fantástico", "o líder elástico conhecido como Sr. Fantástico", "Reed Richards"),
-        ("o Deadpool", "o nome verdadeiro do mercenário tagarela", "Wade Wilson"),
-        ("o Homem-Formiga", "o cientista que descobriu as partículas de encolhimento", "Hank Pym"),
-        ("o herói Shazam", "a palavra mágica gritada por Billy Batson para se transformar", "SHAZAM!"),
-        ("os Guardiões da Galáxia", "o líder humano conhecido como Senhor das Estrelas", "Peter Quill")
-    ]
     fatos_frutas = [
         ("o Abacaxi", "a característica visual famosa no topo da fruta", "Possui uma coroa de folhas espinhosas"),
         ("a Melancia", "a sua composição ideal para hidratação no verão", "Mais de 90% de água e polpa vermelha"),
@@ -584,6 +650,12 @@ def construir_bancos_completos():
             "🟠 Hard": montar_100_perguntas(igreja_hard, tpl_padrao),
             "🔴 Impossível": montar_100_perguntas(igreja_impossivel, tpl_padrao)
         },
+        "🦸 Super-Heróis": {
+            "🟢 Fácil": montar_100_perguntas(herois_facil, tpl_padrao),
+            "🟡 Normal": montar_100_perguntas(herois_normal, tpl_padrao),
+            "🟠 Hard": montar_100_perguntas(herois_hard, tpl_padrao),
+            "🔴 Impossível": montar_100_perguntas(herois_impossivel, tpl_padrao)
+        },
         "🎨 Desenhos": {
             "🟢 Fácil": montar_100_perguntas(desenhos_facil, tpl_padrao),
             "🟡 Normal": montar_100_perguntas(desenhos_normal, tpl_padrao),
@@ -596,7 +668,6 @@ def construir_bancos_completos():
             "🟠 Hard": montar_100_perguntas(animes_hard, tpl_padrao),
             "🔴 Impossível": montar_100_perguntas(animes_impossivel, tpl_padrao)
         },
-        "🦸 Super-Heróis": montar_100_perguntas(fatos_herois, tpl_padrao),
         "🍎 Frutas": montar_100_perguntas(fatos_frutas, tpl_padrao),
         "🍔 Comidas": montar_100_perguntas(fatos_comidas, tpl_padrao),
         "📺 Novelas": montar_100_perguntas(fatos_novelas, tpl_padrao),
@@ -639,7 +710,7 @@ def obter_config_padrao():
         
         "titulo_aba": "Super Quiz Multi-Temas",
         "icone_aba": "🎲",
-        "txt_titulo_menu": "🎲 SUPER QUIZ MULTI-TEMAS (1.800 PERGUNTAS) 🎲",
+        "txt_titulo_menu": "🎲 SUPER QUIZ MULTI-TEMAS (2.100 PERGUNTAS) 🎲",
         "txt_subtitulo_menu": "Escolha o seu tema, selecione a dificuldade e desafie os seus conhecimentos! (F11 para tela cheia)",
         "txt_btn_jogar": "▶️ Jogar / Escolher Modo de Jogo",
         "txt_btn_participantes": "👥 Cadastrar Participantes",
@@ -913,7 +984,7 @@ def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=
     st.markdown(html_bloco, unsafe_allow_html=True)
 
 # ==============================================================================
-# FUNÇÕES DE DADOS (COM SUPORTE A NÍVEIS EM IGREJA, DESENHOS E ANIMES)
+# FUNÇÕES DE DADOS (COM SUPORTE A NÍVEIS EM IGREJA, HERÓIS, DESENHOS E ANIMES)
 # ==============================================================================
 def copiar_bancos_padrao():
     copia = {}
@@ -934,7 +1005,8 @@ def carregar_dados():
         try:
             with open(ARQUIVO_DADOS, "r", encoding="utf-8") as f:
                 dados = json.load(f)
-                if not dados.get("niveis_dificuldade_v3", False):
+                # Verifica a flag v4 (que inclui os 4 níveis de Super-Heróis)
+                if not dados.get("niveis_dificuldade_v4", False):
                     precisa_salvar = True
                 elif "bancos_perguntas" in dados and isinstance(dados["bancos_perguntas"], dict):
                     for k, val_salvo in dados["bancos_perguntas"].items():
@@ -969,7 +1041,7 @@ def carregar_dados():
 
 def salvar_dados(bancos_perguntas, participantes, historico):
     dados = {
-        "niveis_dificuldade_v3": True,
+        "niveis_dificuldade_v4": True,
         "bancos_perguntas": bancos_perguntas,
         "participantes": participantes,
         "historico": historico
@@ -1244,7 +1316,7 @@ if st.session_state.pagina == "menu":
                 st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE (IGREJA, DESENHOS E ANIMES!)
+# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE (IGREJA, HERÓIS, DESENHOS E ANIMES!)
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     slot_jogo.empty()
@@ -1275,7 +1347,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.session_state.modo_jogo_ativo = modo_escolhido
                 st.rerun()
 
-            # SE FOR IGREJA, DESENHOS OU ANIMES, EXIBE O SELETOR DE DIFICULDADE!
+            # SE FOR IGREJA, SUPER-HERÓIS, DESENHOS OU ANIMES, EXIBE O SELETOR DE DIFICULDADE!
             pts_base_cfg = config.get("pontos_por_acerto", 100)
             if modo_escolhido in TEMAS_COM_DIFICULDADE:
                 idx_dif = NIVEIS_DIFICULDADE.index(st.session_state.dificuldade_ativa) if st.session_state.dificuldade_ativa in NIVEIS_DIFICULDADE else 0
@@ -1565,7 +1637,7 @@ elif st.session_state.pagina == "jogo":
                     ir_para_pagina("fim")
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (SEM BOTÃO DE VOLTAR PRO QUIZ — VAI PRO RESUMO FINAL!)
+# 4. SALA DO DADO PREMIADO
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     slot_selecao.empty()
@@ -1624,7 +1696,6 @@ elif st.session_state.pagina == "dado":
                 st.success(f"O participante {st.session_state.participante} tirou o número {res} no dado e ganhou o prêmio!")
                 st.write("")
                 
-                # Apenas o botão de encerrar a partida e ver o resumo final!
                 if st.button("🏁 Encerrar Partida e Ver Resumo Final", key="btn_ir_dado", use_container_width=True):
                     st.session_state.dado_girado = False
                     if st.session_state.tempo_final_congelado is None:
@@ -1785,13 +1856,13 @@ elif st.session_state.pagina == "historico":
             st.info("Ainda não existem registos no histórico.")
 
 # ==============================================================================
-# 8. GERIR / EDITAR AS 1.800 PERGUNTAS SEPARADAS POR TEMA & NÍVEL
+# 8. GERIR / EDITAR AS 2.100 PERGUNTAS SEPARADAS POR TEMA & NÍVEL
 # ==============================================================================
 elif st.session_state.pagina == "gerir_perguntas":
     slot_selecao.empty()
     slot_jogo.empty()
     with slot_outros.container():
-        st.markdown("<h2 style='text-align: center;'>📝 Gestão de Perguntas por Tema & Dificuldade</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>📝 Gestão de Perguntas por Tema & Dificuldade (2.100 Perguntas)</h2>", unsafe_allow_html=True)
         
         col_topo_esq, col_topo_meio, col_topo_dir = st.columns([1, 1, 1])
         with col_topo_esq:
@@ -2082,11 +2153,11 @@ elif st.session_state.pagina == "configuracoes":
 
             st.divider()
             st.markdown("<h3 style='text-align: center;'>♻️ Restaurar Padrão de Fábrica</h3>", unsafe_allow_html=True)
-            if st.button("🔄 Restaurar Todas as Configurações e as 1.800 Perguntas", key="btn_restaurar_orig"):
+            if st.button("🔄 Restaurar Todas as Configurações e as 2.100 Perguntas", key="btn_restaurar_orig"):
                 salvar_config(obter_config_padrao())
                 salvar_dados(copiar_bancos_padrao(), participantes, historico)
                 st.session_state.up_cnt += 1
-                st.session_state.msg_upload_ok = "🔄 Configurações e banco de 1.800 perguntas restaurados com sucesso!"
+                st.session_state.msg_upload_ok = "🔄 Configurações e banco de 2.100 perguntas restaurados com sucesso!"
                 st.rerun()
 
         st.write("---")
