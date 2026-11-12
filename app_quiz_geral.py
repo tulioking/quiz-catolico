@@ -1,5 +1,5 @@
 # ==============================================================================
-# SUPER QUIZ MULTI-TEMAS - VERSÃO FINAL 100% CENTRALIZADA E LIMPA 🎲🏆✨
+# SUPER QUIZ MULTI-TEMAS - VERSÃO FINAL BLINDADA CONTRA FANTASMAS NA Q1 🎲🏆✨
 # ==============================================================================
 
 import streamlit as st
@@ -518,7 +518,7 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# GERADOR DE CSS DINÂMICO (CENTRALIZAÇÃO TOTAL DE INPUTS, SELECTBOX, BADGES E BOTÕES)
+# GERADOR DE CSS DINÂMICO (CENTRALIZAÇÃO TOTAL)
 # ==============================================================================
 def obter_modo_visual_atual():
     modo_ativo = st.session_state.get("modo_jogo_ativo")
@@ -576,7 +576,6 @@ def aplicar_estilos_dinamicos():
             display: block !important;
             width: 100% !important;
         }}
-        /* ETIQUETA DE TEMA 100% CENTRALIZADA */
         .badge-wrapper {{
             width: 100% !important;
             display: flex !important;
@@ -613,7 +612,6 @@ def aplicar_estilos_dinamicos():
             margin: 0 !important;
             text-align: center !important;
         }}
-        /* CENTRALIZAR CAIXAS DE TEXTO E SELECTBOX */
         div[data-testid="stTextInput"], div[data-testid="stSelectbox"] {{
             max-width: {larg_max}px !important;
             width: 100% !important;
@@ -639,7 +637,6 @@ def aplicar_estilos_dinamicos():
             font-size: 20px !important;
             font-weight: 600 !important;
         }}
-        /* OPÇÕES DO RADIO BEM VISÍVEIS */
         .stRadio div[role="radiogroup"] label div p {{
             font-size: {config['tam_fonte_opcoes']}px !important;
             font-weight: 700 !important;
@@ -648,7 +645,6 @@ def aplicar_estilos_dinamicos():
         .stRadio div[role="radiogroup"] label {{
             padding: 10px 0px !important;
         }}
-        /* CENTRALIZAÇÃO ABSOLUTA DE TODOS OS BOTÕES */
         div.stButton, [data-testid="stButton"], .stElementContainer:has(button) {{
             display: flex !important;
             justify-content: center !important;
@@ -675,13 +671,14 @@ def aplicar_estilos_dinamicos():
             filter: brightness(1.2) !important;
             border-color: {paleta['cor_destaque']} !important;
         }}
-        .st-key-btn_ir_dado, .st-key-btn_ir_dado > div {{
+        .st-key-btn_ir_dado, .st-key-btn_ir_dado > div,
+        .st-key-btn_iniciar_quiz_sel, .st-key-btn_iniciar_quiz_sel > div {{
             display: flex !important;
             justify-content: center !important;
             width: 100% !important;
             margin: 0 auto !important;
         }}
-        .st-key-btn_ir_dado button {{
+        .st-key-btn_ir_dado button, .st-key-btn_iniciar_quiz_sel button {{
             background-color: #F4D35E !important;
             color: #0B2545 !important;
             border: 3px solid #FFFFFF !important;
@@ -703,7 +700,7 @@ def aplicar_estilos_dinamicos():
     """, unsafe_allow_html=True)
 
 # ==============================================================================
-# IMAGEM DINÂMICA DA COLUNA DIREITA (FOTO REAL OU PÔSTER ESPECIAL DO TEMA!)
+# IMAGEM DINÂMICA DA COLUNA DIREITA
 # ==============================================================================
 def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=None):
     modo = modo_especifico if modo_especifico in INFO_MODOS else obter_modo_visual_atual()
@@ -748,7 +745,7 @@ def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=
     st.markdown(html_bloco, unsafe_allow_html=True)
 
 # ==============================================================================
-# FUNÇÕES DE DADOS E ATUALIZAÇÃO AUTOMÁTICA DAS PERGUNTAS LIMPAS
+# FUNÇÕES DE DADOS
 # ==============================================================================
 def carregar_dados():
     bancos_atuais = {k: list(v) for k, v in BANCOS_PADRAO.items()}
@@ -760,7 +757,6 @@ def carregar_dados():
         try:
             with open(ARQUIVO_DADOS, "r", encoding="utf-8") as f:
                 dados = json.load(f)
-                # Se for uma versão anterior sem a flag de perguntas limpas, atualiza os textos mantendo participantes e histórico!
                 if not dados.get("perguntas_limpas_v2", False):
                     precisa_salvar = True
                 elif "bancos_perguntas" in dados and isinstance(dados["bancos_perguntas"], dict):
@@ -813,7 +809,6 @@ def obter_tempo_decorrido():
     return int(time.time() - inicio)
 
 def extrair_ranking_top5(lista_historico):
-    """Extrai as 5 maiores pontuações registadas no histórico para exibir o Pódio."""
     registos = []
     for item in lista_historico:
         m_nome = re.search(r"Participante:\s*([^|]+)", item)
@@ -973,7 +968,7 @@ estados_iniciais = {
     "resultado_dado": None, "editando_idx": None, "tempo_restante": 30,
     "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False,
     "up_cnt": 0, "msg_upload_ok": "", "tema_gerir_selecionado": "⛪ Igreja",
-    "tema_img_cfg": "⛪ Igreja"
+    "tema_img_cfg": "⛪ Igreja", "limpar_tela_jogo": False
 }
 for chave, valor_padrao in estados_iniciais.items():
     if chave not in st.session_state:
@@ -999,19 +994,27 @@ def soltar_baloes():
     if config.get("ativar_baloes", True):
         st.balloons()
 
-# Container Mestre para limpar completamente o DOM entre trocas de ecrã (elimina fantasmas!)
-tela_mestre = st.empty()
+# ==============================================================================
+# SLOTS DE CONTEÚDO INDEPENDENTES (GARANTE QUE A TELA DE SELEÇÃO SEJA DESTRUÍDA!)
+# ==============================================================================
+slot_selecao = st.empty()
+slot_jogo = st.empty()
+slot_outros = st.empty()
 
 def ir_para_pagina(nova_pagina):
+    slot_selecao.empty()
+    slot_jogo.empty()
+    slot_outros.empty()
     st.session_state.pagina = nova_pagina
-    tela_mestre.empty()
     st.rerun()
 
 # ==============================================================================
 # 1. MENU PRINCIPAL
 # ==============================================================================
 if st.session_state.pagina == "menu":
-    with tela_mestre.container():
+    slot_selecao.empty()
+    slot_jogo.empty()
+    with slot_outros.container():
         st.session_state.modo_jogo_ativo = None
         st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
         st.markdown(
@@ -1045,13 +1048,14 @@ if st.session_state.pagina == "menu":
                 st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE + MODO (100% CENTRALIZADO!)
+# 2. SELECIONAR PARTICIPANTE + MODO (DENTRO DO SLOT_SELECAO EXCLUSIVO)
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
-    with tela_mestre.container():
+    slot_jogo.empty()
+    slot_outros.empty()
+    with slot_selecao.container():
         st.markdown("<h2 style='text-align: center; margin-bottom: 25px;'>👤 Participante & Modo de Jogo</h2>", unsafe_allow_html=True)
         
-        # Proporção exclusiva [1.8, 1.2] diferente da tela de jogo para nunca misturar elementos
         col_esq, col_dir = st.columns([1.8, 1.2])
         
         with col_esq:
@@ -1080,14 +1084,13 @@ elif st.session_state.pagina == "selecionar_participante":
             else:
                 qtd_disp = len(bancos_perguntas.get(modo_escolhido, []))
                 
-            # Etiqueta perfeitamente centralizada!
             st.markdown(
                 f"<div class='badge-wrapper'><div class='badge-modo'>🎯 Tema selecionado: {modo_escolhido} — {qtd_disp} perguntas disponíveis!</div></div>",
                 unsafe_allow_html=True
             )
             
             st.write("")
-            if st.button(f"▶️ Iniciar Quiz: {modo_escolhido}", key="btn_ir_dado", use_container_width=True):
+            if st.button(f"▶️ Iniciar Quiz: {modo_escolhido}", key="btn_iniciar_quiz_sel", use_container_width=True):
                 nome_final = ""
                 if escolha_lista != "-- Selecione da lista --":
                     nome_final = escolha_lista
@@ -1151,6 +1154,8 @@ elif st.session_state.pagina == "selecionar_participante":
                             
                         random.shuffle(sessao)
                         st.session_state.perguntas_sessao = sessao
+                        # Ativa o ciclo rápido de limpeza antes de iniciar o relógio da Q1!
+                        st.session_state.limpar_tela_jogo = True
                         ir_para_pagina("jogo")
                 else:
                     st.warning("⚠️ Por favor, digite ou selecione o nome do participante!")
@@ -1163,10 +1168,19 @@ elif st.session_state.pagina == "selecionar_participante":
             mostrar_painel_tema(modo_especifico=modo_escolhido)
 
 # ==============================================================================
-# 3. TELA DO JOGO (ISOLADA E SEM ELEMENTOS FANTASMAS!)
+# 3. TELA DO JOGO (DENTRO DO SLOT_JOGO + CICLO DE LIMPEZA ANTES DO SLEEP DA Q1!)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
-    with tela_mestre.container():
+    # Destrói imediatamente qualquer elemento que estivesse no slot_selecao!
+    slot_selecao.empty()
+    slot_outros.empty()
+    
+    # Se acabou de entrar na Q1, faz 1 ciclo completo sem sleep para o navegador apagar a tela anterior!
+    if st.session_state.get("limpar_tela_jogo", False):
+        st.session_state.limpar_tela_jogo = False
+        st.rerun()
+
+    with slot_jogo.container():
         p_idx = st.session_state.pergunta_idx
         total_p = len(st.session_state.perguntas_sessao)
         meta_dado = config.get("acertos_para_dado", 3)
@@ -1180,7 +1194,6 @@ elif st.session_state.pagina == "jogo":
         if not st.session_state.respondido:
             tocar_audio_invisivel(SOM_TIC_TAK, loop=True)
 
-        # Proporção [2.1, 0.9] exclusiva da tela de jogo
         col_jogo_esq, col_jogo_dir = st.columns([2.1, 0.9])
         
         with col_jogo_dir:
@@ -1222,7 +1235,7 @@ elif st.session_state.pagina == "jogo":
                 
                 aviso_selecao = st.empty()
                 
-                if st.button("✅ Confirmar Resposta", use_container_width=True):
+                if st.button("✅ Confirmar Resposta", key=f"btn_conf_resp_{p_idx}", use_container_width=True):
                     if escolha is None:
                         aviso_selecao.warning("⚠️ Selecione uma alternativa antes de confirmar!")
                     else:
@@ -1240,7 +1253,7 @@ elif st.session_state.pagina == "jogo":
                         st.rerun()
                 
                 st.write("")
-                if st.button("🚪 Parar e Finalizar Partida", key="sair_jogo", use_container_width=True):
+                if st.button("🚪 Parar e Finalizar Partida", key=f"sair_jogo_{p_idx}", use_container_width=True):
                     st.session_state.respondido = False
                     st.session_state.tempo_final_congelado = obter_tempo_decorrido()
                     ir_para_pagina("fim")
@@ -1293,7 +1306,7 @@ elif st.session_state.pagina == "jogo":
                         )
                     
                     if st.session_state.pergunta_idx + 1 < total_p:
-                        if st.button("➡️ Próxima Pergunta (Continuar Desafio)", use_container_width=True):
+                        if st.button("➡️ Próxima Pergunta (Continuar Desafio)", key=f"btn_prox_des_{p_idx}", use_container_width=True):
                             st.session_state.respondido = False
                             st.session_state.pergunta_idx += 1
                             st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
@@ -1311,7 +1324,7 @@ elif st.session_state.pagina == "jogo":
                         st.session_state.dado_girado = False
                         ir_para_pagina("dado")
                 else:
-                    if st.button("➡️ Próxima Pergunta", use_container_width=True):
+                    if st.button("➡️ Próxima Pergunta", key=f"btn_prox_norm_{p_idx}", use_container_width=True):
                         st.session_state.respondido = False
                         st.session_state.pergunta_idx += 1
                         st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
@@ -1323,7 +1336,7 @@ elif st.session_state.pagina == "jogo":
                             st.rerun()
                 
                 st.write("")
-                if st.button("🚪 Parar e Finalizar Partida", key="sair_jogo_resp", use_container_width=True):
+                if st.button("🚪 Parar e Finalizar Partida", key=f"sair_jogo_resp_{p_idx}", use_container_width=True):
                     st.session_state.respondido = False
                     st.session_state.tempo_final_congelado = obter_tempo_decorrido()
                     ir_para_pagina("fim")
@@ -1332,7 +1345,9 @@ elif st.session_state.pagina == "jogo":
 # 4. SALA DO DADO PREMIADO
 # ==============================================================================
 elif st.session_state.pagina == "dado":
-    with tela_mestre.container():
+    slot_selecao.empty()
+    slot_jogo.empty()
+    with slot_outros.container():
         st.markdown(f"<h1 style='text-align: center;'>{config['txt_sala_dado']}</h1>", unsafe_allow_html=True)
         st.markdown(f"<h3 style='text-align: center; opacity: 0.85;'>{st.session_state.participante} ({st.session_state.modo_jogo_ativo}) — {config['txt_sub_dado']}</h3>", unsafe_allow_html=True)
         st.write("")
@@ -1386,6 +1401,7 @@ elif st.session_state.pagina == "dado":
                     if st.button("▶️ Continuar Quiz (Próxima Pergunta)", use_container_width=True):
                         st.session_state.dado_girado = False
                         st.session_state.historico_salvo_partida = False
+                        st.session_state.limpar_tela_jogo = True
                         ir_para_pagina("jogo")
                         
                 if st.button("🏁 Encerrar Partida e Ver Resumo Final", use_container_width=True):
@@ -1394,10 +1410,12 @@ elif st.session_state.pagina == "dado":
                     ir_para_pagina("fim")
 
 # ==============================================================================
-# 5. TELA FINAL / AGRADECIMENTO (COM FRASE EXCLUSIVA DO TEMA E PRECISÃO!)
+# 5. TELA FINAL / AGRADECIMENTO
 # ==============================================================================
 elif st.session_state.pagina == "fim":
-    with tela_mestre.container():
+    slot_selecao.empty()
+    slot_jogo.empty()
+    with slot_outros.container():
         modo_fim = obter_modo_visual_atual()
         paleta = obter_paleta_ativa()
         if st.session_state.tempo_final_congelado is None:
@@ -1437,7 +1455,6 @@ elif st.session_state.pagina == "fim":
         
         mostrar_painel_tema(modo_especifico=modo_fim)
         
-        # Frase Final personalizada especificamente para o modo de jogo escolhido!
         frase_do_tema = config.get("msgs_finais_temas", {}).get(modo_fim, INFO_MODOS[modo_fim]["msg_final"])
         st.markdown(
             f"<p style='text-align: center; font-style: italic; font-size: 24px; font-weight: 600; "
@@ -1462,7 +1479,9 @@ elif st.session_state.pagina == "fim":
 # 6. CADASTRAR PARTICIPANTES
 # ==============================================================================
 elif st.session_state.pagina == "cadastrar_participantes":
-    with tela_mestre.container():
+    slot_selecao.empty()
+    slot_jogo.empty()
+    with slot_outros.container():
         st.markdown("<h2 style='text-align: center;'>👥 Gestão de Participantes</h2>", unsafe_allow_html=True)
         if st.button("⬅️ Voltar ao Menu", key="voltar_part_topo"):
             ir_para_pagina("menu")
@@ -1494,7 +1513,9 @@ elif st.session_state.pagina == "cadastrar_participantes":
 # 7. HISTÓRICO + RANKING TOP 5
 # ==============================================================================
 elif st.session_state.pagina == "historico":
-    with tela_mestre.container():
+    slot_selecao.empty()
+    slot_jogo.empty()
+    with slot_outros.container():
         st.markdown("<h2 style='text-align: center;'>🏆 Ranking Top 5 & Histórico de Partidas</h2>", unsafe_allow_html=True)
         if st.button("⬅️ Voltar ao Menu", key="voltar_hist_topo"):
             ir_para_pagina("menu")
@@ -1544,7 +1565,9 @@ elif st.session_state.pagina == "historico":
 # 8. GERIR / EDITAR AS 900 PERGUNTAS SEPARADAS POR TEMA
 # ==============================================================================
 elif st.session_state.pagina == "gerir_perguntas":
-    with tela_mestre.container():
+    slot_selecao.empty()
+    slot_jogo.empty()
+    with slot_outros.container():
         st.markdown("<h2 style='text-align: center;'>📝 Gestão de Perguntas por Modo de Jogo (900 Perguntas)</h2>", unsafe_allow_html=True)
         
         col_topo_esq, col_topo_meio, col_topo_dir = st.columns([1, 1, 1])
@@ -1643,10 +1666,12 @@ elif st.session_state.pagina == "gerir_perguntas":
                         st.rerun()
 
 # ==============================================================================
-# 9. CONFIGURAÇÕES SIMPLIFICADAS E DIRETAS (COM FRASES FINAIS POR TEMA!)
+# 9. CONFIGURAÇÕES SIMPLIFICADAS E DIRETAS
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
-    with tela_mestre.container():
+    slot_selecao.empty()
+    slot_jogo.empty()
+    with slot_outros.container():
         st.markdown("<h2 style='text-align: center;'>⚙️ Painel de Configurações (Imagens por Tema, Regras & Textos)</h2>", unsafe_allow_html=True)
         if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_topo"):
             st.session_state.msg_upload_ok = ""
