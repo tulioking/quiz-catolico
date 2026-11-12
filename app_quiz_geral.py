@@ -1,5 +1,5 @@
 # ==============================================================================
-# SUPER QUIZ MULTI-TEMAS - VERSÃO FINAL BLINDADA CONTRA FANTASMAS NA Q1 🎲🏆✨
+# SUPER QUIZ MULTI-TEMAS (1.800 PERGUNTAS + NÍVEIS DE DIFICULDADE) 🎲🏆🔥
 # ==============================================================================
 
 import streamlit as st
@@ -13,6 +13,16 @@ import re
 
 ARQUIVO_DADOS = "dados_quiz_geral.json"
 ARQUIVO_CONFIG = "config_quiz_geral.json"
+
+TEMAS_COM_DIFICULDADE = ["⛪ Igreja", "🎨 Desenhos", "⚔️ Animes"]
+NIVEIS_DIFICULDADE = ["🟢 Fácil", "🟡 Normal", "🟠 Hard", "🔴 Impossível"]
+
+MULTIPLICADOR_PONTOS = {
+    "🟢 Fácil": 1.0,
+    "🟡 Normal": 1.5,
+    "🟠 Hard": 2.5,
+    "🔴 Impossível": 5.0
+}
 
 # ==============================================================================
 # PALETAS DE CORES, PÔSTERES E FRASES FINAIS EXCLUSIVAS DE CADA MODO DE JOGO
@@ -84,14 +94,14 @@ INFO_MODOS = {
     "🎲 Misturadão (Todos os Temas)": {
         "cor_fundo": "#1F1147", "cor_card": "#341F6F", "cor_texto": "#FFFFFF",
         "cor_destaque": "#00F5D4", "cor_botao": "#4E2A84", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#00F5D4",
-        "icone": "🎲", "titulo_card": "🌟 Desafio Misturadão", "sub_card": "Todas as 900 Perguntas Juntas num Só Jogo!",
+        "icone": "🎲", "titulo_card": "🌟 Desafio Misturadão", "sub_card": "Todas as 1.800 Perguntas Juntas num Só Jogo!",
         "img_padrao": "tema_misturadao.png",
         "msg_final": "Incrível! Você encarou o desafio supremo de todos os temas e provou que sabe de tudo um pouco! 🎲👑"
     }
 }
 
 # ==============================================================================
-# GERADOR DE 900 PERGUNTAS NATURAIS (SEM PREFIXOS E SEM PARÊNTESES)
+# GERADOR DE PERGUNTAS NATURAIS (COM 4 NÍVEIS PARA IGREJA, DESENHOS E ANIMES)
 # ==============================================================================
 def montar_100_perguntas(fatos, templates):
     todas_respostas = list(dict.fromkeys([f[2] for f in fatos]))
@@ -117,41 +127,293 @@ def montar_100_perguntas(fatos, templates):
         })
     return perguntas_geradas
 
-def construir_bancos_900():
-    fatos_igreja = [
-        ("o Dogma da Imaculada Conceição", "o ano em que foi proclamado pelo Papa Pio IX", "1854"),
-        ("Nossa Senhora de Lourdes", "a jovem santa para quem ela apareceu na França", "Santa Bernadette"),
-        ("Nossa Senhora de Fátima", "o país onde ocorreram as aparições em 1917", "Portugal"),
-        ("Nossa Senhora Aparecida", "o rio onde a imagem milagrosa foi encontrada", "Rio Paraíba do Sul"),
-        ("São Pedro", "a missão que ele recebeu diretamente de Jesus", "Primeiro Papa da Igreja"),
-        ("São Francisco de Assis", "o título pelo qual é conhecido mundialmente", "Padroeiro dos Animais e da Ecologia"),
-        ("o Batismo", "a sua importância na caminhada da fé", "Primeiro Sacramento da iniciação cristã"),
-        ("a Eucaristia", "o sagrado mistério celebrado na Santa Missa", "Corpo e Sangue de Cristo"),
-        ("o Natal", "o grande acontecimento celebrado em 25 de dezembro", "Nascimento de Jesus em Belém"),
-        ("a Páscoa", "o acontecimento central da fé cristã", "Ressurreição de Jesus Cristo"),
-        ("Pentecostes", "o evento celebrado 50 dias após a Páscoa", "Descida do Espírito Santo sobre os Apóstolos"),
-        ("São Paulo Apóstolo", "o nome que ele tinha antes da sua conversão", "Saulo de Tarso"),
-        ("Santa Teresinha do Menino Jesus", "o título espiritual da sua doutrina", "Doutora da Pequena Via"),
-        ("São João Paulo II", "o país de origem deste santo Papa", "Polônia"),
-        ("o Santo Rosário", "o conjunto de mistérios rezados na tradição mariana", "Gozosos, Luminosos, Dolorosos e Gloriosos"),
-        ("a Quaresma", "o tempo de preparação espiritual antes da Páscoa", "40 dias de oração, jejum e caridade"),
-        ("o Advento", "o período litúrgico de quatro semanas", "Preparação para a chegada do Natal"),
-        ("São José", "a missão confiada por Deus na Sagrada Família", "Pai adotivo de Jesus e Esposo de Maria"),
-        ("o Arcanjo São Gabriel", "a missão bíblica narrada no Evangelho de Lucas", "Anunciar a Maria que ela seria Mãe do Salvador"),
-        ("São Miguel Arcanjo", "o significado do seu nome em hebraico", "Quem como Deus?"),
-        ("o livro do Gênesis", "a posição que ocupa na Sagrada Escritura", "Primeiro livro da Bíblia"),
-        ("o livro do Apocalipse", "a posição que ocupa no Novo Testamento", "Último livro da Bíblia"),
-        ("os quatro Evangelistas", "os nomes dos autores dos Evangelhos canônicos", "Mateus, Marcos, Lucas e João"),
-        ("Santa Rita de Cássia", "a devoção popular pela qual é invocada", "Santa das Causas Impossíveis"),
-        ("Santo Antônio", "o título popular além de Doutor da Igreja", "Santo Casamenteiro e Padroeiro dos Pobres")
-    ]
-    tpl_igreja = [
+def construir_bancos_completos():
+    tpl_padrao = [
         "Sobre {item}, qual alternativa indica corretamente {sub}?",
         "Qual das opções abaixo corresponde a {sub} em relação a {item}?",
         "Quando falamos sobre {item}, o que define corretamente {sub}?",
         "Assinale a alternativa verdadeira sobre {sub} referente a {item}:"
     ]
 
+    # --------------------------------------------------------------------------
+    # 1. IGREJA — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
+    # --------------------------------------------------------------------------
+    igreja_facil = [
+        ("o Natal", "o grande acontecimento celebrado em 25 de dezembro", "Nascimento de Jesus em Belém"),
+        ("a Páscoa", "o acontecimento central da fé cristã", "Ressurreição de Jesus Cristo"),
+        ("São José", "a sua missão na Sagrada Família", "Pai adotivo de Jesus e Esposo de Maria"),
+        ("Maria Santíssima", "o seu papel na história da salvação", "Mãe de Jesus Cristo"),
+        ("o Batismo", "a sua importância na caminhada cristã", "Primeiro Sacramento da vida cristã"),
+        ("a Arca de Noé", "o motivo pelo qual Deus pediu sua construção", "Salvar a família de Noé e os animais do Dilúvio"),
+        ("Davi e Golias", "o objeto que o jovem Davi usou para vencer o gigante", "Uma funda e uma pedra"),
+        ("Jonas", "o que aconteceu com o profeta no mar", "Passou três dias no ventre de um grande peixe"),
+        ("o Pai-Nosso", "a importância desta oração", "A oração que o próprio Jesus ensinou aos Apóstolos"),
+        ("São Pedro", "a missão que ele recebeu diretamente de Jesus", "Primeiro Papa da Igreja"),
+        ("São Francisco de Assis", "o título pelo qual é conhecido mundialmente", "Padroeiro dos Animais e da Ecologia"),
+        ("Nossa Senhora Aparecida", "o título que ela possui no nosso país", "Rainha e Padroeira do Brasil"),
+        ("a Bíblia Sagrada", "as duas grandes partes em que ela se divide", "Antigo Testamento e Novo Testamento"),
+        ("Adão e Eva", "o jardim onde viviam no início da Criação", "Jardim do Éden"),
+        ("Moisés", "o milagre famoso ocorrido na saída do Egito", "Abertura do Mar Vermelho"),
+        ("os Dez Mandamentos", "onde foram entregues por Deus a Moisés", "Em duas tábuas de pedra no Monte Sinai"),
+        ("Judas Iscariotes", "o valor pelo qual entregou Jesus", "Trinta moedas de prata"),
+        ("a Santa Missa", "o que acontece com o pão e o vinho no altar", "Tornam-se o Corpo e o Sangue de Cristo"),
+        ("o Domingo de Ramos", "o que recordamos nesta celebração", "A entrada triunfal de Jesus em Jerusalém"),
+        ("a Sexta-Feira Santa", "o que a Igreja recorda em silêncio e oração", "A Paixão e Morte de Jesus na Cruz")
+    ]
+    igreja_normal = [
+        ("o Dogma da Imaculada Conceição", "o significado desta verdade de fé", "Maria foi concebida sem a mancha do pecado original"),
+        ("Nossa Senhora de Fátima", "os nomes dos três pastorinhos videntes em Portugal", "Lúcia, Francisco e Jacinta"),
+        ("Nossa Senhora de Lourdes", "a jovem santa para quem ela apareceu na França", "Santa Bernadette Soubirous"),
+        ("Pentecostes", "o evento celebrado 50 dias após a Páscoa", "Descida do Espírito Santo em línguas de fogo"),
+        ("São Paulo Apóstolo", "o nome que ele tinha antes da conversão na estrada de Damasco", "Saulo de Tarso"),
+        ("os Sete Sacramentos", "os três sacramentos da Iniciação Cristã", "Batismo, Eucaristia e Crisma"),
+        ("o Santo Rosário", "os quatro grupos de mistérios meditados", "Gozosos, Luminosos, Dolorosos e Gloriosos"),
+        ("os quatro Evangelistas", "os nomes dos autores dos Evangelhos", "Mateus, Marcos, Lucas e João"),
+        ("o livro do Gênesis", "a posição que ocupa na Sagrada Escritura", "Primeiro livro da Bíblia"),
+        ("o livro do Apocalipse", "a posição que ocupa no Novo Testamento", "Último livro da Bíblia"),
+        ("Santa Rita de Cássia", "a devoção popular pela qual é invocada", "Santa das Causas Impossíveis"),
+        ("Santo Antônio de Pádua", "o título popular além de Doutor da Igreja", "Santo Casamenteiro e Padroeiro dos Pobres"),
+        ("São João Batista", "o parentesco que tinha com Jesus e sua missão", "Primo de Jesus que batizava no Rio Jordão"),
+        ("a Quaresma", "o dia em que se inicia este tempo penitencial", "Quarta-Feira de Cinzas"),
+        ("o Advento", "a cor litúrgica utilizada nas quatro semanas de preparação", "Roxo (e Rosa no Domingo Gaudete)"),
+        ("as Bodas de Caná", "o que Jesus realizou nesta festa de casamento", "Seu primeiro milagre, transformando água em vinho"),
+        ("São Miguel, São Gabriel e São Rafael", "a categoria angélica a que pertencem", "Os três Arcanjos citados na Bíblia"),
+        ("São João Paulo II", "o país de origem deste santo Papa", "Polônia"),
+        ("Santa Luzia", "a proteção pela qual é invocada pelos fiéis", "Protetora dos olhos e da visão"),
+        ("São Cristóvão", "a classe de trabalhadores de quem é padroeiro", "Padroeiro dos motoristas e viajantes")
+    ]
+    igreja_hard = [
+        ("o Dogma da Imaculada Conceição", "o Papa e o ano exato da proclamação solene", "Papa Pio IX em 8 de dezembro de 1854"),
+        ("o Dogma da Assunção de Maria", "o Papa que o proclamou em 1950", "Papa Pio XII"),
+        ("Nossa Senhora Aparecida", "os nomes dos três pescadores que encontraram a imagem em 1717", "Domingos Garcia, Filipe Pedroso e João Alves"),
+        ("Nossa Senhora de Guadalupe", "o indígena vidente no México em 1531", "São Juan Diego Cuauhtlatoatzin"),
+        ("São Tomás de Aquino", "a sua maior obra teológica e filosófica", "Suma Teológica"),
+        ("Santo Agostinho de Hipona", "a santa mãe que rezou anos por sua conversão", "Santa Mônica"),
+        ("São Jerônimo", "a famosa tradução da Bíblia para o latim que ele realizou", "A Vulgata Latina"),
+        ("o Concílio de Niceia em 325", "a heresia que foi combatida dando origem ao Credo", "O Arianismo (que negava a divindade de Cristo)"),
+        ("Santa Teresinha do Menino Jesus", "o mosteiro carmelita na França onde viveu", "Carmelo de Lisieux"),
+        ("São Padre Pio de Pietrelcina", "o fenômeno místico que carregou no corpo por 50 anos", "Os Estigmas da Paixão de Cristo"),
+        ("a Transubstanciação", "o significado teológico deste termo na Eucaristia", "Conversão de toda a substância do pão e do vinho no Corpo e Sangue de Cristo"),
+        ("o livro dos Atos dos Apóstolos", "o autor sagrado que o escreveu como continuação do seu Evangelho", "São Lucas Evangelista"),
+        ("São Maximiliano Maria Kolbe", "o ato heroico que realizou no campo de Auschwitz", "Deu a própria vida no lugar de um pai de família"),
+        ("Santa Catarina de Sena", "o grande feito histórico em que convenceu o Papa no século XIV", "O retorno do Papado de Avignon para Roma"),
+        ("São Bento de Núrsia", "o lema famoso da Regra Beneditina", "Ora et Labora (Reza e Trabalha)"),
+        ("São Lourenço", "o seu cargo na Igreja de Roma antes do martírio na grelha", "Um dos sete diáconos de Roma"),
+        ("Santo Estêvão", "a sua marca na história do cristianismo primitivo", "Primeiro mártir (Protomártir) da Igreja"),
+        ("o Concílio Vaticano II", "o Papa que o convocou em 1962 e o Papa que o encerrou em 1965", "São João XXIII e São Paulo VI"),
+        ("São Francisco Xavier", "a região do mundo onde ficou conhecido como grande missionário", "Ásia (Índia e Japão)"),
+        ("Santa Teresa d'Ávila", "o santo espanhol com quem reformou a Ordem do Carmo", "São João da Cruz")
+    ]
+    igreja_impossivel = [
+        ("a Bula Ineffabilis Deus", "o conteúdo deste documento papal de 1854", "Documento oficial que definiu o Dogma da Imaculada Conceição"),
+        ("a Constituição Munificentissimus Deus", "o dogma mariano definido por Pio XII neste texto de 1950", "Dogma da Assunção de Nossa Senhora ao Céu em corpo e alma"),
+        ("o Concílio de Éfeso no ano 431", "o título grego proclamado para Maria contra Nestório", "Theotokos (Mãe de Deus)"),
+        ("a Didaqué", "a importância deste documento cristão do século I", "O Catecismo mais antigo conhecido, chamado Doutrina dos Doze Apóstolos"),
+        ("São Policarpo de Esmirna", "de qual Apóstolo de Jesus ele foi discípulo direto", "Discípulo direto do Apóstolo São João"),
+        ("Santo Irineu de Lyon", "a obra famosa que escreveu no século II contra o gnosticismo", "Adversus Haereses (Contra as Heresias)"),
+        ("o Código de Direito Canônico atual", "o ano em que foi promulgado por São João Paulo II", "Promulgado em 25 de janeiro de 1983"),
+        ("a Encíclica Rerum Novarum de 1891", "o Papa autor e o tema central deste marco histórico", "Papa Leão XIII, inaugurando a Doutrina Social da Igreja"),
+        ("a Encíclica Fides et Ratio", "as duas asas que elevam o espírito humano à verdade segundo João Paulo II", "A Fé e a Razão"),
+        ("as 36 Doutoras e Doutores da Igreja", "as três primeiras mulheres proclamadas Doutoras da Igreja em 1970 e 1997", "Santa Teresa d'Ávila, Santa Catarina de Sena e Santa Teresinha de Lisieux"),
+        ("o Concílio de Calcedônia no ano 451", "a definição cristológica central estabelecida pelos bispos", "Cristo é uma só Pessoa em duas naturezas: verdadeiro Deus e verdadeiro Homem"),
+        ("o papiro Rylands P52", "a importância arqueológica deste fragmento bíblico", "O fragmento mais antigo do Novo Testamento (Evangelho de São João)"),
+        ("a Oração Eucarística II", "o santo teólogo do século III em cujos escritos ela se baseia", "Santo Hipólito de Roma"),
+        ("o Triságio Angélico (Santo, Santo, Santo)", "o livro e capítulo do Antigo Testamento onde os Serafins o proclamam", "Profeta Isaías, capítulo 6"),
+        ("Melquisedeque no livro do Gênesis", "a oferta que este rei de Salém trouxe prefigurando a Eucaristia", "Pão e Vinho, por ser sacerdote do Deus Altíssimo"),
+        ("o Murmúrio de Elias no Monte Horeb", "onde Deus se manifestou ao profeta em 1 Reis 19", "Na brisa suave e silenciosa, e não no vento forte nem no terremoto"),
+        ("o Papa São Silvestre I", "o imperador romano que governava durante o Édito de Milão em 313", "Imperador Constantino Magno"),
+        ("São Cirilo de Jerusalém", "as famosas instruções que escreveu no século IV para os recém-batizados", "As Catequeses Mistagógicas"),
+        ("a Cruz de São Damião", "o pedido que o Crucificado fez a São Francisco de Assis em 1205", "Francisco, vai e reconstrói a minha Igreja"),
+        ("o Tratado da Verdadeira Devoção à Santíssima Virgem", "o santo francês que escreveu esta obra-prima mariana", "São Luís Maria Grignion de Montfort")
+    ]
+
+    # --------------------------------------------------------------------------
+    # 2. DESENHOS — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
+    # --------------------------------------------------------------------------
+    desenhos_facil = [
+        ("Bob Esponja", "o formato da casa onde ele mora no fundo do mar", "Um abacaxi"),
+        ("Patrick Estrela", "o seu parentesco e amizade com Bob Esponja", "Uma estrela-do-mar rosa e melhor amigo do Bob Esponja"),
+        ("Scooby-Doo", "o seu melhor amigo humano que está sempre com fome", "Salsicha"),
+        ("Tom e Jerry", "os animais que protagonizam essa dupla clássica", "Um gato e um rato"),
+        ("Pica-Pau", "a cor das penas da cabeça desse pássaro famoso", "Vermelha"),
+        ("Pernalonga", "o vegetal que ele está sempre mastigando", "Uma cenoura"),
+        ("Turma da Mônica", "o personagem que troca a letra R pela letra L ao falar", "Cebolinha"),
+        ("Cascão", "aquilo de que ele foge de todas as maneiras possíveis", "Água e banho"),
+        ("Magali", "a característica mais famosa da personagem e sua fruta favorita", "Muito comilona e apaixonada por melancia"),
+        ("Mickey Mouse", "o nome do seu cachorro de estimação", "Pluto"),
+        ("Pato Donald", "os nomes dos seus três sobrinhos trigêmeos", "Huguinho, Zezinho e Luisinho"),
+        ("Popeye", "o alimento que ele come para ficar superforte na hora", "Espinafre"),
+        ("Os Simpsons", "a cor da pele dos personagens dessa família", "Amarela"),
+        ("Peppa Pig", "o nome do irmãozinho mais novo dela que adora dinossauros", "George"),
+        ("Patrulha Canina", "o garoto líder da equipe de filhotes socorristas", "Ryder"),
+        ("Dora, a Aventureira", "o macaquinho de botas vermelhas que a acompanha", "Botas"),
+        ("As Meninas Superpoderosas", "os nomes das três irmãs heroínas", "Florzinha, Lindinha e Docinho"),
+        ("Ben 10", "o objeto que ele usa no pulso para virar alienígenas", "Um relógio alienígena chamado Omnitrix"),
+        ("Piu-Piu e Frajola", "a frase famosa que o passarinho amarelo sempre diz", "Eu acho que vi um gatinho!"),
+        ("Papa-Léguas", "o vilão que tenta capturá-lo no deserto usando produtos ACME", "Wile E. Coyote (Coioite)")
+    ]
+    desenhos_normal = [
+        ("Bob Esponja", "o restaurante onde ele trabalha fazendo hambúrgueres de siri", "Siri Cascudo, do chefe Seu Siriguejo"),
+        ("Scooby-Doo", "os cinco integrantes da Mistério S/A", "Fred, Daphne, Velma, Salsicha e Scooby-Doo"),
+        ("Os Flintstones", "o melhor amigo vizinho de Fred e sua esposa", "Barney e Betty Rubble"),
+        ("Os Jetsons", "a época em que vive a família de George Jetson", "No futuro espacial cheio de robôs e carros voadores"),
+        ("Os Padrinhos Mágicos", "os nomes das duas fadas padrinhos de Timmy Turner", "Cosmo e Wanda"),
+        ("Hora de Aventura", "os nomes do garoto humano e do cão mágico amarelo", "Finn e Jake"),
+        ("Apenas um Show (Regular Show)", "as espécies dos amigos protagonistas Mordecai e Rigby", "Um gaio-azul e um guaxinim"),
+        ("O Incrível Mundo de Gumball", "o irmão adotivo de Gumball que era um peixinho dourado com pernas", "Darwin Watterson"),
+        ("Gravity Falls", "o tio-avô dono da Cabana do Mistério", "Tio-avô Stan (Stanley Pines)"),
+        ("Avatar: A Lenda de Aang", "a tribo de origem de Katara e Sokka", "Tribo da Água do Sul"),
+        ("Phineas e Ferb", "a irmã mais velha que tenta dedurá-los para a mãe todo dia", "Candace Flynn"),
+        ("Coragem, o Cão Covarde", "os nomes dos dois idosos donos do Coragem", "Muriel e Eustácio Resmungão"),
+        ("O Laboratório de Dexter", "o rival de Dexter que tem uma risada estridente", "Mandark"),
+        ("Jovens Titãs", "os cinco heróis da torre em formato de T", "Robin, Estelar, Mutano, Ciborgue e Ravena"),
+        ("As Três Espiãs Demais", "o chefe da organização WOOHP que envia as missões", "Jerry"),
+        ("Caverna do Dragão", "o vilão de um chifre só que persegue os jovens no Reino", "Vingador"),
+        ("Corrida Maluca", "a motorista charmosa do Carrinho Pra Frente (número 5)", "Penélope Charmosa"),
+        ("Manda-Chuva", "o guarda policial que tenta colocar ordem no beco", "Guarda Belo"),
+        ("Johnny Bravo", "a característica física e personalidade do protagonista", "Topete loiro gigante, óculos escuros e músculos"),
+        ("Du, Dudu e Edu", "o doce gigante que eles fazem de tudo para conseguir comprar", "Bala de caramelo gigante")
+    ]
+    desenhos_hard = [
+        ("Bob Esponja", "o nome do caracol de estimação dele que mia como gato", "Gary"),
+        ("Bob Esponja", "o nome completo do vilão microscópico dono do Balde de Lixo", "Sheldon J. Plankton"),
+        ("Ben 10 Clássico", "quantos alienígenas iniciais vinham no Omnitrix no 1º episódio", "10 alienígenas (Chama, Quatro Braços, XLR8, Diamante, etc.)"),
+        ("Avatar: A Lenda de Aang", "o nome do bisão voador de seis patas e do lêmure de Aang", "Appa e Momo"),
+        ("Gravity Falls", "o nome do demônio triangular amarelo de um olho só e cartola", "Bill Cipher"),
+        ("Hora de Aventura", "o nome verdadeiro do Rei Gelado antes de colocar a coroa mágica", "Simon Petrikov"),
+        ("Steven Universo", "as três Crystal Gems que criaram o jovem Steven", "Garnet, Ametista e Pérola"),
+        ("KND: A Turma do Bairro", "o codinome do líder careca de óculos escuros do Setor V", "Número 1 (Nigel Uno)"),
+        ("As Aventuras de Jackie Chan", "o que o Tio sempre dizia dando um peteleco na testa", "Mais uma coisa! (One more thing!)"),
+        ("Super Choque (Static Shock)", "o nome civil do herói Virgil e seu melhor amigo", "Virgil Hawkins e Richie Foley (Gear)"),
+        ("X-Men: Evolution", "o instituto onde os jovens mutantes moravam com o Professor Xavier", "Instituto Xavier em Bayville"),
+        ("Danny Phantom", "o acidente que deu poderes fantasmas ao jovem Danny Fenton", "Entrou no portal fantasma construído por seus pais"),
+        ("Jimmy Neutron", "o nome do seu cachorro robótico inteligente", "Goddard"),
+        ("Kim Possible", "o melhor amigo desastrado de Kim e a toupeira-pelada dele", "Ron Stoppable e Rufus"),
+        ("Samurai Jack", "o demônio metamorfo que enviou Jack para o futuro", "Aku (Abu)"),
+        ("Mansão Foster para Amigos Imaginários", "o melhor amigo azul de Mac", "Bloo"),
+        ("Os Simpsons", "o nome do dono bilionário da Usina Nuclear de Springfield", "Sr. Montgomery Burns"),
+        ("Futurama", "o nome do robô dobrador amigo de Fry", "Bender Bending Rodríguez"),
+        ("Pinky e o Cérebro", "o objetivo deles em absolutamente todas as noites", "Tentar dominar o mundo"),
+        ("ThunderCats", "o nome da espada mágica empunhada por Lion-O", "Espada Justiceira (com o Olho de Thundera)")
+    ]
+    desenhos_impossivel = [
+        ("Bob Esponja", "o nome do criador da série que era biólogo marinho na vida real", "Stephen Hillenburg"),
+        ("Gravity Falls", "quem escreveu de verdade os 3 Diários misteriosos na história", "Stanford Pines (o irmão gêmeo de seis dedos do Tio Stan)"),
+        ("Ben 10", "o nome do gênio da raça Galvaniana que criou o Omnitrix", "Azmuth"),
+        ("Avatar: A Lenda de Aang", "a sociedade secreta da qual o Tio Iroh era Grão-Mestre", "Ordem do Lótus Branco"),
+        ("As Meninas Superpoderosas", "o nome do ingrediente acidental que deu superpoderes a elas", "Elemento X"),
+        ("O Laboratório de Dexter", "o criador desta série que também criou Samurai Jack e Primal", "Genndy Tartakovsky"),
+        ("Caverna do Dragão", "os nomes das 6 armas mágicas recebidas pelos jovens", "Arco, Tacape, Escudo, Bastão, Capa da Invisibilidade e Chapéu de Mago"),
+        ("Scooby-Doo", "o nome verdadeiro completo do Salsicha na versão original", "Norville Rogers"),
+        ("Turma da Mônica", "qual foi o primeiro personagem criado por Mauricio de Sousa em 1959", "O cãozinho Bidu e seu dono Franjinha"),
+        ("Pica-Pau", "o nome do cartunista norte-americano que criou o personagem em 1940", "Walter Lantz"),
+        ("Tom e Jerry", "a dupla lendária de criadores que dirigiu os curtas originais na MGM", "William Hanna e Joseph Barbera"),
+        ("Hora de Aventura", "o conflito apocalíptico ocorrido 1.000 anos antes da série", "A Grande Guerra dos Cogumelos"),
+        ("Apenas um Show", "o nome do criador da série que fazia a voz original do Mordecai", "J. G. Quintel"),
+        ("Os Simpsons", "o nome completo do criador da família Simpson", "Matt Groening"),
+        ("Coragem, o Cão Covarde", "o estado norte-americano onde fica a cidade fictícia de Lugar Nenhum", "Kansas"),
+        ("Os Padrinhos Mágicos", "o nome do professor de Timmy obcecado em provar que fadas existem", "Sr. Denzel Crocker"),
+        ("Jovens Titãs", "o nome do pai demônio interdimensional da heroína Ravena", "Trigon"),
+        ("Corrida Maluca", "quem pilotava o Carro-Tronco (número 10) na corrida", "Rufus Lenhador e o castor Dentes-de-Serra"),
+        (" Os Flintstones", "o nome do pequeno alienígena verde que apenas Fred e Barney viam", "Gazoo"),
+        ("He-Man e os Mestres do Universo", "o verdadeiro nome do Príncipe de Eternia e do seu tigre", "Príncipe Adam e Pacato (Gato Guerreiro)")
+    ]
+
+    # --------------------------------------------------------------------------
+    # 3. ANIMES — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
+    # --------------------------------------------------------------------------
+    animes_facil = [
+        ("Dragon Ball Z", "o nome do protagonista criado na Terra que busca as Esferas do Dragão", "Son Goku"),
+        ("Dragon Ball Z", "quantas Esferas do Dragão existem na Terra para invocar Shenlong", "7 Esferas do Dragão"),
+        ("Naruto", "o sonho principal de Naruto Uzumaki desde criança", "Tornar-se o Hokage da Vila da Folha"),
+        ("One Piece", "o acessório famoso que Monkey D. Luffy usa na cabeça", "Um Chapéu de Palha"),
+        ("Pokémon", "o primeiro Pokémon amarelo de tipo elétrico parceiro de Ash", "Pikachu"),
+        ("Cavaleiros do Zodíaco", "a constelação protetora do protagonista Seiya", "Pégaso"),
+        ("Death Note", "o que acontece quando o nome de alguém é escrito no caderno", "A pessoa morre"),
+        ("One Punch Man", "como Saitama derrota praticamente qualquer inimigo", "Com apenas um soco"),
+        ("Demon Slayer", "quem Tanjiro carrega dentro de uma caixa de madeira nas costas", "Sua irmã Nezuko Kamado"),
+        ("Dragon Ball Z", "o príncipe orgulhoso dos Saiyajins que se torna rival de Goku", "Vegeta"),
+        ("Naruto", "o melhor amigo e rival de Naruto, último sobrevivente do clã Uchiha", "Sasuke Uchiha"),
+        ("One Piece", "o espadachim do bando que luta usando três espadas ao mesmo tempo", "Roronoa Zoro"),
+        ("Spy x Family", "a garotinha de cabelo rosa que consegue ler mentes", "Anya Forger"),
+        ("Attack on Titan", "as criaturas gigantes que devoravam humanos fora das muralhas", "Titãs"),
+        ("Yu-Gi-Oh!", "o jogo que Yugi Muto domina usando o Enigma do Milênio", "Duelo de Monstros (Cartas)"),
+        ("Beyblade", "o objeto giratório usado nas batalhas de arena", "Piões de batalha Beyblade"),
+        ("Digimon", "o parceiro dinossauro laranja de Tai Kamiya", "Agumon"),
+        ("Super Campeões (Captain Tsubasa)", "o esporte praticado por Oliver Tsubasa", "Futebol"),
+        ("Sailor Moon", "a guerreira mágica que luta pelo amor e pela justiça", "Usagi Tsukino (Sailor Moon)"),
+        ("Sakura Card Captors", "o que Sakura Kinomoto precisa capturar ao longo do anime", "As Cartas Clow")
+    ]
+    animes_normal = [
+        ("Solo Leveling", "o comando que Sung Jin-Woo usa para erguer seu exército de sombras", "Erga-se (Arise)"),
+        ("Black Clover", "a característica única de Asta num mundo onde todos usam magia", "Ele nasceu sem magia e usa espadas de Anti-Magia"),
+        ("Bleach", "a raça de ceifadores de almas da qual Ichigo Kurosaki faz parte", "Shinigami"),
+        ("Tokyo Revengers", "o apelido do líder invencível da gangue Tokyo Manji (Toman)", "Mikey (Manjiro Sano)"),
+        ("Mashle: Magia e Músculos", "o doce que Mash Burnedead é completamente viciado em comer", "Profiteroles (bombinhas de creme)"),
+        ("That Time I Got Reincarnated as a Slime", "o nome que o protagonista recebe do dragão Veldora ao reencarnar", "Rimuru Tempest"),
+        ("Cyberpunk: Edgerunners", "a netrunner de cabelos coloridos por quem David se apaixona", "Lucy"),
+        ("Jujutsu Kaisen", "o Rei das Maldições cujos dedos foram engolidos por Yuji Itadori", "Ryomen Sukuna"),
+        ("My Hero Academia", "o Símbolo da Paz que passa seu poder para Izuku Midoriya", "All Might"),
+        ("Naruto Shippuden", "a organização criminosa de mantos pretos com nuvens vermelhas", "Akatsuki"),
+        ("Dragon Ball Z", "quem Goku derrota em Namekusei após a morte de Kuririn", "Freeza"),
+        ("Dragon Ball Z", "quem derrota o vilão Cell ao atingir o Super Saiyajin 2", "Son Gohan"),
+        ("One Piece", "a fruta mística que deu a Luffy um corpo de borracha", "Gomu Gomu no Mi (Hito Hito no Mi, Modelo: Nika)"),
+        ("Fullmetal Alchemist", "os nomes dos dois irmãos alquimistas protagonistas", "Edward e Alphonse Elric"),
+        ("Hunter x Hunter", "o melhor amigo de Gon Freecss que vem de uma família de assassinos", "Killua Zoldyck"),
+        ("Yu Yu Hakusho", "os quatro amigos protagonistas que lutam no Torneio das Trevas", "Yusuke, Kuwabara, Kurama e Hiei"),
+        ("InuYasha", "a estudante do presente que volta ao Japão Feudal pelo poço", "Kagome Higurashi"),
+        ("Death Note", "o maior detetive do mundo que investiga o caso Kira", "L (Lawliet)"),
+        ("Demon Slayer", "o título dado aos espadachins de mais alto nível da corporação", "Hashiras (Pilares)"),
+        ("Attack on Titan", "o capitão da Tropa de Exploração conhecido como o mais forte da humanidade", "Capitão Levi Ackerman")
+    ]
+    animes_hard = [
+        ("Bleach: Thousand-Year Blood War", "o nome da Bankai de Ichigo Kurosaki", "Tensa Zangetsu"),
+        ("Solo Leveling", "a primeira sombra de cavaleiro vermelho-sangue que Jin-Woo extrai", "Igris, o Comandante Vermelho-Sangue"),
+        ("Black Clover", "o capitão do esquadrão Touros Negros que usa Magia de Escuridão", "Yami Sukehiro"),
+        ("Cyberpunk: Edgerunners", "o lendário mercenário ciborgue que David enfrenta na Arasaka Tower", "Adam Smasher"),
+        ("Attack on Titan", "os nove Titãs Originais liderados pelo poder máximo de Eren", "Titã Fundador, Titã de Ataque, Colossal, Blindado, Fêmea, Bestial, Mandíbula, Quadrúpede e Martelo de Guerra"),
+        ("Dragon Ball Super", "a técnica divina que Goku domina no Torneio do Poder contra Jiren", "Instinto Superior (Ultra Instinct)"),
+        ("Naruto", "o nome verdadeiro do Quarto Hokage, pai de Naruto", "Minato Namikaze (Relâmpago Amarelo de Konoha)"),
+        ("Jujutsu Kaisen", "o nome da Expansão de Domínio de Satoru Gojo", "Vazio Infinito (Muryokusho)"),
+        ("Demon Slayer", "o primeiro usuário da Respiração do Sol que quase derrotou Muzan", "Yoriichi Tsugikuni"),
+        ("That Time I Got Reincarnated as a Slime", "a habilidade suprema de inteligência que guia Rimuru desde o início", "Grande Sábio (que evolui para Rafael)"),
+        ("Tokyo Revengers", "como Takemichi Hanagaki ativa sua viagem no tempo de 12 anos no passado", "Através de um aperto de mão com Naoto Tachibana"),
+        ("Mashle: Magia e Músculos", "o título dado aos alunos de elite que recebem moedas de ouro em Easton", "Visionários Divinos"),
+        ("One Piece", "o nome do médico rena e do carpinteiro ciborgue do bando do Chapéu de Palha", "Tony Tony Chopper e Franky"),
+        ("Death Note", "o nome do Shinigami que deixou o caderno cair no mundo humano", "Ryuk"),
+        ("Fullmetal Alchemist: Brotherhood", "o líder dos Homúnculos que comanda o exército de Amestris", "King Bradley (Ira / Wrath)"),
+        ("Hunter x Hunter", "o líder da Trupe Fantasma (Genei Ryodan) que rouba habilidades", "Chrollo Lucilfer"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro de Virgem conhecido como o homem mais próximo de Deus", "Shaka de Virgem"),
+        ("Yu Yu Hakusho", "a transformação de cabelos longos prateados de Kurama", "Kurama Youko"),
+        ("Code Geass", "o protagonista que recebe o poder da obediência absoluta de C.C.", "Lelouch vi Britannia (Zero)"),
+        ("Steins;Gate", "o aparelho doméstico que Okabe transforma numa máquina de enviar mensagens ao passado", "Um forno de micro-ondas conectado a um celular")
+    ]
+    animes_impossivel = [
+        ("Solo Leveling", "o título e nome do Monarca original de quem Sung Jin-Woo herdou o coração negro", "Ashborn, o Monarca das Sombras"),
+        ("Bleach: Thousand-Year Blood War", "o nome do Imperador Quincy pai de todos os Quincies e sua habilidade 'A'", "Yhwach e o poder 'The Almighty' (O Onipotente)"),
+        ("Black Clover", "o nome do demônio de Anti-Magia que habitava o grimório de cinco folhas de Asta", "Liebe"),
+        ("Dragon Ball", "o nome verdadeiro de Goku dado por seu pai Bardock no planeta Vegeta", "Kakarotto"),
+        ("Attack on Titan", "o nome da fundadora original que obteve o poder dos Titãs há 2.000 anos", "Ymir Fritz"),
+        ("Cyberpunk: Edgerunners", "a música famosa de Rosa Walton que toca na cena final da Lua", "I Really Want to Stay at Your House"),
+        ("That Time I Got Reincarnated as a Slime", "o nome do mordomo demônio primordial Preto invocado por Rimuru", "Diablo (Noir)"),
+        ("Mashle: Magia e Músculos", "o nome do vilão principal pai de Mash que busca o coração dos 6 filhos", "Innocent Zero"),
+        ("Tokyo Revengers", "o nome do irmão mais velho de Mikey que era dono de uma oficina de motos", "Shinichiro Sano"),
+        ("Naruto Shippuden", "o nome do Sábio dos Seis Caminhos que criou o Ninshu", "Hagoromo Otsutsuki"),
+        ("One Piece", "a ilha final da Grand Line onde Gol D. Roger deixou o grande tesouro", "Laugh Tale"),
+        ("Demon Slayer", "o nome da flor rara que Muzan Kibutsuji procurou por mil anos para vencer o sol", "Lírio da Aranha Azul"),
+        ("Jujutsu Kaisen", "o feiticeiro milenar que possui o corpo de Suguru Geto usando pontos na testa", "Kenjaku"),
+        ("Death Note", "o nome verdadeiro completo de L revelado na enciclopédia oficial", "L Lawliet"),
+        ("Hunter x Hunter", "o jogo de tabuleiro estratégico em que o Rei Meruem nunca venceu Komugi", "Gungi"),
+        ("Fullmetal Alchemist", "a data gravada dentro do relógio de bolso de prata de Edward Elric", "Don't Forget 3.Oct.11 (Não esqueça 3 de outubro de 1911)"),
+        ("Neon Genesis Evangelion", "o significado da sigla NERV e o nome do pai de Shinji Ikari", "Gendo Ikari"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro de Gêmeos que assumiu o lugar do Grande Mestre", "Saga de Gêmeos"),
+        ("Monster", "o nome do neurocirurgião japonês que salvou a vida do menino Johan Liebert", "Dr. Kenzo Tenma"),
+        ("Berserk", "o nome do artefato em forma de rosto vermelho que ativa a Mão de Deus no Eclipse", "Behelit Carmesim (O Ovo do Rei)")
+    ]
+
+    # --------------------------------------------------------------------------
+    # DEMAIS TEMAS (100 PERGUNTAS CADA)
+    # --------------------------------------------------------------------------
     fatos_herois = [
         ("o Homem de Ferro", "a identidade secreta do herói na Marvel", "Tony Stark"),
         ("o Batman", "a identidade secreta do protetor de Gotham", "Bruce Wayne"),
@@ -179,13 +441,6 @@ def construir_bancos_900():
         ("o herói Shazam", "a palavra mágica gritada por Billy Batson para se transformar", "SHAZAM!"),
         ("os Guardiões da Galáxia", "o líder humano conhecido como Senhor das Estrelas", "Peter Quill")
     ]
-    tpl_herois = [
-        "Sobre {item}, qual alternativa indica corretamente {sub}?",
-        "Qual das opções abaixo revela {sub} em relação a {item}?",
-        "Quando o assunto é {item}, qual é a resposta certa para {sub}?",
-        "Marque a alternativa correta que representa {sub} de {item}:"
-    ]
-
     fatos_frutas = [
         ("o Abacaxi", "a característica visual famosa no topo da fruta", "Possui uma coroa de folhas espinhosas"),
         ("a Melancia", "a sua composição ideal para hidratação no verão", "Mais de 90% de água e polpa vermelha"),
@@ -213,13 +468,6 @@ def construir_bancos_900():
         ("a Tâmara", "a região do mundo onde é cultivada há milênios", "Desertos do Oriente Médio e Norte da África"),
         ("a Romã", "o significado popular associado às suas sementes no Ano-Novo", "Simboliza prosperidade e fartura")
     ]
-    tpl_frutas = [
-        "Sobre {item}, qual alternativa indica corretamente {sub}?",
-        "Qual das opções abaixo descreve {sub} em relação a {item}?",
-        "Pensando nas características de {item}, qual opção responde {sub}?",
-        "Assinale a alternativa correta sobre {sub} referente a {item}:"
-    ]
-
     fatos_comidas = [
         ("o Baião de Dois", "os ingredientes principais desse clássico nordestino", "Arroz, feijão-de-corda ou verde e queijo coalho"),
         ("a Feijoada Brasileira", "a base principal usada no preparo tradicional", "Feijão-preto cozido com carnes salgadas"),
@@ -247,13 +495,6 @@ def construir_bancos_900():
         ("a Canjica e o Mungunzá", "a época festiva do ano em que esses pratos são tradição", "Festas Juninas de São João"),
         ("o Pastel de Feira", "a bebida gelada que forma a dupla perfeita nas feiras livres", "Caldo de cana moído na hora")
     ]
-    tpl_comidas = [
-        "Na culinária, sobre {item}, qual opção indica {sub}?",
-        "Qual alternativa descreve corretamente {sub} em relação a {item}?",
-        "Quando preparamos ou saboreamos {item}, o que define {sub}?",
-        "Marque a resposta certa sobre {sub} referente a {item}:"
-    ]
-
     fatos_novelas = [
         ("a novela Avenida Brasil", "a vilã icônica interpretada por Adriana Esteves", "Carminha"),
         ("a novela Senhora do Destino", "a vilã famosa pelos memes da escada e por roubar Lindalva", "Nazaré Tedesco"),
@@ -281,13 +522,6 @@ def construir_bancos_900():
         ("a novela Império", "o título pelo qual era chamado o protagonista José Alfredo", "Comendador"),
         ("a novela Verdades Secretas", "o apelido da jovem modelo Arlete nas passarelas", "Angel")
     ]
-    tpl_novelas = [
-        "Sobre {item}, qual alternativa indica corretamente {sub}?",
-        "Qual das opções abaixo corresponde a {sub} em {item}?",
-        "Relembrando {item}, quem ou o que ficou marcado como {sub}?",
-        "Assinale a opção verdadeira sobre {sub} em {item}:"
-    ]
-
     fatos_filmes = [
         ("o filme Titanic", "o casal protagonista interpretado por Leonardo DiCaprio e Kate Winslet", "Jack Dawson e Rose DeWitt Bukater"),
         ("a saga Harry Potter", "o nome da escola de magia e bruxaria onde a história acontece", "Hogwarts"),
@@ -315,81 +549,6 @@ def construir_bancos_900():
         ("Homem-Aranha no Aranhaverso", "o jovem do Brooklyn que assume o manto do herói", "Miles Morales"),
         ("Vingadores: Ultimato", "a frase final dita por Tony Stark antes de estalar os dedos", "Eu sou o Homem de Ferro")
     ]
-    tpl_filmes = [
-        "No cinema, sobre {item}, qual alternativa indica {sub}?",
-        "Qual das opções abaixo responde corretamente {sub} em {item}?",
-        "Relembrando {item}, qual opção descreve {sub}?",
-        "Marque a alternativa correta sobre {sub} referente a {item}:"
-    ]
-
-    fatos_desenhos = [
-        ("o desenho Bob Esponja", "o formato da casa onde ele mora na Fenda do Biquíni", "Um abacaxi no fundo do mar"),
-        ("o desenho Scooby-Doo", "o nome da van colorida usada pela turma para investigar mistérios", "Máquina de Mistério"),
-        ("o clássico Tom e Jerry", "as espécies dos dois rivais dos desenhos animados", "Um gato doméstico e um ratinho esperto"),
-        ("a série Os Simpsons", "a cidade norte-americana onde mora a família amarela", "Springfield"),
-        ("As Meninas Superpoderosas", "os nomes das três irmãs criadas pelo Professor Utônio", "Florzinha, Lindinha e Docinho"),
-        ("o clássico Pica-Pau", "a característica sonora mais famosa do personagem", "Sua risada inconfundível"),
-        ("o coelho Pernalonga", "a frase clássica que ele diz enquanto mastiga uma cenoura", "O que que há, velhinho?"),
-        ("o desenho Os Flintstones", "o período histórico em que vivem Fred Flintstone e Barney", "Idade da Pedra, na cidade de Bedrock"),
-        ("o desenho Ben 10", "o dispositivo alienígena em formato de relógio preso ao pulso", "Omnitrix"),
-        ("Os Padrinhos Mágicos", "os nomes do casal de fadas de cabelos rosa e verde de Timmy", "Cosmo e Wanda"),
-        ("Hora de Aventura", "a dupla de protagonistas que vive na Terra de Ooo", "Finn, o humano, e Jake, o cão mágico"),
-        ("o desenho Gravity Falls", "os irmãos gêmeos que passam o verão na Cabana do Mistério", "Dipper e Mabel Pines"),
-        ("Avatar: A Lenda de Aang", "os quatro elementos da natureza dominados pelo Avatar", "Água, Terra, Fogo e Ar"),
-        ("o desenho Phineas e Ferb", "o animal de estimação deles que atua como agente secreto", "Perry, o Ornitorrinco, conhecido como Agente P"),
-        ("Coragem, o Cão Covarde", "o lugar isolado onde ele mora com Muriel e Eustácio", "Lugar Nenhum"),
-        ("O Laboratório de Dexter", "a irmã mais velha que sempre invade e bagunça o laboratório", "Dee Dee"),
-        ("os Jovens Titãs", "o líder da equipe que usa artes marciais e tecnologia", "Robin"),
-        ("a Turma da Mônica", "o objeto inseparável que a Mônica usa para correr atrás do Cebolinha", "Coelhinho de pelúcia azul Sansão"),
-        ("o Desenho do Chaves", "a comida favorita que o Chaves sempre sonha em comer na vila", "Sanduíche de presunto"),
-        ("o marinheiro Popeye", "o alimento enlatado que lhe dá força instantânea nos músculos", "Espinafre"),
-        ("o desenho Manda-Chuva", "o grupo de animais de rua que ele lidera no beco", "Gangue de gatos de Nova York"),
-        ("a Corrida Maluca", "o vilão trapaceiro acompanhado pelo cachorro risonho Muttley", "Dick Vigarista"),
-        ("os Ursinhos Carinhosos", "o poder especial disparado pela barriga dos ursinhos", "Raio de sentimentos e arco-íris"),
-        ("a Caverna do Dragão", "o guia misterioso baixinho de manto vermelho que dá conselhos", "Mestre dos Magos"),
-        ("o desenho Três Espiãs Demais", "os nomes das três amigas estudantes de Beverly Hills", "Sam, Clover e Alex")
-    ]
-    tpl_desenhos = [
-        "Sobre {item}, qual alternativa indica corretamente {sub}?",
-        "Qual das opções abaixo corresponde a {sub} em {item}?",
-        "Quando assistimos a {item}, o que identifica {sub}?",
-        "Assinale a opção correta sobre {sub} referente a {item}:"
-    ]
-
-    fatos_animes = [
-        ("Dragon Ball Z", "a transformação lendária de cabelos dourados alcançada por Goku", "Super Saiyajin"),
-        ("o anime Naruto", "o nome da raposa de nove caudas selada dentro do protagonista", "Kurama"),
-        ("o anime One Piece", "o grande sonho de Monkey D. Luffy ao navegar pelos mares", "Encontrar o One Piece e ser o Rei dos Piratas"),
-        ("o anime Solo Leveling", "o comando que Sung Jin-Woo usa para erguer seu exército de sombras", "Erga-se (Arise)"),
-        ("o anime Bleach", "o nome da espada espiritual empunhada por Ichigo Kurosaki", "Zanpakuto Zangetsu"),
-        ("Attack on Titan", "os nomes das três muralhas que protegiam a humanidade dos Titãs", "Muralhas Maria, Rose e Sina"),
-        ("o anime Black Clover", "a característica única do protagonista Asta num mundo mágico", "Ele nasceu sem mana e usa Anti-Magia"),
-        ("Tokyo Revengers", "a gangue de motoqueiros onde Takemichi tenta salvar o futuro", "Tokyo Manji (Toman)"),
-        ("Mashle: Magia e Músculos", "o modo como Mash Burnedead supera os magos sem ter magia", "Com força física pura e treino muscular absurdo"),
-        ("o anime do Slime (Tensura)", "a criatura em que o protagonista reencarna como Rimuru Tempest", "Um Slime azul superpoderoso"),
-        ("Cyberpunk: Edgerunners", "o implante cibernético militar usado por David Martinez", "Sandevistan, que garante supervelocidade"),
-        ("Demon Slayer", "o principal objetivo da jornada de Tanjiro Kamado", "Transformar sua irmã Nezuko de volta em humana"),
-        ("Jujutsu Kaisen", "o feiticeiro de venda nos olhos conhecido como o mais forte", "Satoru Gojo"),
-        ("o anime Death Note", "a regra principal do caderno sobrenatural de Light Yagami", "A pessoa cujo nome for escrito nele morre"),
-        ("Os Cavaleiros do Zodíaco", "o golpe principal disparado por Seiya de Pégaso", "Meteoro de Pégaso"),
-        ("o anime Pokémon", "o primeiro parceiro elétrico de Ash Ketchum da cidade de Pallet", "Pikachu"),
-        ("Fullmetal Alchemist", "a lei fundamental da alquimia seguida pelos irmãos Elric", "Lei da Troca Equivalente"),
-        ("My Hero Academia", "o poder passado de All Might para o jovem Izuku Midoriya", "One For All"),
-        ("Hunter x Hunter", "a energia vital aprendida por Gon e Killua após o Exame Hunter", "Nen"),
-        ("Yu Yu Hakusho", "a técnica espiritual disparada pela ponta do dedo de Yusuke", "Leigan"),
-        ("o anime InuYasha", "a joia poderosa em pedaços procurada no Japão Feudal", "Joia de Quatro Almas"),
-        ("One Punch Man", "a rotina de treino que deixou Saitama careca e invencível", "100 flexões, 100 abdominais, 100 agachamentos e 10 km por dia"),
-        ("o anime Spy x Family", "o poder secreto da pequena Anya Forger", "Telepatia, lendo a mente das pessoas"),
-        ("o anime Blue Lock", "o esporte competitivo que busca criar o maior atacante do Japão", "Futebol"),
-        ("o anime Haikyuu!!", "a posição na quadra de vôlei em que o baixinho Hinata brilha", "Central de bloqueio com salto gigante")
-    ]
-    tpl_animes = [
-        "Sobre {item}, qual alternativa indica corretamente {sub}?",
-        "Qual das opções abaixo corresponde a {sub} em {item}?",
-        "No universo de {item}, qual é a resposta certa para {sub}?",
-        "Marque a opção correta que representa {sub} em {item}:"
-    ]
-
     fatos_trabalhos = [
         ("Analista de Suporte e TI", "a função essencial desempenhada nas empresas modernas", "Resolver problemas técnicos de computadores, sistemas e usuários"),
         ("Administrador de Redes", "os equipamentos que ele configura para conectar a empresa", "Roteadores, Switches, Firewalls e servidores de rede"),
@@ -417,27 +576,36 @@ def construir_bancos_900():
         ("Pedreiro e Mestre de Obras", "a ferramenta usada para garantir que a parede suba reta", "Prumo e Nível de bolha"),
         ("Designer Gráfico", "o formato de arquivo vetorial usado em corte a laser e logotipos", "SVG e curvas vetoriais")
     ]
-    tpl_trabalhos = [
-        "Na profissão de {item}, qual alternativa indica {sub}?",
-        "Qual das opções abaixo descreve {sub} para um {item}?",
-        "No dia a dia de um {item}, o que corresponde a {sub}?",
-        "Assinale a alternativa correta sobre {sub} referente ao {item}:"
-    ]
 
     return {
-        "⛪ Igreja": montar_100_perguntas(fatos_igreja, tpl_igreja),
-        "🦸 Super-Heróis": montar_100_perguntas(fatos_herois, tpl_herois),
-        "🍎 Frutas": montar_100_perguntas(fatos_frutas, tpl_frutas),
-        "🍔 Comidas": montar_100_perguntas(fatos_comidas, tpl_comidas),
-        "📺 Novelas": montar_100_perguntas(fatos_novelas, tpl_novelas),
-        "🎬 Filmes": montar_100_perguntas(fatos_filmes, tpl_filmes),
-        "🎨 Desenhos": montar_100_perguntas(fatos_desenhos, tpl_desenhos),
-        "⚔️ Animes": montar_100_perguntas(fatos_animes, tpl_animes),
-        "💼 Trabalhos & Profissões": montar_100_perguntas(fatos_trabalhos, tpl_trabalhos)
+        "⛪ Igreja": {
+            "🟢 Fácil": montar_100_perguntas(igreja_facil, tpl_padrao),
+            "🟡 Normal": montar_100_perguntas(igreja_normal, tpl_padrao),
+            "🟠 Hard": montar_100_perguntas(igreja_hard, tpl_padrao),
+            "🔴 Impossível": montar_100_perguntas(igreja_impossivel, tpl_padrao)
+        },
+        "🎨 Desenhos": {
+            "🟢 Fácil": montar_100_perguntas(desenhos_facil, tpl_padrao),
+            "🟡 Normal": montar_100_perguntas(desenhos_normal, tpl_padrao),
+            "🟠 Hard": montar_100_perguntas(desenhos_hard, tpl_padrao),
+            "🔴 Impossível": montar_100_perguntas(desenhos_impossivel, tpl_padrao)
+        },
+        "⚔️ Animes": {
+            "🟢 Fácil": montar_100_perguntas(animes_facil, tpl_padrao),
+            "🟡 Normal": montar_100_perguntas(animes_normal, tpl_padrao),
+            "🟠 Hard": montar_100_perguntas(animes_hard, tpl_padrao),
+            "🔴 Impossível": montar_100_perguntas(animes_impossivel, tpl_padrao)
+        },
+        "🦸 Super-Heróis": montar_100_perguntas(fatos_herois, tpl_padrao),
+        "🍎 Frutas": montar_100_perguntas(fatos_frutas, tpl_padrao),
+        "🍔 Comidas": montar_100_perguntas(fatos_comidas, tpl_padrao),
+        "📺 Novelas": montar_100_perguntas(fatos_novelas, tpl_padrao),
+        "🎬 Filmes": montar_100_perguntas(fatos_filmes, tpl_padrao),
+        "💼 Trabalhos & Profissões": montar_100_perguntas(fatos_trabalhos, tpl_padrao)
     }
 
-BANCOS_PADRAO = construir_bancos_900()
-LISTA_MODOS_JOGO = list(BANCOS_PADRAO.keys()) + ["🎲 Misturadão (Todos os Temas)"]
+BANCOS_PADRAO = construir_bancos_completos()
+LISTA_MODOS_JOGO = list(INFO_MODOS.keys())
 
 # ==============================================================================
 # CONFIGURAÇÕES SIMPLIFICADAS E DIRETAS
@@ -469,13 +637,13 @@ def obter_config_padrao():
         "altura_botao": 16,
         "raio_borda_botao": 10,
         
-        "titulo_aba": "Super Quiz 900 Perguntas",
+        "titulo_aba": "Super Quiz Multi-Temas",
         "icone_aba": "🎲",
-        "txt_titulo_menu": "🎲 SUPER QUIZ MULTI-TEMAS (900 PERGUNTAS) 🎲",
-        "txt_subtitulo_menu": "Escolha um dos 10 modos de jogo e desafie os seus conhecimentos! (F11 para tela cheia)",
+        "txt_titulo_menu": "🎲 SUPER QUIZ MULTI-TEMAS (1.800 PERGUNTAS) 🎲",
+        "txt_subtitulo_menu": "Escolha o seu tema, selecione a dificuldade e desafie os seus conhecimentos! (F11 para tela cheia)",
         "txt_btn_jogar": "▶️ Jogar / Escolher Modo de Jogo",
         "txt_btn_participantes": "👥 Cadastrar Participantes",
-        "txt_btn_perguntas": "📝 Gerir as 900 Perguntas por Tema",
+        "txt_btn_perguntas": "📝 Gerir Perguntas por Tema & Nível",
         "txt_btn_historico": "📊 Histórico e Ranking Top 5",
         "txt_btn_config": "⚙️ Configurações (Imagens, Textos & Regras)",
         "txt_btn_sair": "🚪 Sair / Fechar Sistema",
@@ -745,10 +913,19 @@ def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=
     st.markdown(html_bloco, unsafe_allow_html=True)
 
 # ==============================================================================
-# FUNÇÕES DE DADOS
+# FUNÇÕES DE DADOS (COM SUPORTE A NÍVEIS EM IGREJA, DESENHOS E ANIMES)
 # ==============================================================================
+def copiar_bancos_padrao():
+    copia = {}
+    for k, v in BANCOS_PADRAO.items():
+        if isinstance(v, dict):
+            copia[k] = {niv: list(lista_p) for niv, lista_p in v.items()}
+        else:
+            copia[k] = list(v)
+    return copia
+
 def carregar_dados():
-    bancos_atuais = {k: list(v) for k, v in BANCOS_PADRAO.items()}
+    bancos_atuais = copiar_bancos_padrao()
     participantes_atuais = []
     historico_atual = []
     precisa_salvar = False
@@ -757,15 +934,24 @@ def carregar_dados():
         try:
             with open(ARQUIVO_DADOS, "r", encoding="utf-8") as f:
                 dados = json.load(f)
-                if not dados.get("perguntas_limpas_v2", False):
+                if not dados.get("niveis_dificuldade_v3", False):
                     precisa_salvar = True
                 elif "bancos_perguntas" in dados and isinstance(dados["bancos_perguntas"], dict):
-                    for k, lista_p in dados["bancos_perguntas"].items():
-                        if k in BANCOS_PADRAO and len(lista_p) < 10:
-                            bancos_atuais[k] = list(BANCOS_PADRAO[k])
-                            precisa_salvar = True
-                        else:
-                            bancos_atuais[k] = lista_p
+                    for k, val_salvo in dados["bancos_perguntas"].items():
+                        if k in TEMAS_COM_DIFICULDADE:
+                            if isinstance(val_salvo, dict):
+                                for niv in NIVEIS_DIFICULDADE:
+                                    if niv in val_salvo and len(val_salvo[niv]) >= 10:
+                                        bancos_atuais[k][niv] = val_salvo[niv]
+                                    else:
+                                        precisa_salvar = True
+                            else:
+                                precisa_salvar = True
+                        elif k in BANCOS_PADRAO:
+                            if isinstance(val_salvo, list) and len(val_salvo) >= 10:
+                                bancos_atuais[k] = val_salvo
+                            else:
+                                precisa_salvar = True
                 else:
                     precisa_salvar = True
                 
@@ -783,13 +969,23 @@ def carregar_dados():
 
 def salvar_dados(bancos_perguntas, participantes, historico):
     dados = {
-        "perguntas_limpas_v2": True,
+        "niveis_dificuldade_v3": True,
         "bancos_perguntas": bancos_perguntas,
         "participantes": participantes,
         "historico": historico
     }
     with open(ARQUIVO_DADOS, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, indent=2)
+
+def contar_todas_perguntas(bancos_dict):
+    total = 0
+    for v in bancos_dict.values():
+        if isinstance(v, dict):
+            for lista_n in v.values():
+                total += len(lista_n)
+        elif isinstance(v, list):
+            total += len(v)
+    return total
 
 def limpar_prefixo_opcao(texto):
     return re.sub(r'^[A-Da-d][\)\.\-]\s*', '', texto.strip())
@@ -961,14 +1157,14 @@ def renderizar_dado_3d(numero_final=None, animar=False):
 # Inicialização de Estados da Sessão
 estados_iniciais = {
     "pagina": "menu", "participante": "", "modo_jogo_ativo": None,
-    "pergunta_idx": 0, "pontuacao": 0, "acertos": 0,
+    "dificuldade_ativa": "🟢 Fácil", "pergunta_idx": 0, "pontuacao": 0, "acertos": 0,
     "total_acertos_partida": 0, "total_erros_partida": 0,
     "inicio_partida": None, "tempo_final_congelado": None, "perguntas_sessao": [],
     "respondido": False, "ultima_resposta_correta": None, "dado_girado": False,
     "resultado_dado": None, "editando_idx": None, "tempo_restante": 30,
     "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False,
     "up_cnt": 0, "msg_upload_ok": "", "tema_gerir_selecionado": "⛪ Igreja",
-    "tema_img_cfg": "⛪ Igreja", "limpar_tela_jogo": False
+    "nivel_gerir_selecionado": "🟢 Fácil", "tema_img_cfg": "⛪ Igreja", "limpar_tela_jogo": False
 }
 for chave, valor_padrao in estados_iniciais.items():
     if chave not in st.session_state:
@@ -995,7 +1191,7 @@ def soltar_baloes():
         st.balloons()
 
 # ==============================================================================
-# SLOTS DE CONTEÚDO INDEPENDENTES (GARANTE QUE A TELA DE SELEÇÃO SEJA DESTRUÍDA!)
+# SLOTS DE CONTEÚDO INDEPENDENTES
 # ==============================================================================
 slot_selecao = st.empty()
 slot_jogo = st.empty()
@@ -1048,7 +1244,7 @@ if st.session_state.pagina == "menu":
                 st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE + MODO (DENTRO DO SLOT_SELECAO EXCLUSIVO)
+# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE (IGREJA, DESENHOS E ANIMES!)
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     slot_jogo.empty()
@@ -1078,19 +1274,40 @@ elif st.session_state.pagina == "selecionar_participante":
             if modo_escolhido != st.session_state.modo_jogo_ativo:
                 st.session_state.modo_jogo_ativo = modo_escolhido
                 st.rerun()
-                
-            if modo_escolhido == "🎲 Misturadão (Todos os Temas)":
-                qtd_disp = sum(len(v) for v in bancos_perguntas.values())
+
+            # SE FOR IGREJA, DESENHOS OU ANIMES, EXIBE O SELETOR DE DIFICULDADE!
+            pts_base_cfg = config.get("pontos_por_acerto", 100)
+            if modo_escolhido in TEMAS_COM_DIFICULDADE:
+                idx_dif = NIVEIS_DIFICULDADE.index(st.session_state.dificuldade_ativa) if st.session_state.dificuldade_ativa in NIVEIS_DIFICULDADE else 0
+                dif_escolhida = st.selectbox(
+                    "3️⃣ Escolha o Nível de Dificuldade:",
+                    NIVEIS_DIFICULDADE,
+                    index=idx_dif,
+                    key="sel_dif_jogo_sel"
+                )
+                st.session_state.dificuldade_ativa = dif_escolhida
+                pts_partida = int(pts_base_cfg * MULTIPLICADOR_PONTOS.get(dif_escolhida, 1.0))
+                qtd_disp = len(bancos_perguntas.get(modo_escolhido, {}).get(dif_escolhida, []))
+                resumo_badge = f"🎯 {modo_escolhido} ({dif_escolhida}) — {qtd_disp} perguntas | ⭐ {pts_partida} pts/acerto"
+                txt_botao_ini = f"▶️ Iniciar Quiz: {modo_escolhido} ({dif_escolhida})"
             else:
-                qtd_disp = len(bancos_perguntas.get(modo_escolhido, []))
+                dif_escolhida = None
+                st.session_state.dificuldade_ativa = None
+                pts_partida = pts_base_cfg
+                if modo_escolhido == "🎲 Misturadão (Todos os Temas)":
+                    qtd_disp = contar_todas_perguntas(bancos_perguntas)
+                else:
+                    qtd_disp = len(bancos_perguntas.get(modo_escolhido, []))
+                resumo_badge = f"🎯 Tema selecionado: {modo_escolhido} — {qtd_disp} perguntas disponíveis!"
+                txt_botao_ini = f"▶️ Iniciar Quiz: {modo_escolhido}"
                 
             st.markdown(
-                f"<div class='badge-wrapper'><div class='badge-modo'>🎯 Tema selecionado: {modo_escolhido} — {qtd_disp} perguntas disponíveis!</div></div>",
+                f"<div class='badge-wrapper'><div class='badge-modo'>{resumo_badge}</div></div>",
                 unsafe_allow_html=True
             )
             
             st.write("")
-            if st.button(f"▶️ Iniciar Quiz: {modo_escolhido}", key="btn_iniciar_quiz_sel", use_container_width=True):
+            if st.button(txt_botao_ini, key="btn_iniciar_quiz_sel", use_container_width=True):
                 nome_final = ""
                 if escolha_lista != "-- Selecione da lista --":
                     nome_final = escolha_lista
@@ -1103,16 +1320,23 @@ elif st.session_state.pagina == "selecionar_participante":
                 if nome_final:
                     if modo_escolhido == "🎲 Misturadão (Todos os Temas)":
                         lista_base = []
-                        for tema_k, lista_t in bancos_perguntas.items():
-                            lista_base.extend(lista_t)
+                        for val_b in bancos_perguntas.values():
+                            if isinstance(val_b, dict):
+                                for l_niv in val_b.values():
+                                    lista_base.extend(l_niv)
+                            elif isinstance(val_b, list):
+                                lista_base.extend(val_b)
+                    elif modo_escolhido in TEMAS_COM_DIFICULDADE:
+                        lista_base = list(bancos_perguntas.get(modo_escolhido, {}).get(dif_escolhida, []))
                     else:
                         lista_base = list(bancos_perguntas.get(modo_escolhido, []))
                         
                     if not lista_base:
-                        st.error("Este tema ainda não possui perguntas cadastradas!")
+                        st.error("Este modo/nível ainda não possui perguntas cadastradas!")
                     else:
                         st.session_state.participante = nome_final
                         st.session_state.modo_jogo_ativo = modo_escolhido
+                        st.session_state.dificuldade_ativa = dif_escolhida
                         st.session_state.pergunta_idx = 0
                         st.session_state.pontuacao = 0
                         st.session_state.acertos = 0
@@ -1154,7 +1378,6 @@ elif st.session_state.pagina == "selecionar_participante":
                             
                         random.shuffle(sessao)
                         st.session_state.perguntas_sessao = sessao
-                        # Ativa o ciclo rápido de limpeza antes de iniciar o relógio da Q1!
                         st.session_state.limpar_tela_jogo = True
                         ir_para_pagina("jogo")
                 else:
@@ -1168,14 +1391,12 @@ elif st.session_state.pagina == "selecionar_participante":
             mostrar_painel_tema(modo_especifico=modo_escolhido)
 
 # ==============================================================================
-# 3. TELA DO JOGO (DENTRO DO SLOT_JOGO + CICLO DE LIMPEZA ANTES DO SLEEP DA Q1!)
+# 3. TELA DO JOGO
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
-    # Destrói imediatamente qualquer elemento que estivesse no slot_selecao!
     slot_selecao.empty()
     slot_outros.empty()
     
-    # Se acabou de entrar na Q1, faz 1 ciclo completo sem sleep para o navegador apagar a tela anterior!
     if st.session_state.get("limpar_tela_jogo", False):
         st.session_state.limpar_tela_jogo = False
         st.rerun()
@@ -1184,7 +1405,9 @@ elif st.session_state.pagina == "jogo":
         p_idx = st.session_state.pergunta_idx
         total_p = len(st.session_state.perguntas_sessao)
         meta_dado = config.get("acertos_para_dado", 3)
-        pts_acerto = config.get("pontos_por_acerto", 100)
+        dif_atual = st.session_state.get("dificuldade_ativa")
+        mult = MULTIPLICADOR_PONTOS.get(dif_atual, 1.0) if dif_atual else 1.0
+        pts_acerto = int(config.get("pontos_por_acerto", 100) * mult)
         paleta = obter_paleta_ativa()
         
         if p_idx >= total_p:
@@ -1202,9 +1425,10 @@ elif st.session_state.pagina == "jogo":
         with col_jogo_esq:
             p = st.session_state.perguntas_sessao[p_idx]
             tempo_total_fmt = formatar_tempo_partida(obter_tempo_decorrido())
+            txt_dif_badge = f" ({dif_atual})" if dif_atual else ""
             
             st.markdown(
-                f"<div class='badge-wrapper'><div class='badge-modo'>Modo: {st.session_state.modo_jogo_ativo} &nbsp;|&nbsp; Pergunta {p_idx + 1} de {total_p}</div></div>",
+                f"<div class='badge-wrapper'><div class='badge-modo'>Modo: {st.session_state.modo_jogo_ativo}{txt_dif_badge} &nbsp;|&nbsp; Pergunta {p_idx + 1} de {total_p}</div></div>",
                 unsafe_allow_html=True
             )
             
@@ -1280,7 +1504,7 @@ elif st.session_state.pagina == "jogo":
                 placeholder_tempo.markdown("<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
                 
                 if st.session_state.ultima_resposta_correta:
-                    st.success("🎉 Resposta CORRETA! Parabéns!")
+                    st.success(f"🎉 Resposta CORRETA! (+{pts_acerto} pontos)")
                     tocar_audio_invisivel(SOM_ACERTO)
                 else:
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
@@ -1296,7 +1520,7 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.markdown(
                             f"<h3 style='text-align: center; color: {paleta['cor_destaque']};'>🏆 DADO PREMIADO LIBERADO ({st.session_state.acertos} ACERTOS)!<br>"
-                            f"<span style='font-size: 20px; opacity: 0.85;'>Quer continuar respondendo o desafio ou girar o dado agora?</span></h3>",
+                            f"<span style='font-size: 20px; opacity: 0.85;'>Quer continuar respondendo o desafio ou encerrar para girar o dado agora?</span></h3>",
                             unsafe_allow_html=True
                         )
                     else:
@@ -1319,8 +1543,7 @@ elif st.session_state.pagina == "jogo":
                         st.session_state.dado_disponivel = False
                         st.session_state.baloes_mostrados = False
                         st.session_state.respondido = False
-                        st.session_state.pergunta_idx += 1
-                        st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+                        st.session_state.tempo_final_congelado = obter_tempo_decorrido()
                         st.session_state.dado_girado = False
                         ir_para_pagina("dado")
                 else:
@@ -1342,14 +1565,15 @@ elif st.session_state.pagina == "jogo":
                     ir_para_pagina("fim")
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO
+# 4. SALA DO DADO PREMIADO (SEM BOTÃO DE VOLTAR PRO QUIZ — VAI PRO RESUMO FINAL!)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     slot_selecao.empty()
     slot_jogo.empty()
     with slot_outros.container():
+        dif_str = f" - {st.session_state.dificuldade_ativa}" if st.session_state.get("dificuldade_ativa") else ""
         st.markdown(f"<h1 style='text-align: center;'>{config['txt_sala_dado']}</h1>", unsafe_allow_html=True)
-        st.markdown(f"<h3 style='text-align: center; opacity: 0.85;'>{st.session_state.participante} ({st.session_state.modo_jogo_ativo}) — {config['txt_sub_dado']}</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='text-align: center; opacity: 0.85;'>{st.session_state.participante} ({st.session_state.modo_jogo_ativo}{dif_str}) — {config['txt_sub_dado']}</h3>", unsafe_allow_html=True)
         st.write("")
         
         col1, col2, col3 = st.columns([1, 2, 1])
@@ -1373,12 +1597,15 @@ elif st.session_state.pagina == "dado":
                     st.session_state.dado_girado = True
                     
                     tempo_gasto_fmt = formatar_tempo_partida(obter_tempo_decorrido())
+                    total_resp = st.session_state.total_acertos_partida + st.session_state.total_erros_partida
+                    precisao = int((st.session_state.total_acertos_partida / total_resp) * 100) if total_resp > 0 else 0
                     reg = (
                         f"Participante: {st.session_state.participante} | "
-                        f"Modo: {st.session_state.modo_jogo_ativo} | "
+                        f"Modo: {st.session_state.modo_jogo_ativo}{dif_str} | "
                         f"Pontos: {st.session_state.pontuacao} | "
                         f"Acertos: {st.session_state.total_acertos_partida} | "
                         f"Erros: {st.session_state.total_erros_partida} | "
+                        f"Precisão: {precisao}% | "
                         f"Tempo: {tempo_gasto_fmt} | "
                         f"Dado: Saiu {resultado_final}"
                     )
@@ -1397,16 +1624,11 @@ elif st.session_state.pagina == "dado":
                 st.success(f"O participante {st.session_state.participante} tirou o número {res} no dado e ganhou o prêmio!")
                 st.write("")
                 
-                if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
-                    if st.button("▶️ Continuar Quiz (Próxima Pergunta)", use_container_width=True):
-                        st.session_state.dado_girado = False
-                        st.session_state.historico_salvo_partida = False
-                        st.session_state.limpar_tela_jogo = True
-                        ir_para_pagina("jogo")
-                        
-                if st.button("🏁 Encerrar Partida e Ver Resumo Final", use_container_width=True):
+                # Apenas o botão de encerrar a partida e ver o resumo final!
+                if st.button("🏁 Encerrar Partida e Ver Resumo Final", key="btn_ir_dado", use_container_width=True):
                     st.session_state.dado_girado = False
-                    st.session_state.tempo_final_congelado = obter_tempo_decorrido()
+                    if st.session_state.tempo_final_congelado is None:
+                        st.session_state.tempo_final_congelado = obter_tempo_decorrido()
                     ir_para_pagina("fim")
 
 # ==============================================================================
@@ -1417,6 +1639,7 @@ elif st.session_state.pagina == "fim":
     slot_jogo.empty()
     with slot_outros.container():
         modo_fim = obter_modo_visual_atual()
+        dif_str = f" - {st.session_state.dificuldade_ativa}" if st.session_state.get("dificuldade_ativa") else ""
         paleta = obter_paleta_ativa()
         if st.session_state.tempo_final_congelado is None:
             st.session_state.tempo_final_congelado = obter_tempo_decorrido()
@@ -1428,7 +1651,7 @@ elif st.session_state.pagina == "fim":
         if not st.session_state.historico_salvo_partida:
             reg_final = (
                 f"Participante: {st.session_state.participante} | "
-                f"Modo: {modo_fim} | "
+                f"Modo: {modo_fim}{dif_str} | "
                 f"Pontos: {st.session_state.pontuacao} | "
                 f"Acertos: {st.session_state.total_acertos_partida} | "
                 f"Erros: {st.session_state.total_erros_partida} | "
@@ -1440,7 +1663,7 @@ elif st.session_state.pagina == "fim":
             st.session_state.historico_salvo_partida = True
             
         st.markdown(f"<h1 style='text-align: center;'>{config['txt_titulo_fim']}</h1>", unsafe_allow_html=True)
-        st.markdown(f"<h2 style='text-align: center;'>Participante: {st.session_state.participante} ({modo_fim})</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='text-align: center;'>Participante: {st.session_state.participante} ({modo_fim}{dif_str})</h2>", unsafe_allow_html=True)
         st.markdown(
             f"<h3 style='text-align: center; color: {paleta['cor_destaque']};'>"
             f"⭐ {st.session_state.pontuacao} Pontos &nbsp;|&nbsp; "
@@ -1562,13 +1785,13 @@ elif st.session_state.pagina == "historico":
             st.info("Ainda não existem registos no histórico.")
 
 # ==============================================================================
-# 8. GERIR / EDITAR AS 900 PERGUNTAS SEPARADAS POR TEMA
+# 8. GERIR / EDITAR AS 1.800 PERGUNTAS SEPARADAS POR TEMA & NÍVEL
 # ==============================================================================
 elif st.session_state.pagina == "gerir_perguntas":
     slot_selecao.empty()
     slot_jogo.empty()
     with slot_outros.container():
-        st.markdown("<h2 style='text-align: center;'>📝 Gestão de Perguntas por Modo de Jogo (900 Perguntas)</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>📝 Gestão de Perguntas por Tema & Dificuldade</h2>", unsafe_allow_html=True)
         
         col_topo_esq, col_topo_meio, col_topo_dir = st.columns([1, 1, 1])
         with col_topo_esq:
@@ -1577,21 +1800,25 @@ elif st.session_state.pagina == "gerir_perguntas":
                 st.session_state.modo_jogo_ativo = None
                 ir_para_pagina("menu")
         with col_topo_meio:
-            if st.button("➕ Nova Pergunta neste Tema", key="btn_nova_perg_topo", use_container_width=True):
+            if st.button("➕ Nova Pergunta neste Banco", key="btn_nova_perg_topo", use_container_width=True):
                 st.session_state.editando_idx = -1
                 st.rerun()
         with col_topo_dir:
-            if st.button("🔄 Restaurar 100 Perguntas deste Tema", key="btn_reset_tema", use_container_width=True):
+            if st.button("🔄 Restaurar 100 Perguntas deste Banco", key="btn_reset_tema", use_container_width=True):
                 tema_atual = st.session_state.tema_gerir_selecionado
-                bancos_perguntas[tema_atual] = list(BANCOS_PADRAO[tema_atual])
+                niv_atual = st.session_state.nivel_gerir_selecionado
+                if tema_atual in TEMAS_COM_DIFICULDADE:
+                    bancos_perguntas[tema_atual][niv_atual] = list(BANCOS_PADRAO[tema_atual][niv_atual])
+                else:
+                    bancos_perguntas[tema_atual] = list(BANCOS_PADRAO[tema_atual])
                 salvar_dados(bancos_perguntas, participantes, historico)
-                st.success(f"As 100 perguntas de {tema_atual} foram restauradas!")
+                st.success("As 100 perguntas deste banco foram restauradas!")
                 st.rerun()
 
         st.write("")
         temas_disponiveis = list(BANCOS_PADRAO.keys())
         idx_t = temas_disponiveis.index(st.session_state.tema_gerir_selecionado) if st.session_state.tema_gerir_selecionado in temas_disponiveis else 0
-        tema_sel_gerir = st.selectbox("📂 Selecione o Banco de Dados / Modo de Jogo para ver ou editar:", temas_disponiveis, index=idx_t)
+        tema_sel_gerir = st.selectbox("📂 1. Selecione o Modo de Jogo:", temas_disponiveis, index=idx_t)
         
         if tema_sel_gerir != st.session_state.tema_gerir_selecionado:
             st.session_state.tema_gerir_selecionado = tema_sel_gerir
@@ -1599,13 +1826,25 @@ elif st.session_state.pagina == "gerir_perguntas":
             st.session_state.editando_idx = None
             st.rerun()
 
-        perguntas_do_tema = bancos_perguntas.get(tema_sel_gerir, [])
+        if tema_sel_gerir in TEMAS_COM_DIFICULDADE:
+            idx_n = NIVEIS_DIFICULDADE.index(st.session_state.nivel_gerir_selecionado) if st.session_state.nivel_gerir_selecionado in NIVEIS_DIFICULDADE else 0
+            niv_sel_gerir = st.selectbox("🎯 2. Selecione o Nível de Dificuldade:", NIVEIS_DIFICULDADE, index=idx_n)
+            if niv_sel_gerir != st.session_state.nivel_gerir_selecionado:
+                st.session_state.nivel_gerir_selecionado = niv_sel_gerir
+                st.session_state.editando_idx = None
+                st.rerun()
+            perguntas_do_tema = bancos_perguntas.get(tema_sel_gerir, {}).get(niv_sel_gerir, [])
+            rotulo_banco = f"{tema_sel_gerir} ({niv_sel_gerir})"
+        else:
+            niv_sel_gerir = None
+            perguntas_do_tema = bancos_perguntas.get(tema_sel_gerir, [])
+            rotulo_banco = tema_sel_gerir
 
         if st.session_state.editando_idx is not None:
             idx_edit = st.session_state.editando_idx
             is_novo = (idx_edit == -1)
             
-            titulo_form = f"Adicionar Nova Pergunta em {tema_sel_gerir}" if is_novo else f"Editar Pergunta #{idx_edit + 1} ({tema_sel_gerir})"
+            titulo_form = f"Adicionar Nova Pergunta em {rotulo_banco}" if is_novo else f"Editar Pergunta #{idx_edit + 1} ({rotulo_banco})"
             st.markdown(f"<h3 style='text-align: center;'>{titulo_form}</h3>", unsafe_allow_html=True)
             
             p_val = perguntas_do_tema[idx_edit]["pergunta"] if not is_novo else ""
@@ -1630,7 +1869,10 @@ elif st.session_state.pagina == "gerir_perguntas":
                                 perguntas_do_tema.insert(0, item_novo)
                             else:
                                 perguntas_do_tema[idx_edit] = item_novo
-                            bancos_perguntas[tema_sel_gerir] = perguntas_do_tema
+                            if tema_sel_gerir in TEMAS_COM_DIFICULDADE:
+                                bancos_perguntas[tema_sel_gerir][niv_sel_gerir] = perguntas_do_tema
+                            else:
+                                bancos_perguntas[tema_sel_gerir] = perguntas_do_tema
                             salvar_dados(bancos_perguntas, participantes, historico)
                             st.session_state.editando_idx = None
                             st.success("Pergunta salva com sucesso!")
@@ -1645,9 +1887,9 @@ elif st.session_state.pagina == "gerir_perguntas":
                 st.rerun()
                 
         st.write("---")
-        st.markdown(f"<h3 style='text-align: center;'>📋 Perguntas de {tema_sel_gerir} ({len(perguntas_do_tema)} cadastradas)</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='text-align: center;'>📋 Perguntas de {rotulo_banco} ({len(perguntas_do_tema)} cadastradas)</h3>", unsafe_allow_html=True)
         
-        busca_txt = st.text_input("🔍 Filtrar / Pesquisar pergunta neste tema:", "")
+        busca_txt = st.text_input("🔍 Filtrar / Pesquisar pergunta neste banco:", "")
         
         for idx, item in enumerate(perguntas_do_tema):
             if busca_txt.strip().lower() in item["pergunta"].lower() or busca_txt.strip().lower() in item["resposta"].lower():
@@ -1655,13 +1897,16 @@ elif st.session_state.pagina == "gerir_perguntas":
                 with col_txt:
                     st.write(f"**{idx+1}. {item['pergunta']}** *(Resp: {item['resposta']})*")
                 with col_edit:
-                    if st.button("✏️", key=f"edit_p_{tema_sel_gerir}_{idx}"):
+                    if st.button("✏️", key=f"edit_p_{rotulo_banco}_{idx}"):
                         st.session_state.editando_idx = idx
                         st.rerun()
                 with col_del:
-                    if st.button("🗑️", key=f"del_p_{tema_sel_gerir}_{idx}"):
+                    if st.button("🗑️", key=f"del_p_{rotulo_banco}_{idx}"):
                         perguntas_do_tema.pop(idx)
-                        bancos_perguntas[tema_sel_gerir] = perguntas_do_tema
+                        if tema_sel_gerir in TEMAS_COM_DIFICULDADE:
+                            bancos_perguntas[tema_sel_gerir][niv_sel_gerir] = perguntas_do_tema
+                        else:
+                            bancos_perguntas[tema_sel_gerir] = perguntas_do_tema
                         salvar_dados(bancos_perguntas, participantes, historico)
                         st.rerun()
 
@@ -1771,7 +2016,7 @@ elif st.session_state.pagina == "configuracoes":
                 tempo_alerta_val = st.number_input("Alerta Vermelho nos últimos (seg):", 1, 30, int(config.get("tempo_alerta", 5)))
             with cr2:
                 acertos_dado_val = st.number_input("Acertos para liberar o Dado:", 1, 20, int(config.get("acertos_para_dado", 3)))
-                pts_acerto_val = st.number_input("Pontos ganhos por Acerto:", 10, 1000, int(config.get("pontos_por_acerto", 100)), 10)
+                pts_acerto_val = st.number_input("Pontos Base por Acerto (Fácil=1x, Normal=1.5x, Hard=2.5x, Impossível=5x):", 10, 1000, int(config.get("pontos_por_acerto", 100)), 10)
 
             st.divider()
             st.markdown("<h3 style='text-align: center;'>📏 Ajuste de Tamanho de Letras e Botões</h3>", unsafe_allow_html=True)
@@ -1837,11 +2082,11 @@ elif st.session_state.pagina == "configuracoes":
 
             st.divider()
             st.markdown("<h3 style='text-align: center;'>♻️ Restaurar Padrão de Fábrica</h3>", unsafe_allow_html=True)
-            if st.button("🔄 Restaurar Todas as Configurações e as 900 Perguntas", key="btn_restaurar_orig"):
+            if st.button("🔄 Restaurar Todas as Configurações e as 1.800 Perguntas", key="btn_restaurar_orig"):
                 salvar_config(obter_config_padrao())
-                salvar_dados(construir_bancos_900(), participantes, historico)
+                salvar_dados(copiar_bancos_padrao(), participantes, historico)
                 st.session_state.up_cnt += 1
-                st.session_state.msg_upload_ok = "🔄 Configurações e banco de 900 perguntas restaurados com sucesso!"
+                st.session_state.msg_upload_ok = "🔄 Configurações e banco de 1.800 perguntas restaurados com sucesso!"
                 st.rerun()
 
         st.write("---")
