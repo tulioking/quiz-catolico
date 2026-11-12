@@ -1,1 +1,1020 @@
-
+{
+    "perguntas": [
+        {
+            "pergunta": "Em que ano foi proclamado o Dogma da Imaculada Conceição pelo Papa Pio IX?",
+            "opcoes": [
+                "A) 1854",
+                "B) 1950",
+                "C) 1891",
+                "D) 1250"
+            ],
+            "resposta": "A) 1854"
+        },
+        {
+            "pergunta": "Qual é a cor litúrgica principal associada às festividades de Nossa Senhora?",
+            "opcoes": [
+                "A) Vermelho",
+                "B) Azul / Branco",
+                "C) Verde",
+                "D) Roxo"
+            ],
+            "resposta": "B) Azul / Branco"
+        },
+        {
+            "pergunta": "Quem foi a jovem santa a quem Nossa Senhora apareceu em Lourdes, França?",
+            "opcoes": [
+                "A) Santa Teresinha",
+                "B) Santa Clara",
+                "C) Santa Bernadette",
+                "D) Santa Rita"
+            ],
+            "resposta": "C) Santa Bernadette"
+        },
+        {
+            "pergunta": "Qual é o nome do rio onde Jesus foi batizado por João Batista?",
+            "opcoes": [
+                "A) Rio Nilo",
+                "B) Rio Amazonas",
+                "C) Rio Jordão",
+                "D) Rio Tibre"
+            ],
+            "resposta": "C) Rio Jordão"
+        },
+        {
+            "pergunta": "Quantos apóstolos Jesus escolheu para caminhar com Ele?",
+            "opcoes": [
+                "A) 7",
+                "B) 10",
+                "C) 12",
+                "D) 40"
+            ],
+            "resposta": "C) 12"
+        },
+        {
+            "pergunta": "Qual o nome do pai terreno de Jesus (marido de Maria)?",
+            "opcoes": [
+                "A) Zacarias",
+                "B) José",
+                "C) Simeão",
+                "D) Abraham"
+            ],
+            "resposta": "B) José"
+        },
+        {
+            "pergunta": "O que significa a palavra 'Bíblia'?",
+            "opcoes": [
+                "A) Livros",
+                "B) Cartas sagradas",
+                "C) História antiga",
+                "D) Palavra de ouro"
+            ],
+            "resposta": "A) Livros"
+        },
+        {
+            "pergunta": "Quem construiu a arca para salvar os animais do dilúvio?",
+            "opcoes": [
+                "A) Moisés",
+                "B) Abraão",
+                "C) Noé",
+                "D) Davi"
+            ],
+            "resposta": "C) Noé"
+        },
+        {
+            "pergunta": "Qual o nome do primeiro Papa da Igreja Católica?",
+            "opcoes": [
+                "A) São Paulo",
+                "B) São Pedro",
+                "C) São João",
+                "D) São Francisco"
+            ],
+            "resposta": "B) São Pedro"
+        },
+        {
+            "pergunta": "Em qual cidade Jesus nasceu?",
+            "opcoes": [
+                "A) Nazaré",
+                "B) Jerusalém",
+                "C) Belém",
+                "D) Cafarnaum"
+            ],
+            "resposta": "C) Belém"
+        },
+        {
+            "pergunta": "Qual era a profissão de São José antes de cuidar da Sagrada Família?",
+            "opcoes": [
+                "A) Pescador",
+                "B) Carpinteiro",
+                "C) Pastor de ovelhas",
+                "D) Cozinheiro"
+            ],
+            "resposta": "B) Carpinteiro"
+        },
+        {
+            "pergunta": "Quantos livros tem o Novo Testamento?",
+            "opcoes": [
+                "A) 27",
+                "B) 46",
+                "C) 73",
+                "D) 10"
+            ],
+            "resposta": "A) 27"
+        },
+        {
+            "pergunta": "Qual é a oração que o próprio Jesus nos ensinou?",
+            "opcoes": [
+                "A) Ave-Maria",
+                "B) Salve Rainha",
+                "C) Pai-Nosso",
+                "D) Credo"
+            ],
+            "resposta": "C) Pai-Nosso"
+        },
+        {
+            "pergunta": "Quem derrubou o gigante Golias usando apenas uma funda e uma pedra?",
+            "opcoes": [
+                "A) Sansão",
+                "B) Salomão",
+                "C) Davi",
+                "D) Saul"
+            ],
+            "resposta": "C) Davi"
+        },
+        {
+            "pergunta": "Qual animal tentou Eva no Jardim do Éden?",
+            "opcoes": [
+                "A) Um leão",
+                "B) Uma serpente",
+                "C) Um urso",
+                "D) Um macaco"
+            ],
+            "resposta": "B) Uma serpente"
+        },
+        {
+            "pergunta": "Qual o nome do anjo que anunciou a Maria que ela seria a mãe de Jesus?",
+            "opcoes": [
+                "A) Arcanjo Miguel",
+                "B) Arcanjo Rafael",
+                "C) Arcanjo Gabriel",
+                "D) Anjo da Guarda"
+            ],
+            "resposta": "C) Arcanjo Gabriel"
+        },
+        {
+            "pergunta": "Em qual festa litúrgica o Espírito Santo desceu sobre os apóstolos em forma de línguas de fogo?",
+            "opcoes": [
+                "A) Páscoa",
+                "B) Natal",
+                "C) Pentecostes",
+                "D) Corpus Christi"
+            ],
+            "resposta": "C) Pentecostes"
+        },
+        {
+            "pergunta": "Qual o sacramento que nos apaga o pecado original e nos torna filhos de Deus?",
+            "opcoes": [
+                "A) Crisma",
+                "B) Batismo",
+                "C) Eucaristia",
+                "D) Matrimônio"
+            ],
+            "resposta": "B) Batismo"
+        },
+        {
+            "pergunta": "O que comemoramos no Domingo de Páscoa?",
+            "opcoes": [
+                "A) O nascimento de Jesus",
+                "B) A ressurreição de Jesus",
+                "C) A subida de Maria ao céu",
+                "D) A descida do Espírito Santo"
+            ],
+            "resposta": "B) A ressurreição de Jesus"
+        },
+        {
+            "pergunta": "Quantos dias e noites durou o dilúvio na época de Noé?",
+            "opcoes": [
+                "A) 7 dias e 7 noites",
+                "B) 40 dias e 40 noites",
+                "C) 100 dias e 100 noites",
+                "D) 3 dias e 3 noites"
+            ],
+            "resposta": "B) 40 dias e 40 noites"
+        },
+        {
+            "pergunta": "Quem foi engolido por um grande peixe (ou baleia) após desobedecer a Deus?",
+            "opcoes": [
+                "A) Jonas",
+                "B) Daniel",
+                "C) Jeremias",
+                "D) Ezequiel"
+            ],
+            "resposta": "A) Jonas"
+        },
+        {
+            "pergunta": "Qual o nome da montanha onde Moisés recebeu as Tábuas da Lei (Os Dez Mandamentos)?",
+            "opcoes": [
+                "A) Monte das Oliveiras",
+                "B) Monte Sinai",
+                "C) Monte Carmelo",
+                "D) Monte Tabor"
+            ],
+            "resposta": "B) Monte Sinai"
+        },
+        {
+            "pergunta": "Qual foi o primeiro milagre de Jesus, realizado nas bodas de Caná?",
+            "opcoes": [
+                "A) Multiplicação dos pães",
+                "B) Andar sobre as águas",
+                "C) Transformar água em vinho",
+                "D) Curar um cego"
+            ],
+            "resposta": "C) Transformar água em vinho"
+        },
+        {
+            "pergunta": "Qual santa é conhecida como a 'Florzinha de Jesus' e doutora da Igreja?",
+            "opcoes": [
+                "A) Santa Teresa d'Ávila",
+                "B) Santa Teresinha do Menino Jesus",
+                "C) Santa Cecília",
+                "D) Santa Luzia"
+            ],
+            "resposta": "B) Santa Teresinha do Menino Jesus"
+        },
+        {
+            "pergunta": "Como se chama a mesa onde o padre celebra a Missa?",
+            "opcoes": [
+                "A) Banco",
+                "B) Altar",
+                "C) Ambão",
+                "D) Sacrário"
+            ],
+            "resposta": "B) Altar"
+        },
+        {
+            "pergunta": "Onde fica guardada a Eucaristia (Santíssimo Sacramento) fora do horário da missa?",
+            "opcoes": [
+                "A) Na pia batismal",
+                "B) No Sacrário (Tabernáculo)",
+                "C) Na sacristia",
+                "D) No ambão"
+            ],
+            "resposta": "B) No Sacrário (Tabernáculo)"
+        },
+        {
+            "pergunta": "Qual é o nome do livro de onde são lidas as leituras da Bíblia durante a Missa?",
+            "opcoes": [
+                "A) Catecismo",
+                "B) Lecionário (ou Bíblia)",
+                "C) Hinário",
+                "D) Boletim paroquial"
+            ],
+            "resposta": "B) Lecionário (ou Bíblia)"
+        },
+        {
+            "pergunta": "Quem foi o santo que amava muito os animais e a natureza, e criou o primeiro presépio?",
+            "opcoes": [
+                "A) São Antônio",
+                "B) São Francisco de Assis",
+                "C) São Bento",
+                "D) São Judas Tadeu"
+            ],
+            "resposta": "B) São Francisco de Assis"
+        },
+        {
+            "pergunta": "Qual o santo casamenteiro e padroeiro dos aflitos e achados perdidos?",
+            "opcoes": [
+                "A) São Valentim",
+                "B) São José",
+                "C) São Antônio",
+                "D) São Pancrácio"
+            ],
+            "resposta": "C) São Antônio"
+        },
+        {
+            "pergunta": "Em quantas partes principais a Bíblia Sagrada está dividida?",
+            "opcoes": [
+                "A) 2 (Antigo e Novo Testamento)",
+                "B) 3 (Passado, Presente e Futuro)",
+                "C) 4 (Evangelhos)",
+                "D) 10 (Mandamentos)"
+            ],
+            "resposta": "A) 2 (Antigo e Novo Testamento)"
+        },
+        {
+            "pergunta": "Quantos animais de cada espécie Moisés colocou dentro da Arca?",
+            "opcoes": [
+                "A) Dois de cada espécie",
+                "B) Sete de cada espécie",
+                "C) Nenhum, quem colocou foi Noé!",
+                "D) Um casal de cada espécie"
+            ],
+            "resposta": "C) Nenhum, quem colocou foi Noé!"
+        },
+        {
+            "pergunta": "Qual é a cor dos paramentos usados pelo padre no Tempo Comum?",
+            "opcoes": [
+                "A) Vermelho",
+                "B) Verde",
+                "C) Roxo",
+                "D) Branco"
+            ],
+            "resposta": "B) Verde"
+        },
+        {
+            "pergunta": "O que significa a sigla INRI escrita na cruz de Jesus?",
+            "opcoes": [
+                "A) Igreja Nova dos Reis de Israel",
+                "B) Jesus Nazareno, Rei dos Judeus",
+                "C) Irmãos Na Redenção de Israel",
+                "D) José Nazaré Redentor Imaculado"
+            ],
+            "resposta": "B) Jesus Nazareno, Rei dos Judeus"
+        },
+        {
+            "pergunta": "Quem subiu em uma árvore (Sicômoro) para conseguir ver Jesus passar porque era baixinho?",
+            "opcoes": [
+                "A) Zaqueu",
+                "B) Nicodemos",
+                "C) Bartimeu",
+                "D) Lázaro"
+            ],
+            "resposta": "A) Zaqueu"
+        },
+        {
+            "pergunta": "Qual é o santo protetor contra os ladrões, causas desesperadas e padroeiro das causas impossíveis?",
+            "opcoes": [
+                "A) São Judas Tadeu",
+                "B) São Sebastião",
+                "C) São Longuinho",
+                "D) São Jorge"
+            ],
+            "resposta": "A) São Judas Tadeu"
+        },
+        {
+            "pergunta": "De que cor era a túnica branca de Jesus?",
+            "opcoes": [
+                "A) Azul escuro",
+                "B) Vermelha",
+                "C) Branca",
+                "D) Colorida"
+            ],
+            "resposta": "C) Branca"
+        },
+        {
+            "pergunta": "Qual o nome do Papa atual da Igreja Católica (em 2026)?",
+            "opcoes": [
+                "A) Papa Bento XVI",
+                "B) Papa João Paulo II",
+                "C) Papa Francisco",
+                "D) Papa Leão XIII"
+            ],
+            "resposta": "C) Papa Francisco"
+        },
+        {
+            "pergunta": "Qual o nome do santo guerreiro que, segundo a lenda popular, venceu o dragão?",
+            "opcoes": [
+                "A) São Miguel",
+                "B) São Jorge",
+                "C) São Cristóvão",
+                "D) São Jerônimo"
+            ],
+            "resposta": "B) São Jorge"
+        },
+        {
+            "pergunta": "Como se chama o período de 40 dias de preparação para a Páscoa?",
+            "opcoes": [
+                "A) Advento",
+                "B) Quaresma",
+                "C) Tríduo Pascal",
+                "D) Festa Junina"
+            ],
+            "resposta": "B) Quaresma"
+        },
+        {
+            "pergunta": "Como se chama o período de 40 dias de preparação para o Natal?",
+            "opcoes": [
+                "A) Quaresma",
+                "B) Advento",
+                "C) Pentecostes",
+                "D) Epifania"
+            ],
+            "resposta": "B) Advento"
+        },
+        {
+            "pergunta": "Qual destes quatro NÃO é um Evangelista?",
+            "opcoes": [
+                "A) Mateus",
+                "B) Marcos",
+                "C) Paulo",
+                "D) João"
+            ],
+            "resposta": "C) Paulo"
+        },
+        {
+            "pergunta": "Quem foi jogado na cova dos leões por rezar a Deus, mas saiu são e salvo?",
+            "opcoes": [
+                "A) Daniel",
+                "B) José do Egito",
+                "C) Elias",
+                "D) Isaías"
+            ],
+            "resposta": "A) Daniel"
+        },
+        {
+            "pergunta": "Quantos ovos de galinha couberam na Arca de Noé antes da chuva começar?",
+            "opcoes": [
+                "A) Uma centena",
+                "B) Milhares",
+                "C) Nenhuma galinha levou ovos marcados",
+                "D) Nenhuma das alternativas, essa é para testar a atenção!"
+            ],
+            "resposta": "D) Nenhuma das alternativas, essa é para testar a atenção!"
+        },
+        {
+            "pergunta": "Qual é o nome da festa que celebra a instituição da Eucaristia e a presença real de Cristo no Santíssimo Sacramento?",
+            "opcoes": [
+                "A) Corpus Christi",
+                "B) Finados",
+                "C) Cinzas",
+                "D) Assunção"
+            ],
+            "resposta": "A) Corpus Christi"
+        },
+        {
+            "pergunta": "Quem ajudou Jesus a carregar a cruz rumo ao Calvário?",
+            "opcoes": [
+                "A) Simão de Cirene (Cirineu)",
+                "B) José de Arimateia",
+                "C) Pilatos",
+                "D) Barabás"
+            ],
+            "resposta": "A) Simão de Cirene (Cirineu)"
+        },
+        {
+            "pergunta": "Qual é o nome do lugar onde rezamos o terço meditando os mistérios da vida de Jesus e Maria?",
+            "opcoes": [
+                "A) Santo Rosário",
+                "B) Missal",
+                "C) Lecionário",
+                "D) Catecismo"
+            ],
+            "resposta": "A) Santo Rosário"
+        },
+        {
+            "pergunta": "Qual dos apóstolos negou Jesus três vezes antes do galo cantar?",
+            "opcoes": [
+                "A) Judas Iscariotes",
+                "B) Tomé",
+                "C) Pedro",
+                "D) Tiago"
+            ],
+            "resposta": "C) Pedro"
+        },
+        {
+            "pergunta": "Qual apóstolo ficou conhecido como o 'duvidoso' por querer tocar nas chagas de Jesus?",
+            "opcoes": [
+                "A) Filipe",
+                "B) Tomé",
+                "C) André",
+                "D) Bartolomeu"
+            ],
+            "resposta": "B) Tomé"
+        },
+        {
+            "pergunta": "O que comemoramos no dia 8 de dezembro na nossa Paróquia da Imaculada Conceição?",
+            "opcoes": [
+                "A) O Natal de Jesus",
+                "B) O Dogma da Imaculada Conceição de Maria",
+                "C) A aparição de Fátima",
+                "D) O dia de Todos os Santos"
+            ],
+            "resposta": "B) O Dogma da Imaculada Conceição de Maria"
+        },
+        {
+            "pergunta": "Se o galo cantou três vezes quando Pedro negou Jesus, quem acordou a vizinhança inteira?",
+            "opcoes": [
+                "A) O vigia da cidade",
+                "B) O próprio galo",
+                "C) Os guardas do templo",
+                "D) Ninguém, foi só um sinal bíblico!"
+            ],
+            "resposta": "B) O próprio galo"
+        },
+        {
+            "pergunta": "Qual o nome da mãe de Nossa Senhora (e avó de Jesus)?",
+            "opcoes": [
+                "A) Isabel",
+                "B) Ana",
+                "C) Marta",
+                "D) Madalena"
+            ],
+            "resposta": "B) Ana"
+        },
+        {
+            "pergunta": "Qual o nome do pai de Nossa Senhora (e avô de Jesus)?",
+            "opcoes": [
+                "A) Joaquim",
+                "B) Zacarias",
+                "C) José",
+                "D) Eli"
+            ],
+            "resposta": "A) Joaquim"
+        },
+        {
+            "pergunta": "Quem foi a prima de Maria que deu à luz a João Batista na velhice?",
+            "opcoes": [
+                "A) Rute",
+                "B) Isabel",
+                "C) Ester",
+                "D) Noemi"
+            ],
+            "resposta": "B) Isabel"
+        },
+        {
+            "pergunta": "Qual o nome do monte onde Jesus foi crucificado?",
+            "opcoes": [
+                "A) Calvário (ou Gólgota)",
+                "B) Monte Sinai",
+                "C) Monte das Oliveiras",
+                "D) Monte Carmelo"
+            ],
+            "resposta": "A) Calvário (ou Gólgota)"
+        },
+        {
+            "pergunta": "Qual sacramento nos perdoa os pecados e nos reconcilia com Deus?",
+            "opcoes": [
+                "A) Confissão (Reconciliação / Penitência)",
+                "B) Crisma",
+                "C) Ordem",
+                "D) Unção dos Enfermos"
+            ],
+            "resposta": "A) Confissão (Reconciliação / Penitência)"
+        },
+        {
+            "pergunta": "Quantos mandamentos tem a Lei de Deus?",
+            "opcoes": [
+                "A) 3",
+                "B) 7",
+                "C) 10",
+                "D) 12"
+            ],
+            "resposta": "C) 10"
+        },
+        {
+            "pergunta": "Qual é o primeiro mandamento da Lei de Deus?",
+            "opcoes": [
+                "A) Amar a Deus sobre todas as coisas",
+                "B) Guardar os domingos e festas de guarda",
+                "C) Não matar",
+                "D) Honrar pai e mãe"
+            ],
+            "resposta": "A) Amar a Deus sobre todas as coisas"
+        },
+        {
+            "pergunta": "Quantos mandamentos da Lei de Deus cabem em um bilhete único de ônibus?",
+            "opcoes": [
+                "A) Todos, se escrever bem pequenininho",
+                "B) Só cabem 5",
+                "C) Nenhum, mandamento é pra guardar no coração!",
+                "D) Cabe a lei de trânsito"
+            ],
+            "resposta": "C) Nenhum, mandamento é pra guardar no coração!"
+        },
+        {
+            "pergunta": "Quem escreveu a maior parte das Cartas do Novo Testamento?",
+            "opcoes": [
+                "A) São Pedro",
+                "B) São Paulo",
+                "C) São Tiago",
+                "D) São João"
+            ],
+            "resposta": "B) São Paulo"
+        },
+        {
+            "pergunta": "Qual é o nome do santo protetor dos motoristas e viajantes que costuma ir no retrovisor dos carros?",
+            "opcoes": [
+                "A) São Cristóvão",
+                "B) São Sebastião",
+                "C) São Expedito",
+                "D) São Lucas"
+            ],
+            "resposta": "A) São Cristóvão"
+        },
+        {
+            "pergunta": "Qual é o santo conhecido como o 'santo das causas urgentes'?",
+            "opcoes": [
+                "A) São Expedito",
+                "B) São Judas Tadeu",
+                "C) Santo Agostinho",
+                "D) São Jerônimo"
+            ],
+            "resposta": "A) São Expedito"
+        },
+        {
+            "pergunta": "Como se chama a veste branca longa que os coroinhas e padres usam por baixo de tudo?",
+            "opcoes": [
+                "A) Batina",
+                "B) Túnica (ou Alva)",
+                "C) Casula",
+                "D) Estola"
+            ],
+            "resposta": "B) Túnica (ou Alva)"
+        },
+        {
+            "pergunta": "Qual o nome da fita colorida que o padre coloca ao redor do pescoço para celebrar a Missa ou atender confissão?",
+            "opcoes": [
+                "A) Estola",
+                "B) Cíngulo",
+                "C) Capa",
+                "D) Mitra"
+            ],
+            "resposta": "A) Estola"
+        },
+        {
+            "pergunta": "Onde fica guardada a chave do Sacrário quando o padre esquece onde colocou?",
+            "opcoes": [
+                "A) Na gaveta da cozinha",
+                "B) Debaixo do tapete da igreja",
+                "C) Com o sacristião de plantão",
+                "D) Na responsabilidade de quem cuida da igreja!"
+            ],
+            "resposta": "C) Com o sacristião de plantão"
+        },
+        {
+            "pergunta": "Qual é o nome da Virgem Maria que apareceu no México e deixou sua imagem impressa na tilma de Juan Diego?",
+            "opcoes": [
+                "A) Nossa Senhora de Fátima",
+                "B) Nossa Senhora Aparecida",
+                "C) Nossa Senhora de Guadalupe",
+                "D) Nossa Senhora de Lourdes"
+            ],
+            "resposta": "C) Nossa Senhora de Guadalupe"
+        },
+        {
+            "pergunta": "Qual é a padroeira do Brasil?",
+            "opcoes": [
+                "A) Nossa Senhora das Graças",
+                "B) Nossa Senhora Aparecida",
+                "C) Nossa Senhora do Carmo",
+                "D) Nossa Senhora de Nazaré"
+            ],
+            "resposta": "B) Nossa Senhora Aparecida"
+        },
+        {
+            "pergunta": "Em que ano a imagem de Nossa Senhora Aparecida foi encontrada nas águas do rio Paraíba do Sul?",
+            "opcoes": [
+                "A) 1717",
+                "B) 1500",
+                "C) 1888",
+                "D) 1950"
+            ],
+            "resposta": "A) 1717"
+        },
+        {
+            "pergunta": "Quantos peixes os três pescadores acharam primeiro antes de encontrar a imagem de Nossa Senhora Aparecida?",
+            "opcoes": [
+                "A) Nenhum, a rede só pegou a santa",
+                "B) Centenas",
+                "C) Uma baleia",
+                "D) Apenas um dourado"
+            ],
+            "resposta": "A) Nenhum, a rede só pegou a santa"
+        },
+        {
+            "pergunta": "Qual destes sacramentos só pode ser recebido uma única vez na vida (caráter indelével)?",
+            "opcoes": [
+                "A) Confissão",
+                "B) Eucaristia",
+                "C) Batismo",
+                "D) Unção dos Enfermos"
+            ],
+            "resposta": "C) Batismo"
+        },
+        {
+            "pergunta": "Se um peixe falar na Bíblia, qual deles foi o mais famoso?",
+            "opcoes": [
+                "A) O peixe dourado",
+                "B) O peixe que engoliu Jonas",
+                "C) Os peixes da multiplicação",
+                "D) Peixe não fala, só quem falava era a mula do presépio!"
+            ],
+            "resposta": "B) O peixe que engoliu Jonas"
+        },
+        {
+            "pergunta": "Qual é o nome do papa que instituiu a festa de Nossa Senhora de Guadalupe?",
+            "opcoes": [
+                "A) São João Paulo II",
+                "B) Pio XII",
+                "C) Leão XIII",
+                "D) Bento XVI"
+            ],
+            "resposta": "A) São João Paulo II"
+        },
+        {
+            "pergunta": "O que significa a palavra 'Amém' que dizemos no final das orações?",
+            "opcoes": [
+                "A) Assim seja",
+                "B) Acabou a oração",
+                "C) Glória a Deus",
+                "D) Muito obrigado"
+            ],
+            "resposta": "A) Assim seja"
+        },
+        {
+            "pergunta": "Qual o nome do apóstolo que era cobrador de impostos antes de seguir Jesus?",
+            "opcoes": [
+                "A) Mateus (Levi)",
+                "B) João",
+                "C) Simão",
+                "D) André"
+            ],
+            "resposta": "A) Mateus (Levi)"
+        },
+        {
+            "pergunta": "Qual o nome do monte onde Elias desafiou os profetas de Baal?",
+            "opcoes": [
+                "A) Monte Carmelo",
+                "B) Monte Sinai",
+                "C) Monte Tabor",
+                "D) Monte das Oliveiras"
+            ],
+            "resposta": "A) Monte Carmelo"
+        },
+        {
+            "pergunta": "Quem foi a mulher corajosa do Antigo Testamento que salvou o seu povo da destruição usando sua beleza e fé?",
+            "opcoes": [
+                "A) Ester",
+                "B) Dalila",
+                "C) Jezabel",
+                "D) Sara"
+            ],
+            "resposta": "A) Ester"
+        },
+        {
+            "pergunta": "Quem foi o primeiro homem a dar o 'pontapé inicial' figurativo no paraíso?",
+            "opcoes": [
+                "A) Adão, quando aceitou a maçã",
+                "B) Sansão",
+                "C) Davi",
+                "D) Ninguém, bola não existia no Éden!"
+            ],
+            "resposta": "A) Adão, quando aceitou a maçã"
+        },
+        {
+            "pergunta": "Qual é o santo padroeiro da juventude, famoso por escalar montanhas e amar os pobres?",
+            "opcoes": [
+                "A) São Pier Giorgio Frassati",
+                "B) São Carlos Borromeu",
+                "C) São Domingos Sávio",
+                "D) São Tarcísio"
+            ],
+            "resposta": "A) São Pier Giorgio Frassati"
+        },
+        {
+            "pergunta": "Quem é o padroeiro dos coroinhas e acólitos, que preferiu morrer a entregar a Eucaristia?",
+            "opcoes": [
+                "A) São Tarcísio",
+                "B) São Luis Gonzaga",
+                "C) São João Bosco",
+                "D) São Domingos Sávio"
+            ],
+            "resposta": "A) São Tarcísio"
+        },
+        {
+            "pergunta": "Como se chama o tecido circular que cobre o cálice na hora da missa?",
+            "opcoes": [
+                "A) Pala",
+                "B) Sanguinho",
+                "C) Corporal",
+                "D) Murça"
+            ],
+            "resposta": "A) Pala"
+        },
+        {
+            "pergunta": "Qual o nome do pequeno pano usado pelo padre para limpar o cálice?",
+            "opcoes": [
+                "A) Sanguinho (ou manustérgio)",
+                "B) Toalha de banho",
+                "C) Corporal",
+                "D) Estola"
+            ],
+            "resposta": "A) Sanguinho (ou manustérgio)"
+        },
+        {
+            "pergunta": "Quantas voltas os israelitas deram em torno das muralhas de Jericó antes delas caírem?",
+            "opcoes": [
+                "A) 7 voltas no último dia (e 1 volta em cada um dos 6 dias anteriores)",
+                "B) 100 voltas correndo",
+                "C) Apenas meia volta",
+                "D) Nenhuma, eles derrubaram com empurrão"
+            ],
+            "resposta": "A) 7 voltas no último dia (e 1 volta em cada um dos 6 dias anteriores)"
+        },
+        {
+            "pergunta": "Qual é o nome do santo curas, padroeiro dos padres e párocos?",
+            "opcoes": [
+                "A) São João Maria Vianney",
+                "B) São Padre Pio",
+                "C) São Filipe Néri",
+                "D) Santo Afonso de Ligório"
+            ],
+            "resposta": "A) São João Maria Vianney"
+        },
+        {
+            "pergunta": "Qual padre famoso pelas chagas e por confissão horas a fio na Itália foi canonizado recentemente?",
+            "opcoes": [
+                "A) São Padre Pio de Pietrelcina",
+                "B) São Maximiliano Kolbe",
+                "C) São Charbel",
+                "D) São Leopoldo Mandic"
+            ],
+            "resposta": "A) São Padre Pio de Pietrelcina"
+        },
+        {
+            "pergunta": "Qual o nome do santo que trocou sua vida para salvar um pai de família no campo de concentração de Auschwitz?",
+            "opcoes": [
+                "A) São Maximiliano Kolbe",
+                "B) São Maximiliano Maria",
+                "C) São Tito Brandsma",
+                "D) São Jerzy Popiełuszko"
+            ],
+            "resposta": "A) São Maximiliano Kolbe"
+        },
+        {
+            "pergunta": "Em que dia se comemora o Natal de Jesus?",
+            "opcoes": [
+                "A) 25 de Dezembro",
+                "B) 1º de Janeiro",
+                "C) 31 de Dezembro",
+                "D) 12 de Outubro"
+            ],
+            "resposta": "A) 25 de Dezembro"
+        },
+        {
+            "pergunta": "Quem foi o primeiro patriarca a seguir rumo à terra prometida sem saber exatamente onde ia?",
+            "opcoes": [
+                "A) Abraão, que seguiu a voz de Deus guiado pela fé",
+                "B) Moisés no deserto",
+                "C) Noé na arca",
+                "D) Paulo na estrada de Damasco"
+            ],
+            "resposta": "A) Abraão, que seguiu a voz de Deus guiado pela fé"
+        },
+        {
+            "pergunta": "Qual é a virtude teologal que nos faz esperar a vida eterna e as promessas de Deus?",
+            "opcoes": [
+                "A) Esperança",
+                "B) Fé",
+                "C) Caridade",
+                "D) Fortaleza"
+            ],
+            "resposta": "A) Esperança"
+        },
+        {
+            "pergunta": "Qual é a maior das três virtudes teologais (Fé, Esperança e Caridade)?",
+            "opcoes": [
+                "A) Caridade (o Amor)",
+                "B) A Fé",
+                "C) A Esperança",
+                "D) Todas têm o mesmo peso"
+            ],
+            "resposta": "A) Caridade (o Amor)"
+        },
+        {
+            "pergunta": "O que significa a sigla J.M.J. frequentemente usada em cartas e escritos católicos?",
+            "opcoes": [
+                "A) Jesus, Maria e José",
+                "B) Juventude Missionária Jovem",
+                "C) Justiça, Misericórdia e Julgamento",
+                "D) João, Mateus e Jeremias"
+            ],
+            "resposta": "A) Jesus, Maria e José"
+        },
+        {
+            "pergunta": "Qual o nome do óleo sagrado usado nos sacramentos do Batismo, Crisma e Ordem?",
+            "opcoes": [
+                "A) Santo Crisma",
+                "B) Óleo de cozinha",
+                "C) Azeite extra virgem",
+                "D) Óleo perfumado simples"
+            ],
+            "resposta": "A) Santo Crisma"
+        },
+        {
+            "pergunta": "Se o sol parou no céu a pedido de Josué, de quem foi o poder que realizou esse prodígio?",
+            "opcoes": [
+                "A) O sol gerou energia",
+                "B) Ninguém, foi um milagre extraordinário de Deus!",
+                "C) Os israelitas fizeram cálculos",
+                "D) Fenômeno natural comum"
+            ],
+            "resposta": "B) Ninguém, foi um milagre extraordinário de Deus!"
+        },
+        {
+            "pergunta": "Qual o nome da festa que celebra a subida de Jesus ao Céu, 40 dias após a Páscoa?",
+            "opcoes": [
+                "A) Ascensão do Senhor",
+                "B) Assunção de Nossa Senhora",
+                "C) Transfiguração",
+                "D) Epifania"
+            ],
+            "resposta": "A) Ascensão do Senhor"
+        },
+        {
+            "pergunta": "Qual o nome do dogma que afirma que Nossa Senhora foi elevada ao Céu em corpo e alma?",
+            "opcoes": [
+                "A) Assunção de Nossa Senhora",
+                "B) Imaculada Conceição",
+                "C) Maternidade Divina",
+                "D) Virgindade Perpétua"
+            ],
+            "resposta": "A) Assunção de Nossa Senhora"
+        },
+        {
+            "pergunta": "Quem foi o profeta que foi arrebatado ao céu em uma carruagem de fogo?",
+            "opcoes": [
+                "A) Elias",
+                "B) Eliseu",
+                "C) Isaías",
+                "D) Ezequiel"
+            ],
+            "resposta": "A) Elias"
+        },
+        {
+            "pergunta": "Qual é o santo padroeiro dos animais, veterinários e ecologistas?",
+            "opcoes": [
+                "A) São Francisco de Assis",
+                "B) São Roque",
+                "C) São Lázaro",
+                "D) São Martinho"
+            ],
+            "resposta": "A) São Francisco de Assis"
+        },
+        {
+            "pergunta": "Quantos pães e peixes Jesus usou para alimentar a multidão de mais de 5 mil pessoas?",
+            "opcoes": [
+                "A) 5 pães e 2 peixes",
+                "B) 7 pães e alguns peixinhos",
+                "C) 12 pães e 12 peixes",
+                "D) 1 pão e 1 peixe gigante"
+            ],
+            "resposta": "A) 5 pães e 2 peixes"
+        },
+        {
+            "pergunta": "Como se chama o local onde os fiéis acendem velas e fazem suas preces na igreja?",
+            "opcoes": [
+                "A) Velário",
+                "B) Sacrário",
+                "C) Batistério",
+                "D) Pia"
+            ],
+            "resposta": "A) Velário"
+        },
+        {
+            "pergunta": "Qual é a oração inicial do Santo Terço que recitamos segurando o crucifixo?",
+            "opcoes": [
+                "A) O Credo (Símbolo dos Apóstolos)",
+                "B) Salve Rainha",
+                "C) Pai-Nosso",
+                "D) Ave-Maria"
+            ],
+            "resposta": "A) O Credo (Símbolo dos Apóstolos)"
+        },
+        {
+            "pergunta": "Quantas Ave-Marias rezamos em cada mistério do Terço tradicional?",
+            "opcoes": [
+                "A) 10 Ave-Marias (uma dezena)",
+                "B) 3 Ave-Marias",
+                "C) 7 Ave-Marias",
+                "D) 50 Ave-Marias"
+            ],
+            "resposta": "A) 10 Ave-Marias (uma dezena)"
+        },
+        {
+            "pergunta": "Quantos mistérios contemplamos em um terço completo tradicional (sem contar os luminosos)?",
+            "opcoes": [
+                "A) 15 mistérios",
+                "B) 10 mistérios",
+                "C) 20 mistérios",
+                "D) 5 mistérios"
+            ],
+            "resposta": "A) 15 mistérios"
+        },
+        {
+            "pergunta": "Se o tema da nossa igreja é a Imaculada Conceição e os festejos começam no final de novembro (dia 28 ou 29), qual o dia exato da grande festa padroeira?",
+            "opcoes": [
+                "A) 8 de Dezembro",
+                "B) 25 de Dezembro",
+                "C) 1º de Janeiro",
+                "D) 12 de Outubro"
+            ],
+            "resposta": "A) 8 de Dezembro"
+        }
+    ],
+    "participantes": [
+        "tulio"
+    ],
+    "historico": [
+        "Participante: tulio | Pontuação Final: 300 Pontos"
+    ]
+}
