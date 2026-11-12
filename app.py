@@ -7,6 +7,7 @@ import random
 import json
 import os
 import time
+import base64
 
 ARQUIVO_DADOS = "dados_quiz_igreja.json"
 ARQUIVO_CONFIG = "config_quiz.json"
@@ -169,6 +170,12 @@ SOM_DADO = "paramomentododado.mp3"
 SOM_ACERTO = "ElevenLabs_Efeito_sonoro_de_aplausos_altos_indicando_uma_resposta.mp3"
 SOM_ERRO = "ElevenLabs_Efeito_sonoro_de_trombone_triste_quando_um_personagem.mp3"
 
+def tocar_audio_invisivel(caminho_arquivo):
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("utf-8")
+            st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64}"></audio>', unsafe_allow_html=True)
+
 # ==============================================================================
 # 1. MENU PRINCIPAL
 # ==============================================================================
@@ -264,22 +271,24 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM MINI PLAYER DISCRETO PARA O TIC-TAK)
+# 3. TELA DO JOGO (COM MINI PLAYER DISCRETO NO TOPO E FLUXO DIRETO)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    # Mini player discreto para o som tic-tak rolar sem falhas
-    if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
-        st.markdown("<p style='font-size: 14px; color: #8DA9C4; margin-bottom: 0px;'>⏱️ Trilha sonora do tempo:</p>", unsafe_allow_html=True)
-        st.audio(SOM_TIC_TAK, autoplay=True, loop=True)
-
-    c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
-    c1.markdown(f"<span class='placar-topo'>👤 Participante: {st.session_state.participante}</span>", unsafe_allow_html=True)
+    # Placar Superior e Mini Player de Fundo Discreto ao Lado dos Acertos
+    c1, c2, c3, c4, c5 = st.columns([2, 1, 1, 1, 1.5])
+    c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
     placeholder_tempo = c2.empty()
-    c3.markdown(f"<span class='placar-topo'>⭐ Pontos: {st.session_state.pontuacao}</span>", unsafe_allow_html=True)
-    c4.markdown(f"<span class='placar-topo'>🎯 Acertos: {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
+    c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
+    c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
+    
+    with c5:
+        if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
+            st.markdown("<span style='font-size: 11px; color: #8DA9C4;'>⏱️ Som do Tempo:</span>", unsafe_allow_html=True)
+            st.audio(SOM_TIC_TAK, autoplay=True, loop=True)
+
     st.divider()
     
     col_esq, col_dir = st.columns([2, 1])
@@ -294,34 +303,33 @@ elif st.session_state.pagina == "jogo":
                 escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
                 st.write("")
                 
-                if st.button("✅ Confirmar Resposta"):
-                    st.session_state.respondido = True
-                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                    
-                    if st.session_state.ultima_resposta_correta:
-                        st.session_state.pontuacao += 100
-                        st.session_state.acertos += 1
-                        if os.path.exists(SOM_ACERTO):
-                            st.audio(SOM_ACERTO, autoplay=True)
-                    else:
-                        if os.path.exists(SOM_ERRO):
-                            st.audio(SOM_ERRO, autoplay=True)
-                    st.rerun()
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    if st.button("✅ Confirmar Resposta"):
+                        st.session_state.respondido = True
+                        st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                        
+                        if st.session_state.ultima_resposta_correta:
+                            st.session_state.pontuacao += 100
+                            st.session_state.acertos += 1
+                            tocar_audio_invisivel(SOM_ACERTO) #[cite: 22]
+                        else:
+                            tocar_audio_invisivel(SOM_ERRO) #[cite: 21]
+                        st.rerun()
                 
                 # Relógio dinâmico segundo a segundo
                 if st.session_state.tempo_restante > 0:
-                    placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Tempo: {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
+                    placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
                     time.sleep(1)
                     st.session_state.tempo_restante -= 1
                     st.rerun()
                 else:
                     st.session_state.respondido = True
                     st.session_state.ultima_resposta_correta = False
-                    if os.path.exists(SOM_ERRO):
-                        st.audio(SOM_ERRO, autoplay=True)
+                    tocar_audio_invisivel(SOM_ERRO) #[cite: 21]
                     st.rerun()
             else:
-                placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Tempo: Encerrado</span>", unsafe_allow_html=True)
+                placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
                 
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
@@ -329,18 +337,20 @@ elif st.session_state.pagina == "jogo":
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
                 
                 st.write("")
-                if st.button("➡️ Próxima Pergunta"):
-                    st.session_state.respondido = False
-                    st.session_state.pergunta_idx += 1
-                    st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
-                    
-                    if st.session_state.acertos >= 3:
-                        st.session_state.acertos = 0
-                        st.session_state.dado_girado = False
-                        st.session_state.pagina = "dado"
-                    elif st.session_state.pergunta_idx >= total_p:
-                        st.session_state.pagina = "fim"
-                    st.rerun()
+                col_res1, col_res2 = st.columns(2)
+                with col_res1:
+                    if st.button("➡️ Próxima Pergunta"):
+                        st.session_state.respondido = False
+                        st.session_state.pergunta_idx += 1
+                        st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+                        
+                        if st.session_state.acertos >= 3:
+                            st.session_state.acertos = 0
+                            st.session_state.dado_girado = False
+                            st.session_state.pagina = "dado"
+                        elif st.session_state.pergunta_idx >= total_p:
+                            st.session_state.pagina = "fim"
+                        st.rerun()
             
             st.write("")
             if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
@@ -360,7 +370,7 @@ elif st.session_state.pagina == "jogo":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (COM DOBRO DE TEMPO DE ROTAÇÃO)
+# 4. SALA DO DADO PREMIADO
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
@@ -374,8 +384,7 @@ elif st.session_state.pagina == "dado":
         if not st.session_state.dado_girado:
             placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
             if st.button("🎲 GIRAR O DADO AGORA"):
-                if os.path.exists(SOM_DADO):
-                    st.audio(SOM_DADO, autoplay=True)
+                tocar_audio_invisivel(SOM_DADO) #[cite: 21, 22]
                 
                 # Dobro de tempo de rotação do dado (24 passos)
                 for _ in range(24):
@@ -395,8 +404,7 @@ elif st.session_state.pagina == "dado":
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
-            if os.path.exists(SOM_ACERTO):
-                st.audio(SOM_ACERTO, autoplay=True)
+            tocar_audio_invisivel(SOM_ACERTO) #[cite: 22]
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
