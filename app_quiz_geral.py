@@ -1,5 +1,5 @@
 # ==============================================================================
-# SUPER QUIZ MULTI-TEMAS (900 PERGUNTAS + CORES CAMALEÃO POR MODO) 🎲🎨🚀
+# SUPER QUIZ MULTI-TEMAS (900 PERGUNTAS + CORES E IMAGENS DINÂMICAS POR TEMA) 🎲
 # ==============================================================================
 
 import streamlit as st
@@ -15,48 +15,68 @@ ARQUIVO_DADOS = "dados_quiz_geral.json"
 ARQUIVO_CONFIG = "config_quiz_geral.json"
 
 # ==============================================================================
-# PALETAS DE CORES AUTOMÁTICAS PARA CADA MODO DE JOGO
+# PALETAS DE CORES E PÔSTERES AUTOMÁTICOS PARA CADA MODO DE JOGO
 # ==============================================================================
-CORES_POR_MODO = {
+INFO_MODOS = {
     "⛪ Igreja": {
         "cor_fundo": "#0B2545", "cor_card": "#134074", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#F4D35E", "cor_botao": "#134074", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#1F618D"
+        "cor_destaque": "#F4D35E", "cor_botao": "#134074", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#1F618D",
+        "icone": "⛪", "titulo_card": "🌸 Imaculada Conceição", "sub_card": "Fé, História, Santos e Sagradas Escrituras",
+        "img_padrao": "nossa_senhora.png"
     },
     "🦸 Super-Heróis": {
         "cor_fundo": "#0A1128", "cor_card": "#1C2541", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#FFD166", "cor_botao": "#B80C09", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#FFD166"
+        "cor_destaque": "#FFD166", "cor_botao": "#B80C09", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#FFD166",
+        "icone": "🦸‍♂️", "titulo_card": "⚡ Universo dos Heróis", "sub_card": "Marvel, DC, Quadrinhos e Superpoderes",
+        "img_padrao": "tema_herois.png"
     },
     "🍎 Frutas": {
         "cor_fundo": "#1B4332", "cor_card": "#2D6A4F", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#FFD166", "cor_botao": "#40916C", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#95D5B2"
+        "cor_destaque": "#FFD166", "cor_botao": "#40916C", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#95D5B2",
+        "icone": "🍉", "titulo_card": "🍎 Pomar Tropical", "sub_card": "Frutas, Vitaminas, Sabores e Natureza",
+        "img_padrao": "tema_frutas.png"
     },
     "🍔 Comidas": {
         "cor_fundo": "#370617", "cor_card": "#6A040F", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#FFBA08", "cor_botao": "#9D0208", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#F48C06"
+        "cor_destaque": "#FFBA08", "cor_botao": "#9D0208", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#F48C06",
+        "icone": "🍔", "titulo_card": "👨‍🍳 Mestre da Culinária", "sub_card": "Pratos Típicos, Sabores do Brasil e do Mundo",
+        "img_padrao": "tema_comidas.png"
     },
     "📺 Novelas": {
         "cor_fundo": "#3C096C", "cor_card": "#5A189A", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#FF9E00", "cor_botao": "#7B2CBF", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#E0AAFF"
+        "cor_destaque": "#FF9E00", "cor_botao": "#7B2CBF", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#E0AAFF",
+        "icone": "📺", "titulo_card": "🎭 Clássicos da TV", "sub_card": "Vilãs Icônicas, Bordões e Grandes Tramas",
+        "img_padrao": "tema_novelas.png"
     },
     "🎬 Filmes": {
         "cor_fundo": "#121212", "cor_card": "#1F1F1F", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#D4AF37", "cor_botao": "#292929", "cor_texto_botao": "#D4AF37", "cor_borda_botao": "#D4AF37"
+        "cor_destaque": "#D4AF37", "cor_botao": "#292929", "cor_texto_botao": "#D4AF37", "cor_borda_botao": "#D4AF37",
+        "icone": "🎬", "titulo_card": "🍿 Sessão de Cinema", "sub_card": "Sucessos de Bilheteria, Oscar e Clássicos",
+        "img_padrao": "tema_filmes.png"
     },
     "🎨 Desenhos": {
         "cor_fundo": "#003049", "cor_card": "#00507A", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#FCBF49", "cor_botao": "#F77F00", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#FCBF49"
+        "cor_destaque": "#FCBF49", "cor_botao": "#F77F00", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#FCBF49",
+        "icone": "🎨", "titulo_card": "🎈 Mundo Animado", "sub_card": "Desenhos Clássicos, Nostalgia e Diversão",
+        "img_padrao": "tema_desenhos.png"
     },
     "⚔️ Animes": {
         "cor_fundo": "#10002B", "cor_card": "#240046", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#00F5D4", "cor_botao": "#7209B7", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#F72585"
+        "cor_destaque": "#00F5D4", "cor_botao": "#7209B7", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#F72585",
+        "icone": "⚔️", "titulo_card": "🐉 Arena Otaku", "sub_card": "Dragon Ball, Naruto, One Piece, Solo Leveling e mais!",
+        "img_padrao": "tema_animes.png"
     },
     "💼 Trabalhos & Profissões": {
         "cor_fundo": "#1B263B", "cor_card": "#283845", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#00B4D8", "cor_botao": "#415A77", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#90E0EF"
+        "cor_destaque": "#00B4D8", "cor_botao": "#415A77", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#90E0EF",
+        "icone": "💼", "titulo_card": "🛠️ Mundo das Profissões", "sub_card": "Tecnologia, Saúde, Engenharia e Ofícios",
+        "img_padrao": "tema_trabalhos.png"
     },
     "🎲 Misturadão (Todos os Temas)": {
         "cor_fundo": "#1F1147", "cor_card": "#341F6F", "cor_texto": "#FFFFFF",
-        "cor_destaque": "#00F5D4", "cor_botao": "#4E2A84", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#00F5D4"
+        "cor_destaque": "#00F5D4", "cor_botao": "#4E2A84", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#00F5D4",
+        "icone": "🎲", "titulo_card": "🌟 Desafio Misturadão", "sub_card": "Todas as 900 Perguntas Juntas num Só Jogo!",
+        "img_padrao": "tema_misturadao.png"
     }
 }
 
@@ -64,15 +84,14 @@ CORES_POR_MODO = {
 # GERADOR AUTOMÁTICO DE 900 PERGUNTAS (100 POR CATEGORIA)
 # ==============================================================================
 def montar_100_perguntas(fatos, templates):
-    """Gera exatamente 100 perguntas variadas e únicas a partir de uma matriz de fatos reais."""
     todas_respostas = list(dict.fromkeys([f[2] for f in fatos]))
     perguntas_geradas = []
     rng = random.Random(42)
     
     for idx in range(100):
         item, sub, certa = fatos[idx % len(fatos)]
-        Ciclo = idx // len(fatos)
-        molde = templates[Ciclo % len(templates)]
+        ciclo = idx // len(fatos)
+        molde = templates[ciclo % len(templates)]
         enunciado = molde.format(item=item, sub=sub)
         
         pool_erradas = [r for r in todas_respostas if r != certa]
@@ -89,7 +108,6 @@ def montar_100_perguntas(fatos, templates):
     return perguntas_geradas
 
 def construir_bancos_900():
-    # 1. IGREJA (25 fatos x 4 variações = 100 perguntas)
     fatos_igreja = [
         ("o Dogma da Imaculada Conceição", "proclamado pelo Papa Pio IX", "1854"),
         ("Nossa Senhora de Lourdes", "a jovem vidente na França", "Santa Bernadette"),
@@ -124,7 +142,6 @@ def construir_bancos_900():
         "Pergunta dos Festejos: Assinale a opção verdadeira a respeito de {item} ({sub}):"
     ]
 
-    # 2. SUPER-HERÓIS (25 fatos x 4 = 100 perguntas)
     fatos_herois = [
         ("Homem de Ferro", "identidade secreta nos quadrinhos", "Tony Stark"),
         ("Batman", "identidade secreta e protetor de Gotham", "Bruce Wayne"),
@@ -159,7 +176,6 @@ def construir_bancos_900():
         "Desafio Geek: Sobre {item} ({sub}), marque a opção correta:"
     ]
 
-    # 3. FRUTAS (25 fatos x 4 = 100 perguntas)
     fatos_frutas = [
         ("Abacaxi", "característica visual famosa no topo da fruta", "Possui uma coroa de folhas espinhosas"),
         ("Melancia", "composição nutricional para hidratação no verão", "Mais de 90% de água e polpa vermelha"),
@@ -194,7 +210,6 @@ def construir_bancos_900():
         "Curiosidade Frutícola: Quando falamos em {item} ({sub}), a resposta certa é:"
     ]
 
-    # 4. COMIDAS (25 fatos x 4 = 100 perguntas)
     fatos_comidas = [
         ("Baião de Dois", "ingredientes principais desse clássico nordestino", "Arroz, feijão-de-corda (ou verde) e queijo coalho"),
         ("Feijoada Brasileira", "grão principal usado no preparo tradicional", "Feijão-preto com carnes salgadas"),
@@ -229,7 +244,6 @@ def construir_bancos_900():
         "Cardápio do Quiz: A respeito de {item} ({sub}), marque a opção correta:"
     ]
 
-    # 5. NOVELAS (25 fatos x 4 = 100 perguntas)
     fatos_novelas = [
         ("Avenida Brasil", "vilã icônica interpretada por Adriana Esteves", "Carminha"),
         ("Senhora do Destino", "vilã famosa pelos memes da escada e por roubar Lindalva", "Nazaré Tedesco"),
@@ -241,7 +255,7 @@ def construir_bancos_900():
         ("Alma Gêmea", "índia protagonista que reencarna após o amor com Rafael", "Serena (Priscila Fantin)"),
         ("Mulheres de Areia", "irmãs gêmeas idênticas de personalidades opostas", "Ruth e Raquel (Glória Pires)"),
         ("A Viagem", "personagem revoltado que assombrava os vivos no Vale dos Suicidas", "Alexandre (Guilherme Fontes)"),
-        ("Cravo e a Rosa", "casal que vivia brigando como cão e gato na década de 1920", "Petruchio e Catarina"),
+        ("O Cravo e a Rosa", "casal que vivia brigando como cão e gato na década de 1920", "Petruchio e Catarina"),
         ("Caminho das Índias", "casal indiano separado pelas castas sociais", "Maya e Bahuan (e Raj)"),
         ("Terra Nostra", "imigrante italiano que se apaixona por Giuliana no navio", "Matteo (Thiago Lacerda)"),
         ("Laços de Família", "atitude emocionante de Camila durante o tratamento de leucemia", "Raspou os cabelos ao som de 'Love by Grace'"),
@@ -249,7 +263,7 @@ def construir_bancos_900():
         ("Tieta", "protagonista que volta rica para Santana do Agreste", "Tieta do Agreste (Betty Faria)"),
         ("Da Cor do Pecado", "vilã loira obcecada pela fortuna de Afonso Lambertini", "Bárbara (Giovanna Antonelli)"),
         ("Cheias de Charme", "trio musical formado pelas três domésticas protagonistas", "As Empreguetes (Penha, Rosário e Cida)"),
-        ("Totalmente Demais", "cantora de Chay Suede / vilã da revista de moda", "Carolina Castilho (Juliana Paes)"),
+        ("Totalmente Demais", "diretora implacável da revista de moda na trama", "Carolina Castilho (Juliana Paes)"),
         ("A Usurpadora", "irmãs gêmeas mexicanas interpretadas por Gabriela Spanic", "Paola Bracho e Paulina Martins"),
         ("Maria do Bairro", "vilã dramática que gritava 'Maldita Marginal!'", "Soraya Montenegro"),
         ("Rebelde (RBD)", "colégio de elite onde os seis jovens formaram a banda", "Elite Way School"),
@@ -264,7 +278,6 @@ def construir_bancos_900():
         "Vale a Pena Lembrar: Sobre a novela {item} ({sub}), assinale a opção certa:"
     ]
 
-    # 6. FILMES (25 fatos x 4 = 100 perguntas)
     fatos_filmes = [
         ("Titanic", "casal protagonista interpretado por Leonardo DiCaprio e Kate Winslet", "Jack Dawson e Rose DeWitt Bukater"),
         ("Harry Potter", "escola de magia e bruxaria onde a saga acontece", "Hogwarts"),
@@ -299,7 +312,6 @@ def construir_bancos_900():
         "Clássicos da Telona: Sobre a produção {item} ({sub}), a alternativa correta é:"
     ]
 
-    # 7. DESENHOS (25 fatos x 4 = 100 perguntas)
     fatos_desenhos = [
         ("Bob Esponja", "formato da casa onde ele mora na Fenda do Biquíni", "Um abacaxi no fundo do mar"),
         ("Scooby-Doo", "nome da van colorida usada pela turma para investigar mistérios", "Máquina de Mistério"),
@@ -323,7 +335,7 @@ def construir_bancos_900():
         ("Popeye", "alimento enlatado que lhe dá força instantânea nos músculos", "Espinafre"),
         ("Manda-Chuva", "grupo de animais de rua que ele lidera no beco", "Gangue de gatos de Nova York"),
         ("Corrida Maluca", "vilão trapaceiro acompanhado pelo cachorro risonho Muttley", "Dick Vigarista"),
-        (" Ursinhos Carinhosos", "poder especial disparado pela barriga dos ursinhos", "Raio de sentimentos e arco-íris"),
+        ("Ursinhos Carinhosos", "poder especial disparado pela barriga dos ursinhos", "Raio de sentimentos e arco-íris"),
         ("Caverna do Dragão", "guia misterioso baixinho de manto vermelho que dá conselhos", "Mestre dos Magos"),
         ("Três Espiãs Demais", "nomes das três amigas estudantes de Beverly Hills", "Sam, Clover e Alex")
     ]
@@ -334,7 +346,6 @@ def construir_bancos_900():
         "Quiz de Animação: A respeito do desenho {item} ({sub}), marque a opção correta:"
     ]
 
-    # 8. ANIMES (25 fatos x 4 = 100 perguntas)
     fatos_animes = [
         ("Dragon Ball Z", "transformação lendária de cabelos dourados alcançada por Goku em Namekusei", "Super Saiyajin"),
         ("Naruto", "raposa de nove caudas selada dentro do protagonista", "Kurama"),
@@ -369,7 +380,6 @@ def construir_bancos_900():
         "Batalha de Conhecimento: Em {item} ({sub}), qual alternativa está correta?"
     ]
 
-    # 9. TRABALHOS & PROFISSÕES (25 fatos x 4 = 100 perguntas)
     fatos_trabalhos = [
         ("Analista de Suporte / TI", "função essencial nas empresas modernas", "Resolver problemas técnicos de computadores, sistemas e usuários"),
         ("Administrador de Redes", "equipamentos que ele configura para conectar a empresa", "Roteadores, Switches, Firewalls e servidores de rede"),
@@ -420,30 +430,17 @@ BANCOS_PADRAO = construir_bancos_900()
 LISTA_MODOS_JOGO = list(BANCOS_PADRAO.keys()) + ["🎲 Misturadão (Todos os Temas)"]
 
 # ==============================================================================
-# CONFIGURAÇÕES PADRÃO E TEMAS PRÉ-DEFINIDOS
+# CONFIGURAÇÕES SIMPLIFICADAS E DIRETAS
 # ==============================================================================
-TEMAS_PRONTOS = {
-    "Personalizado (Livre)": None,
-    "Azul Mariano (Padrão)": CORES_POR_MODO["⛪ Igreja"],
-    "Herói Épico (Azul & Vermelho)": CORES_POR_MODO["🦸 Super-Heróis"],
-    "Verde Tropical (Frutas & Natureza)": CORES_POR_MODO["🍎 Frutas"],
-    "Vermelho Gourmet (Comidas & Festa)": CORES_POR_MODO["🍔 Comidas"],
-    "Roxo Glamour (Novelas & TV)": CORES_POR_MODO["📺 Novelas"],
-    "Noite de Oscar (Filmes & Gala)": CORES_POR_MODO["🎬 Filmes"],
-    "Cartoon Vibrante (Desenhos)": CORES_POR_MODO["🎨 Desenhos"],
-    "Neon Cyberpunk (Animes & Geek)": CORES_POR_MODO["⚔️ Animes"],
-    "Corporativo Tech (Trabalhos & TI)": CORES_POR_MODO["💼 Trabalhos & Profissões"]
-}
-
 def obter_config_padrao():
     return {
-        "imagem_ns": "nossa_senhora.png",
         "tamanho_imagem": 360,
-        "borda_imagem": 12,
+        "borda_imagem": 14,
         "usar_fundo_img": False,
         "imagem_fundo": "fundo_quiz_geral.png",
         "opacidade_fundo": 0.7,
-        "cor_auto_por_modo": True,
+        "tema_menu_inicial": "⛪ Igreja",
+        "titulos_temas": {m: INFO_MODOS[m]["titulo_card"] for m in INFO_MODOS},
         
         "tempo_pergunta": 30,
         "tempo_alerta": 5,
@@ -451,17 +448,6 @@ def obter_config_padrao():
         "pontos_por_acerto": 100,
         "ativar_sons": True,
         "ativar_baloes": True,
-        
-        "tema_escolhido": "Azul Mariano (Padrão)",
-        "cor_fundo": "#0B2545",
-        "cor_card": "#134074",
-        "cor_texto": "#FFFFFF",
-        "cor_destaque": "#F4D35E",
-        "cor_botao": "#134074",
-        "cor_texto_botao": "#FFFFFF",
-        "cor_borda_botao": "#1F618D",
-        "cor_botao_dado": "#F4D35E",
-        "cor_botao_sair": "#E74C3C",
         
         "tam_fonte_titulo": 46,
         "tam_fonte_pergunta": 30,
@@ -476,12 +462,11 @@ def obter_config_padrao():
         "icone_aba": "🎲",
         "txt_titulo_menu": "🎲 SUPER QUIZ MULTI-TEMAS (900 PERGUNTAS) 🎲",
         "txt_subtitulo_menu": "Escolha um dos 10 modos de jogo e desafie os seus conhecimentos! (F11 para tela cheia)",
-        "txt_titulo_imagem": "🌸 Destaque do Quiz",
         "txt_btn_jogar": "▶️ Jogar / Escolher Modo de Jogo",
         "txt_btn_participantes": "👥 Cadastrar Participantes",
         "txt_btn_perguntas": "📝 Gerir as 900 Perguntas por Tema",
         "txt_btn_historico": "📊 Histórico de Acertos e Prêmios",
-        "txt_btn_config": "⚙️ Estúdio de Personalização (Configurações)",
+        "txt_btn_config": "⚙️ Configurações (Imagens, Textos & Regras)",
         "txt_btn_sair": "🚪 Sair / Fechar Sistema",
         "txt_sala_dado": "🎲 SALA DO DADO PREMIADO! 🎲",
         "txt_sub_dado": "Parabéns! Chegou a hora de lançar o dado!",
@@ -498,6 +483,12 @@ def carregar_config():
                 for k, v in padrao.items():
                     if k not in cfg:
                         cfg[k] = v
+                if "titulos_temas" not in cfg or not isinstance(cfg["titulos_temas"], dict):
+                    cfg["titulos_temas"] = padrao["titulos_temas"]
+                else:
+                    for m in INFO_MODOS:
+                        if m not in cfg["titulos_temas"]:
+                            cfg["titulos_temas"][m] = INFO_MODOS[m]["titulo_card"]
                 return cfg
         except Exception:
             pass
@@ -516,21 +507,17 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# GERADOR DE CSS DINÂMICO (MUDA DE COR CONFORME O MODO DE JOGO SELECIONADO!)
+# GERADOR DE CSS DINÂMICO (SEMPRE SEGUE O TEMA DO MODO ATIVO OU DO MENU!)
 # ==============================================================================
+def obter_modo_visual_atual():
+    modo_ativo = st.session_state.get("modo_jogo_ativo")
+    if modo_ativo in INFO_MODOS:
+        return modo_ativo
+    tema_menu = config.get("tema_menu_inicial", "⛪ Igreja")
+    return tema_menu if tema_menu in INFO_MODOS else "⛪ Igreja"
+
 def obter_paleta_ativa():
-    modo_atual = st.session_state.get("modo_jogo_ativo")
-    if config.get("cor_auto_por_modo", True) and modo_atual in CORES_POR_MODO:
-        return CORES_POR_MODO[modo_atual]
-    return {
-        "cor_fundo": config["cor_fundo"],
-        "cor_card": config["cor_card"],
-        "cor_texto": config["cor_texto"],
-        "cor_destaque": config["cor_destaque"],
-        "cor_botao": config["cor_botao"],
-        "cor_texto_botao": config["cor_texto_botao"],
-        "cor_borda_botao": config["cor_borda_botao"]
-    }
+    return INFO_MODOS[obter_modo_visual_atual()]
 
 def aplicar_estilos_dinamicos():
     paleta = obter_paleta_ativa()
@@ -637,7 +624,7 @@ def aplicar_estilos_dinamicos():
             margin: 0 auto !important;
         }}
         .st-key-btn_ir_dado button {{
-            background-color: {config['cor_botao_dado']} !important;
+            background-color: #F4D35E !important;
             color: #0B2545 !important;
             border: 3px solid #FFFFFF !important;
             font-size: {config['tam_fonte_botao'] + 2}px !important;
@@ -647,7 +634,7 @@ def aplicar_estilos_dinamicos():
             box-shadow: 0 0 20px rgba(244, 211, 94, 0.7) !important;
         }}
         .st-key-sair_sis button {{
-            background-color: {config['cor_botao_sair']} !important;
+            background-color: #E74C3C !important;
             border: none !important;
             color: #FFFFFF !important;
         }}
@@ -658,7 +645,54 @@ def aplicar_estilos_dinamicos():
     """, unsafe_allow_html=True)
 
 # ==============================================================================
-# FUNÇÕES DE DADOS (GARANTE 100 PERGUNTAS EM CADA BANCO AUTOMATICAMENTE)
+# IMAGEM DINÂMICA DA COLUNA DIREITA (FOTO REAL OU PÔSTER ESPECIAL DO TEMA!)
+# ==============================================================================
+def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=None):
+    modo = modo_especifico if modo_especifico in INFO_MODOS else obter_modo_visual_atual()
+    info = INFO_MODOS[modo]
+    
+    largura = largura_custom if largura_custom is not None else config.get("tamanho_imagem", 360)
+    borda = borda_custom if borda_custom is not None else config.get("borda_imagem", 14)
+    titulo_topo = config.get("titulos_temas", {}).get(modo, info["titulo_card"])
+    arq_img = info["img_padrao"]
+
+    html_bloco = "<div style='text-align: center; width: 100%;'>"
+    if titulo_topo.strip():
+        html_bloco += f"<h3 style='margin-bottom: 14px; color: {info['cor_texto']};'>{titulo_topo}</h3>"
+
+    # Se existe uma foto salva para este tema (ex: nossa_senhora.png para Igreja, ou foto enviada para o tema), mostra a foto!
+    if os.path.exists(arq_img):
+        try:
+            with open(arq_img, "rb") as f:
+                b64_img = base64.b64encode(f.read()).decode("utf-8")
+            html_bloco += (
+                f"<img src='data:image/png;base64,{b64_img}' "
+                f"style='width: {largura}px; max-width: 100%; height: auto; "
+                f"margin: 0 auto; display: block; border-radius: {borda}px; "
+                f"border: 3px solid {info['cor_destaque']}; "
+                f"box-shadow: 0 8px 25px rgba(0,0,0,0.5);' />"
+            )
+        except Exception:
+            pass
+    else:
+        # Pôster Temático Especial gerado automaticamente quando o tema não tem foto física!
+        html_bloco += (
+            f"<div style='width: {largura}px; max-width: 100%; min-height: 330px; margin: 0 auto; "
+            f"background: radial-gradient(circle at top, {info['cor_botao']} 0%, {info['cor_card']} 60%, {info['cor_fundo']} 100%); "
+            f"border-radius: {borda}px; border: 3px solid {info['cor_destaque']}; "
+            f"box-shadow: 0 10px 28px rgba(0,0,0,0.55); display: flex; flex-direction: column; "
+            f"align-items: center; justify-content: center; padding: 28px 20px; box-sizing: border-box;'>"
+            f"<div style='font-size: 115px; line-height: 1.1; margin-bottom: 16px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));'>{info['icone']}</div>"
+            f"<div style='font-size: 26px; font-weight: 800; color: {info['cor_destaque']}; margin-bottom: 10px; text-align: center;'>{modo}</div>"
+            f"<div style='font-size: 16px; color: {info['cor_texto']}; opacity: 0.9; text-align: center; line-height: 1.4;'>{info['sub_card']}</div>"
+            f"</div>"
+        )
+
+    html_bloco += "</div>"
+    st.markdown(html_bloco, unsafe_allow_html=True)
+
+# ==============================================================================
+# FUNÇÕES DE DADOS E DADO 3D
 # ==============================================================================
 def carregar_dados():
     bancos_atuais = {k: list(v) for k, v in BANCOS_PADRAO.items()}
@@ -672,7 +706,6 @@ def carregar_dados():
                 dados = json.load(f)
                 if "bancos_perguntas" in dados and isinstance(dados["bancos_perguntas"], dict):
                     for k, lista_p in dados["bancos_perguntas"].items():
-                        # Se o banco salvo tinha menos de 100 perguntas (ex: versão antiga de 3 perguntas), completa com as 100!
                         if k in BANCOS_PADRAO and len(lista_p) < 10:
                             bancos_atuais[k] = list(BANCOS_PADRAO[k])
                             precisa_salvar = True
@@ -718,39 +751,6 @@ def obter_tempo_decorrido():
     if inicio is None:
         return 0
     return int(time.time() - inicio)
-
-def mostrar_santa(largura_custom=None, borda_custom=None, titulo_custom=None):
-    img_path = config.get("imagem_ns", "nossa_senhora.png")
-    if not os.path.exists(img_path) and os.path.exists("nossa_senhora.png"):
-        img_path = "nossa_senhora.png"
-        
-    largura = largura_custom if largura_custom is not None else config.get("tamanho_imagem", 360)
-    borda = borda_custom if borda_custom is not None else config.get("borda_imagem", 12)
-    titulo = titulo_custom if titulo_custom is not None else config.get("txt_titulo_imagem", "🌸 Destaque do Quiz")
-    
-    paleta = obter_paleta_ativa()
-    html_bloco = "<div style='text-align: center; width: 100%;'>"
-    if titulo.strip():
-        html_bloco += f"<h3 style='margin-bottom: 15px; color: {paleta['cor_texto']};'>{titulo}</h3>"
-    
-    if os.path.exists(img_path):
-        try:
-            with open(img_path, "rb") as f:
-                b64_img = base64.b64encode(f.read()).decode("utf-8")
-            html_bloco += (
-                f"<img src='data:image/png;base64,{b64_img}' "
-                f"style='width: {largura}px; max-width: 100%; height: auto; "
-                f"margin: 0 auto; display: block; border-radius: {borda}px; "
-                f"border: 3px solid {paleta['cor_destaque']}; "
-                f"box-shadow: 0 4px 15px rgba(0,0,0,0.45);' />"
-            )
-        except Exception:
-            html_bloco += "<p style='color: #F4D35E;'>Erro ao ler imagem.</p>"
-    else:
-        html_bloco += f"<p style='color: #8DA9C4;'>Imagem '{img_path}' não encontrada.</p>"
-        
-    html_bloco += "</div>"
-    st.markdown(html_bloco, unsafe_allow_html=True)
 
 def renderizar_dado_3d(numero_final=None, animar=False):
     paleta = obter_paleta_ativa()
@@ -896,13 +896,13 @@ estados_iniciais = {
     "respondido": False, "ultima_resposta_correta": None, "dado_girado": False,
     "resultado_dado": None, "editando_idx": None, "tempo_restante": 30,
     "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False,
-    "up_cnt": 0, "msg_upload_ok": "", "tema_gerir_selecionado": "⛪ Igreja"
+    "up_cnt": 0, "msg_upload_ok": "", "tema_gerir_selecionado": "⛪ Igreja",
+    "tema_img_cfg": "⛪ Igreja"
 }
 for chave, valor_padrao in estados_iniciais.items():
     if chave not in st.session_state:
         st.session_state[chave] = valor_padrao
 
-# Aplica o CSS dinâmico (já sabendo qual é o modo_jogo_ativo da sessão!)
 aplicar_estilos_dinamicos()
 
 bancos_perguntas, participantes, historico = carregar_dados()
@@ -965,16 +965,13 @@ if st.session_state.pagina == "menu":
             st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE + MODO DE JOGO (MUDA A COR NA HORA!)
+# 2. SELECIONAR PARTICIPANTE + MODO (CORES E IMAGEM DA DIREITA MUDAM JUNTAS!)
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     st.markdown("<h2 style='text-align: center; margin-bottom: 20px;'>👤 Participante & Modo de Jogo</h2>", unsafe_allow_html=True)
     
     col_esq, col_dir = st.columns([2, 1])
     
-    with col_dir:
-        mostrar_santa()
-        
     with col_esq:
         nome_digitado = st.text_input("1️⃣ Digite o nome do Participante:")
         escolha_lista = st.selectbox(
@@ -985,12 +982,11 @@ elif st.session_state.pagina == "selecionar_participante":
         st.write("")
         idx_modo_atual = LISTA_MODOS_JOGO.index(st.session_state.modo_jogo_ativo) if st.session_state.modo_jogo_ativo in LISTA_MODOS_JOGO else 0
         modo_escolhido = st.selectbox(
-            "2️⃣ Escolha o Modo de Jogo / Tema das Perguntas (A cor da tela muda com o tema!):",
+            "2️⃣ Escolha o Modo de Jogo (A cor da tela e a imagem à direita mudam na hora!):",
             LISTA_MODOS_JOGO,
             index=idx_modo_atual
         )
         
-        # Assim que o utilizador muda o modo de jogo no seletor, atualiza a cor da tela ao vivo!
         if modo_escolhido != st.session_state.modo_jogo_ativo:
             st.session_state.modo_jogo_ativo = modo_escolhido
             st.rerun()
@@ -1019,7 +1015,6 @@ elif st.session_state.pagina == "selecionar_participante":
                         salvar_dados(bancos_perguntas, participantes, historico)
                 
                 if nome_final:
-                    # Seleciona o banco de perguntas do modo escolhido
                     if modo_escolhido == "🎲 Misturadão (Todos os Temas)":
                         lista_base = []
                         for tema_k, lista_t in bancos_perguntas.items():
@@ -1083,6 +1078,10 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.session_state.pagina = "menu"
                 st.rerun()
 
+    # Renderiza o painel da direita correspondente ao tema escolhido!
+    with col_dir:
+        mostrar_painel_tema(modo_especifico=modo_escolhido)
+
 # ==============================================================================
 # 3. TELA DO JOGO
 # ==============================================================================
@@ -1103,8 +1102,9 @@ elif st.session_state.pagina == "jogo":
 
     col_esq, col_dir = st.columns([2, 1])
     
+    # Renderiza a imagem/pôster do tema na direita ANTES do loop do relógio!
     with col_dir:
-        mostrar_santa()
+        mostrar_painel_tema()
 
     with col_esq:
         p = st.session_state.perguntas_sessao[p_idx]
@@ -1352,7 +1352,7 @@ elif st.session_state.pagina == "fim":
     )
     st.write("")
     
-    mostrar_santa()
+    mostrar_painel_tema()
             
     st.markdown(f"<p style='text-align: center; font-style: italic; font-size: 22px; margin-top: 15px;'>{config['txt_msg_final']}</p>", unsafe_allow_html=True)
     st.write("")
@@ -1564,16 +1564,16 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. ESTÚDIO DE PERSONALIZAÇÃO TOTAL
+# 9. CONFIGURAÇÕES SIMPLIFICADAS E DIRETAS (4 ABAS LIMPAS!)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
-    st.session_state.modo_jogo_ativo = None
     col_cfg_top1, col_cfg_top2 = st.columns([2.2, 1])
     with col_cfg_top1:
-        st.markdown("<h2>⚙️ Estúdio de Personalização Total</h2>", unsafe_allow_html=True)
+        st.markdown("<h2>⚙️ Painel de Configurações (Imagens por Tema, Regras & Textos)</h2>", unsafe_allow_html=True)
     with col_cfg_top2:
         if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_topo", use_container_width=True):
             st.session_state.msg_upload_ok = ""
+            st.session_state.modo_jogo_ativo = None
             st.session_state.pagina = "menu"
             st.rerun()
 
@@ -1581,93 +1581,114 @@ elif st.session_state.pagina == "configuracoes":
         st.success(st.session_state.msg_upload_ok)
         st.session_state.msg_upload_ok = ""
 
-    aba_cores, aba_botoes, aba_textos, aba_img_regras, aba_sons = st.tabs([
-        "🎨 1. Cores & Fundo",
-        "🔘 2. Botões & Tamanhos",
+    aba_img, aba_regras_tam, aba_textos, aba_sons = st.tabs([
+        "🖼️ 1. Imagens por Tema & Fundo",
+        "🎯 2. Regras & Tamanhos",
         "✍️ 3. Textos & Títulos",
-        "🖼️ 4. Imagem & Regras",
-        "🔊 5. Sons & Restauro"
+        "🔊 4. Sons & Restauro"
     ])
     
-    with aba_cores:
-        st.subheader("🎨 Paleta de Cores e Troca Automática por Modo")
-        cor_auto_val = st.checkbox(
-            "🦎 Mudar as cores da tela automaticamente conforme o Modo de Jogo escolhido (Super-Heróis, Frutas, Animes, etc.)",
-            value=config.get("cor_auto_por_modo", True)
-        )
-        
-        opcoes_temas = list(TEMAS_PRONTOS.keys())
-        idx_tema = opcoes_temas.index(config.get("tema_escolhido", "Azul Mariano (Padrão)")) if config.get("tema_escolhido") in opcoes_temas else 0
-        tema_sel = st.selectbox("Cor Padrão do Menu Principal (ou de todo o jogo se desmarcar a opção acima):", opcoes_temas, index=idx_tema)
-        
-        if tema_sel != "Personalizado (Livre)" and tema_sel != config.get("tema_escolhido"):
-            for k_cor, v_cor in TEMAS_PRONTOS[tema_sel].items():
-                config[k_cor] = v_cor
-            config["tema_escolhido"] = tema_sel
-            salvar_config(config)
-            st.rerun()
+    # --------------------------------------------------------------------------
+    # ABA 1: IMAGENS ESPECÍFICAS POR TEMA + TEMA DO MENU INICIAL
+    # --------------------------------------------------------------------------
+    with aba_img:
+        col_im1, col_im2 = st.columns([1.5, 1])
+        with col_im1:
+            st.subheader("🖼️ Personalizar Imagem da Direita para cada Tema")
+            idx_tm = LISTA_MODOS_JOGO.index(st.session_state.tema_img_cfg) if st.session_state.tema_img_cfg in LISTA_MODOS_JOGO else 0
+            tema_cfg_sel = st.selectbox("Selecione o Tema para ver ou trocar a imagem dele:", LISTA_MODOS_JOGO, index=idx_tm)
+            
+            if tema_cfg_sel != st.session_state.tema_img_cfg:
+                st.session_state.tema_img_cfg = tema_cfg_sel
+                st.session_state.modo_jogo_ativo = tema_cfg_sel
+                st.rerun()
 
-        c_cor1, c_cor2, c_cor3, c_cor4 = st.columns(4)
-        with c_cor1:
-            cor_fundo_val = st.color_picker("Cor do Fundo da Tela:", value=config.get("cor_fundo", "#0B2545"))
-        with c_cor2:
-            cor_card_val = st.color_picker("Cor da Caixa da Pergunta:", value=config.get("cor_card", "#134074"))
-        with c_cor3:
-            cor_texto_val = st.color_picker("Cor Geral dos Textos:", value=config.get("cor_texto", "#FFFFFF"))
-        with c_cor4:
-            cor_dest_val = st.color_picker("Cor de Destaque / Placar:", value=config.get("cor_destaque", "#F4D35E"))
+            titulo_tema_atual = st.text_input(
+                f"Legenda acima da imagem no modo {tema_cfg_sel}:",
+                value=config.get("titulos_temas", {}).get(tema_cfg_sel, INFO_MODOS[tema_cfg_sel]["titulo_card"])
+            )
+            config["titulos_temas"][tema_cfg_sel] = titulo_tema_atual
+
+            arq_destino_tema = INFO_MODOS[tema_cfg_sel]["img_padrao"]
+            up_img_tema = st.file_uploader(
+                f"Subir foto personalizada para {tema_cfg_sel} (PNG/JPG):",
+                type=["png", "jpg", "jpeg"],
+                key=f"up_img_t_{st.session_state.up_cnt}"
+            )
+            if up_img_tema is not None:
+                with open(arq_destino_tema, "wb") as f:
+                    f.write(up_img_tema.getbuffer())
+                salvar_config(config)
+                st.session_state.up_cnt += 1
+                st.session_state.msg_upload_ok = f"✅ Nova imagem para o tema {tema_cfg_sel} salva com sucesso!"
+                st.rerun()
+
+            if tema_cfg_sel != "⛪ Igreja" and os.path.exists(arq_destino_tema):
+                if st.button(f"🗑️ Remover foto e voltar a usar o Pôster Automático de {tema_cfg_sel}"):
+                    os.remove(arq_destino_tema)
+                    st.session_state.msg_upload_ok = f"✅ Pôster ilustrado automático de {tema_cfg_sel} reativado!"
+                    st.rerun()
+
+            st.divider()
+            st.subheader("🎨 Cor do Menu Inicial e Moldura")
+            idx_m_ini = LISTA_MODOS_JOGO.index(config.get("tema_menu_inicial", "⛪ Igreja")) if config.get("tema_menu_inicial") in LISTA_MODOS_JOGO else 0
+            tema_menu_val = st.selectbox("Qual paleta de cores usar no Menu Principal (Home)?", LISTA_MODOS_JOGO, index=idx_m_ini)
+            tamanho_img_val = st.slider("Largura da Imagem / Pôster Lateral (px):", 200, 600, int(config.get("tamanho_imagem", 360)), 10)
+            borda_img_val = st.slider("Arredondamento da Moldura (px):", 0, 100, int(config.get("borda_imagem", 14)), 2)
+
+            st.divider()
+            st.subheader("🌄 Wallpaper de Plano de Fundo (Opcional)")
+            usar_bg_img = st.checkbox("Usar imagem de Wallpaper no fundo da tela", value=config.get("usar_fundo_img", False))
+            opacidade_bg_val = st.slider("Escurecer Wallpaper de fundo:", 0.0, 0.95, float(config.get("opacidade_fundo", 0.7)), 0.05)
+            up_bg = st.file_uploader("Carregar Wallpaper (PNG/JPG):", type=["png", "jpg", "jpeg"], key=f"up_bg_{st.session_state.up_cnt}")
+            if up_bg is not None:
+                with open("fundo_quiz_geral.png", "wb") as f:
+                    f.write(up_bg.getbuffer())
+                config["imagem_fundo"] = "fundo_quiz_geral.png"
+                config["usar_fundo_img"] = True
+                salvar_config(config)
+                st.session_state.up_cnt += 1
+                st.session_state.msg_upload_ok = "✅ Wallpaper carregado com sucesso!"
+                st.rerun()
+
+        with col_im2:
+            st.markdown("<h4 style='text-align: center;'>🖼️ Pré-visualização da Coluna Direita</h4>", unsafe_allow_html=True)
+            mostrar_painel_tema(modo_especifico=tema_cfg_sel, largura_custom=tamanho_img_val, borda_custom=borda_img_val)
+
+    # --------------------------------------------------------------------------
+    # ABA 2: REGRAS DO JOGO & TAMANHOS PARA PROJETOR
+    # --------------------------------------------------------------------------
+    with aba_regras_tam:
+        st.subheader("🎯 Regras da Partida")
+        cr1, cr2 = st.columns(2)
+        with cr1:
+            tempo_perg_val = st.number_input("Tempo por Pergunta (seg):", 5, 300, int(config.get("tempo_pergunta", 30)))
+            tempo_alerta_val = st.number_input("Alerta Vermelho nos últimos (seg):", 1, 30, int(config.get("tempo_alerta", 5)))
+        with cr2:
+            acertos_dado_val = st.number_input("Acertos para liberar o Dado:", 1, 20, int(config.get("acertos_para_dado", 3)))
+            pts_acerto_val = st.number_input("Pontos ganhos por Acerto:", 10, 1000, int(config.get("pontos_por_acerto", 100)), 10)
 
         st.divider()
-        st.subheader("🌄 Imagem de Plano de Fundo (Wallpaper Opcional)")
-        usar_bg_img = st.checkbox("Usar uma imagem como Plano de Fundo da tela inteira", value=config.get("usar_fundo_img", False))
-        opacidade_bg_val = st.slider("Escurecer imagem de fundo (para destacar os textos):", 0.0, 0.95, float(config.get("opacidade_fundo", 0.7)), 0.05)
-        
-        up_bg = st.file_uploader("Carregar Imagem de Plano de Fundo (PNG/JPG):", type=["png", "jpg", "jpeg"], key=f"up_bg_{st.session_state.up_cnt}")
-        if up_bg is not None:
-            with open("fundo_quiz_geral.png", "wb") as f:
-                f.write(up_bg.getbuffer())
-            config["imagem_fundo"] = "fundo_quiz_geral.png"
-            config["usar_fundo_img"] = True
-            salvar_config(config)
-            st.session_state.up_cnt += 1
-            st.session_state.msg_upload_ok = "✅ Plano de fundo atualizado e aplicado automaticamente!"
-            st.rerun()
-
-    with aba_botoes:
-        st.subheader("🔘 Cores dos Botões")
-        cb1, cb2, cb3, cb4, cb5 = st.columns(5)
-        with cb1:
-            cor_btn_val = st.color_picker("Fundo do Botão:", value=config.get("cor_botao", "#134074"))
-        with cb2:
-            cor_txt_btn_val = st.color_picker("Texto do Botão:", value=config.get("cor_texto_botao", "#FFFFFF"))
-        with cb3:
-            cor_borda_btn_val = st.color_picker("Borda do Botão:", value=config.get("cor_borda_botao", "#1F618D"))
-        with cb4:
-            cor_btn_dado_val = st.color_picker("Botão do Dado:", value=config.get("cor_botao_dado", "#F4D35E"))
-        with cb5:
-            cor_btn_sair_val = st.color_picker("Botão Sair:", value=config.get("cor_botao_sair", "#E74C3C"))
-
-        st.divider()
-        st.subheader("📏 Controle de Tamanho dos Botões e Fontes")
+        st.subheader("📏 Ajuste de Tamanho de Letras e Botões (Ideal para Projetor)")
         ct1, ct2 = st.columns(2)
         with ct1:
             larg_btn_val = st.slider("Largura Máxima dos Botões (px):", 250, 900, int(config.get("largura_botao", 500)), 10)
-            alt_btn_val = st.slider("Altura / Espaçamento Interno do Botão (px):", 8, 36, int(config.get("altura_botao", 16)), 2)
-            raio_btn_val = st.slider("Arredondamento dos Cantos do Botão (px):", 0, 40, int(config.get("raio_borda_botao", 10)), 2)
+            alt_btn_val = st.slider("Altura dos Botões (px):", 8, 36, int(config.get("altura_botao", 16)), 2)
             tam_f_btn_val = st.slider("Tamanho da Letra dos Botões (px):", 14, 36, int(config.get("tam_fonte_botao", 22)), 1)
         with ct2:
             tam_f_tit_val = st.slider("Tamanho do Título Principal (px):", 28, 72, int(config.get("tam_fonte_titulo", 46)), 2)
             tam_f_perg_val = st.slider("Tamanho da Letra da Pergunta (px):", 20, 50, int(config.get("tam_fonte_pergunta", 30)), 1)
             tam_f_opc_val = st.slider("Tamanho da Letra das Alternativas A, B, C, D (px):", 16, 42, int(config.get("tam_fonte_opcoes", 24)), 1)
-            tam_f_plac_val = st.slider("Tamanho da Letra do Placar no Topo (px):", 14, 36, int(config.get("tam_fonte_placar", 20)), 1)
 
+    # --------------------------------------------------------------------------
+    # ABA 3: TEXTOS FÍSICOS & TÍTULOS
+    # --------------------------------------------------------------------------
     with aba_textos:
-        st.subheader("✍️ Modificar Todos os Textos Físicos do Sistema")
+        st.subheader("✍️ Textos e Títulos do Sistema")
         tx1, tx2 = st.columns(2)
         with tx1:
             txt_tit_menu_val = st.text_input("Título Principal do Menu:", value=config.get("txt_titulo_menu", ""))
             txt_sub_menu_val = st.text_input("Subtítulo do Menu:", value=config.get("txt_subtitulo_menu", ""))
-            txt_tit_img_val = st.text_input("Título acima da Imagem Lateral:", value=config.get("txt_titulo_imagem", ""))
             txt_sala_dado_val = st.text_input("Título da Sala do Dado:", value=config.get("txt_sala_dado", ""))
             txt_sub_dado_val = st.text_input("Subtítulo da Sala do Dado:", value=config.get("txt_sub_dado", ""))
             txt_tit_fim_val = st.text_input("Título da Tela Final:", value=config.get("txt_titulo_fim", ""))
@@ -1679,43 +1700,10 @@ elif st.session_state.pagina == "configuracoes":
             txt_b_hist_val = st.text_input("Texto do Botão Histórico:", value=config.get("txt_btn_historico", ""))
             txt_b_cfg_val = st.text_input("Texto do Botão Configurações:", value=config.get("txt_btn_config", ""))
             txt_b_sair_val = st.text_input("Texto do Botão Sair:", value=config.get("txt_btn_sair", ""))
-            col_aba1, col_aba2 = st.columns([3, 1])
-            with col_aba1:
-                tit_aba_val = st.text_input("Nome na Aba do Navegador:", value=config.get("titulo_aba", ""))
-            with col_aba2:
-                ico_aba_val = st.text_input("Ícone da Aba:", value=config.get("icone_aba", "🎲"))
 
-    with aba_img_regras:
-        col_ir1, col_ir2 = st.columns([1.5, 1])
-        with col_ir1:
-            st.subheader("🖼️ Imagem Principal / Lateral")
-            tamanho_img_val = st.slider("Largura da Imagem Lateral (px):", 150, 650, int(config.get("tamanho_imagem", 360)), 10)
-            borda_img_val = st.slider("Arredondamento da Moldura da Imagem (px):", 0, 200, int(config.get("borda_imagem", 12)), 4)
-            
-            up_img = st.file_uploader("Trocar Imagem Lateral (PNG/JPG):", type=["png", "jpg", "jpeg"], key=f"up_img_{st.session_state.up_cnt}")
-            if up_img is not None:
-                with open("imagem_geral.png", "wb") as f:
-                    f.write(up_img.getbuffer())
-                config["imagem_ns"] = "imagem_geral.png"
-                salvar_config(config)
-                st.session_state.up_cnt += 1
-                st.session_state.msg_upload_ok = "✅ Nova imagem lateral carregada e ativada com sucesso!"
-                st.rerun()
-
-            st.divider()
-            st.subheader("🎯 Regras da Partida")
-            cr1, cr2 = st.columns(2)
-            with cr1:
-                tempo_perg_val = st.number_input("Tempo por Pergunta (seg):", 5, 300, int(config.get("tempo_pergunta", 30)))
-                tempo_alerta_val = st.number_input("Alerta Vermelho nos últimos (seg):", 1, 30, int(config.get("tempo_alerta", 5)))
-            with cr2:
-                acertos_dado_val = st.number_input("Acertos para liberar o Dado:", 1, 20, int(config.get("acertos_para_dado", 3)))
-                pts_acerto_val = st.number_input("Pontos ganhos por Acerto:", 10, 1000, int(config.get("pontos_por_acerto", 100)), 10)
-
-        with col_ir2:
-            st.markdown("<h4 style='text-align: center;'>🖼️ Pré-visualização ao Vivo</h4>", unsafe_allow_html=True)
-            mostrar_santa(largura_custom=tamanho_img_val, borda_custom=borda_img_val, titulo_custom=txt_tit_img_val)
-
+    # --------------------------------------------------------------------------
+    # ABA 4: EFEITOS SONOROS & RESTAURO
+    # --------------------------------------------------------------------------
     with aba_sons:
         st.subheader("🔊 Efeitos Sonoros e Animações")
         cs1, cs2 = st.columns(2)
@@ -1761,37 +1749,19 @@ elif st.session_state.pagina == "configuracoes":
     st.write("---")
     col_bot1, col_bot2 = st.columns([1, 1])
     with col_bot1:
-        if st.button("💾 SALVAR TODAS AS MODIFICAÇÕES", key="btn_ir_dado", use_container_width=True):
-            if (cor_fundo_val != config["cor_fundo"] or cor_card_val != config["cor_card"] or
-                cor_btn_val != config["cor_botao"] or cor_dest_val != config["cor_destaque"]):
-                config["tema_escolhido"] = "Personalizado (Livre)"
-            else:
-                config["tema_escolhido"] = tema_sel
-
+        if st.button("💾 SALVAR CONFIGURAÇÕES", key="btn_ir_dado", use_container_width=True):
             config.update({
-                "cor_auto_por_modo": bool(cor_auto_val),
-                "cor_fundo": cor_fundo_val,
-                "cor_card": cor_card_val,
-                "cor_texto": cor_texto_val,
-                "cor_destaque": cor_dest_val,
+                "tema_menu_inicial": tema_menu_val,
                 "usar_fundo_img": usar_bg_img,
                 "opacidade_fundo": float(opacidade_bg_val),
-                "cor_botao": cor_btn_val,
-                "cor_texto_botao": cor_txt_btn_val,
-                "cor_borda_botao": cor_borda_btn_val,
-                "cor_botao_dado": cor_btn_dado_val,
-                "cor_botao_sair": cor_btn_sair_val,
                 "largura_botao": int(larg_btn_val),
                 "altura_botao": int(alt_btn_val),
-                "raio_borda_botao": int(raio_btn_val),
                 "tam_fonte_botao": int(tam_f_btn_val),
                 "tam_fonte_titulo": int(tam_f_tit_val),
                 "tam_fonte_pergunta": int(tam_f_perg_val),
                 "tam_fonte_opcoes": int(tam_f_opc_val),
-                "tam_fonte_placar": int(tam_f_plac_val),
                 "txt_titulo_menu": txt_tit_menu_val,
                 "txt_subtitulo_menu": txt_sub_menu_val,
-                "txt_titulo_imagem": txt_tit_img_val,
                 "txt_sala_dado": txt_sala_dado_val,
                 "txt_sub_dado": txt_sub_dado_val,
                 "txt_titulo_fim": txt_tit_fim_val,
@@ -1802,8 +1772,6 @@ elif st.session_state.pagina == "configuracoes":
                 "txt_btn_historico": txt_b_hist_val,
                 "txt_btn_config": txt_b_cfg_val,
                 "txt_btn_sair": txt_b_sair_val,
-                "titulo_aba": tit_aba_val,
-                "icone_aba": ico_aba_val,
                 "tamanho_imagem": int(tamanho_img_val),
                 "borda_imagem": int(borda_img_val),
                 "tempo_pergunta": int(tempo_perg_val),
@@ -1814,11 +1782,12 @@ elif st.session_state.pagina == "configuracoes":
                 "ativar_baloes": bool(ativar_baloes_val)
             })
             salvar_config(config)
-            st.session_state.msg_upload_ok = "✅ Todas as modificações foram aplicadas e salvas com sucesso!"
+            st.session_state.msg_upload_ok = "✅ Configurações salvas com sucesso!"
             st.rerun()
             
     with col_bot2:
         if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_rodape", use_container_width=True):
             st.session_state.msg_upload_ok = ""
+            st.session_state.modo_jogo_ativo = None
             st.session_state.pagina = "menu"
             st.rerun()
