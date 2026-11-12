@@ -14,12 +14,18 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Compacto para o Player)
+# Estilos Visuais Aprimorados (Oculta absolutamente qualquer player visual mantendo o som)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
+    }
+    /* OCULTAR COMPLETAMENTE QUALQUER BARRA DE PLAYER DE ÁUDIO VISUAL */
+    audio {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
     }
     .placar-topo {
         font-size: 24px !important;
@@ -46,11 +52,6 @@ st.markdown("""
     }
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
-    }
-    /* COMPACTAR O MINI PLAYER DE ÁUDIO NO TOPO */
-    audio {
-        height: 32px !important;
-        width: 160px !important;
     }
     /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
     .stButton {
@@ -276,29 +277,29 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM MINI PLAYER DISCRETO NO TOPO E FLUXO DIRETO)
+# 3. TELA DO JOGO (COM TIC-TAK 100% OCULTO EM SEGUNDO PLANO)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    # Placar Superior e Mini Player de Fundo Discreto ao Lado
-    c1, c2, c3, c4, c5 = st.columns([2, 1, 1, 1, 1.5])
-    c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
-    placeholder_tempo = c2.empty()
-    c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
-    c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
-    
-    with c5:
-        if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
-            st.markdown("<span style='font-size: 10px; color: #8DA9C4;'>⏱️ Som do Tempo:</span>", unsafe_allow_html=True)
-            st.audio(SOM_TIC_TAK, autoplay=True, loop=True)
+    # Tocar o tic-tak em segundo plano de forma 100% invisível
+    if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
+        with open(SOM_TIC_TAK, "rb") as f:
+            b64_t = base64.b64encode(f.read()).decode("utf-8")
+            st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    st.divider()
-    
+    # Layout de colunas fixo para evitar qualquer piscar ou sumir da imagem
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
+        c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1])
+        c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
+        placeholder_tempo = c2.empty()
+        c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
+        c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
+        st.divider()
+
         if p_idx < total_p:
             p = st.session_state.perguntas_sessao[p_idx]
             
@@ -308,16 +309,14 @@ elif st.session_state.pagina == "jogo":
                 escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
                 st.write("")
                 
-                col_b1, col_b2 = st.columns([2, 2])
-                with col_b1:
-                    if st.button("✅ Confirmar Resposta"):
-                        st.session_state.respondido = True
-                        st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                        
-                        if st.session_state.ultima_resposta_correta:
-                            st.session_state.pontuacao += 100
-                            st.session_state.acertos += 1
-                        st.rerun()
+                if st.button("✅ Confirmar Resposta"):
+                    st.session_state.respondido = True
+                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                    
+                    if st.session_state.ultima_resposta_correta:
+                        st.session_state.pontuacao += 100
+                        st.session_state.acertos += 1
+                    st.rerun()
                 
                 # Relógio dinâmico segundo a segundo
                 if st.session_state.tempo_restante > 0:
@@ -332,7 +331,7 @@ elif st.session_state.pagina == "jogo":
             else:
                 placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
                 
-                # Toca o som respetivo de forma garantida assim que entra no modo respondido
+                # Dispara o som correspondente sem interromper a interface
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
                     tocar_audio_invisivel(SOM_ACERTO)
@@ -341,20 +340,18 @@ elif st.session_state.pagina == "jogo":
                     tocar_audio_invisivel(SOM_ERRO)
                 
                 st.write("")
-                col_res1, col_res2 = st.columns([2, 2])
-                with col_res1:
-                    if st.button("➡️ Próxima Pergunta"):
-                        st.session_state.respondido = False
-                        st.session_state.pergunta_idx += 1
-                        st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
-                        
-                        if st.session_state.acertos >= 3:
-                            st.session_state.acertos = 0
-                            st.session_state.dado_girado = False
-                            st.session_state.pagina = "dado"
-                        elif st.session_state.pergunta_idx >= total_p:
-                            st.session_state.pagina = "fim"
-                        st.rerun()
+                if st.button("➡️ Próxima Pergunta"):
+                    st.session_state.respondido = False
+                    st.session_state.pergunta_idx += 1
+                    st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+                    
+                    if st.session_state.acertos >= 3:
+                        st.session_state.acertos = 0
+                        st.session_state.dado_girado = False
+                        st.session_state.pagina = "dado"
+                    elif st.session_state.pergunta_idx >= total_p:
+                        st.session_state.pagina = "fim"
+                    st.rerun()
             
             st.write("")
             if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
