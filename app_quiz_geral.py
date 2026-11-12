@@ -457,7 +457,8 @@ estados_iniciais = {
     "inicio_partida": None, "tempo_final_congelado": None, "perguntas_sessao": [],
     "respondido": False, "ultima_resposta_correta": None, "dado_girado": False,
     "resultado_dado": None, "editando_idx": None, "tempo_restante": 30,
-    "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False
+    "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False,
+    "up_cnt": 0, "msg_upload_ok": ""
 }
 for chave, valor_padrao in estados_iniciais.items():
     if chave not in st.session_state:
@@ -1048,11 +1049,23 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. ESTÚDIO DE PERSONALIZAÇÃO TOTAL (COM SUBMENUS EM ABAS)
+# 9. ESTÚDIO DE PERSONALIZAÇÃO TOTAL (AUTO-LIMPEZA DE UPLOADS PARA NUNCA TRAVAR)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
-    st.markdown("<h2 style='text-align: center;'>⚙️ Estúdio de Personalização Total</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; opacity: 0.85;'>Personalize cores, planos de fundo, botões, tamanhos, textos, imagens e sons em submenus organizados.</p>", unsafe_allow_html=True)
+    col_cfg_top1, col_cfg_top2 = st.columns([2.2, 1])
+    with col_cfg_top1:
+        st.markdown("<h2>⚙️ Estúdio de Personalização Total</h2>", unsafe_allow_html=True)
+    with col_cfg_top2:
+        if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_topo", use_container_width=True):
+            st.session_state.msg_upload_ok = ""
+            st.session_state.pagina = "menu"
+            st.rerun()
+
+    if st.session_state.msg_upload_ok:
+        st.success(st.session_state.msg_upload_ok)
+        st.session_state.msg_upload_ok = ""
+
+    st.markdown("<p style='opacity: 0.85;'>Personalize cores, planos de fundo, botões, tamanhos, textos, imagens e sons em submenus organizados.</p>", unsafe_allow_html=True)
     
     aba_cores, aba_botoes, aba_textos, aba_img_regras, aba_sons = st.tabs([
         "🎨 1. Cores & Fundo",
@@ -1094,14 +1107,16 @@ elif st.session_state.pagina == "configuracoes":
         usar_bg_img = st.checkbox("Usar uma imagem como Plano de Fundo da tela inteira", value=config.get("usar_fundo_img", False))
         opacidade_bg_val = st.slider("Escurecer imagem de fundo (para destacar os textos):", 0.0, 0.95, float(config.get("opacidade_fundo", 0.7)), 0.05)
         
-        up_bg = st.file_uploader("Carregar Imagem de Plano de Fundo (PNG/JPG):", type=["png", "jpg", "jpeg"], key="up_bg_quiz")
+        # A chave dinâmica com up_cnt limpa o componente automaticamente após salvar!
+        up_bg = st.file_uploader("Carregar Imagem de Plano de Fundo (PNG/JPG):", type=["png", "jpg", "jpeg"], key=f"up_bg_{st.session_state.up_cnt}")
         if up_bg is not None:
             with open("fundo_quiz_geral.png", "wb") as f:
                 f.write(up_bg.getbuffer())
             config["imagem_fundo"] = "fundo_quiz_geral.png"
             config["usar_fundo_img"] = True
             salvar_config(config)
-            st.success("Plano de fundo carregado com sucesso!")
+            st.session_state.up_cnt += 1
+            st.session_state.msg_upload_ok = "✅ Plano de fundo atualizado e aplicado automaticamente!"
             st.rerun()
 
     # --------------------------------------------------------------------------
@@ -1168,18 +1183,19 @@ elif st.session_state.pagina == "configuracoes":
     with aba_img_regras:
         col_ir1, col_ir2 = st.columns([1.5, 1])
         with col_ir1:
-            st.subheader("🖼️ Imagem Principal / Institucional")
+            st.subheader("🖼️ Imagem Principal / Lateral")
             tamanho_img_val = st.slider("Largura da Imagem Lateral (px):", 150, 650, int(config.get("tamanho_imagem", 360)), 10)
             borda_img_val = st.slider("Arredondamento da Moldura da Imagem (px):", 0, 200, int(config.get("borda_imagem", 12)), 4)
             
-            up_img = st.file_uploader("Trocar Imagem Lateral (PNG/JPG):", type=["png", "jpg", "jpeg"], key="up_img_ns")
+            # Chave dinâmica: assim que escolhe a foto, salva, atualiza o preview e limpa a caixinha sozinho!
+            up_img = st.file_uploader("Trocar Imagem Lateral (PNG/JPG):", type=["png", "jpg", "jpeg"], key=f"up_img_{st.session_state.up_cnt}")
             if up_img is not None:
-                # Salva como imagem_geral.png para não substituir a nossa_senhora.png do quiz original!
                 with open("imagem_geral.png", "wb") as f:
                     f.write(up_img.getbuffer())
                 config["imagem_ns"] = "imagem_geral.png"
                 salvar_config(config)
-                st.success("Imagem atualizada com sucesso!")
+                st.session_state.up_cnt += 1
+                st.session_state.msg_upload_ok = "✅ Nova imagem lateral carregada e ativada com sucesso!"
                 st.rerun()
 
             st.divider()
@@ -1207,28 +1223,37 @@ elif st.session_state.pagina == "configuracoes":
             ativar_baloes_val = st.checkbox("🎈 Ativar Chuva de Balões nas Conquistas", value=config.get("ativar_baloes", True))
         with cs2:
             st.write("**Substituir ficheiros de áudio (MP3):**")
-            up_som_tic = st.file_uploader("Som do Relógio (Tic-Tac):", type=["mp3"], key="up_s1")
-            if up_som_tic:
+            up_som_tic = st.file_uploader("Som do Relógio (Tic-Tac):", type=["mp3"], key=f"up_s1_{st.session_state.up_cnt}")
+            if up_som_tic is not None:
                 with open(SOM_TIC_TAK, "wb") as f: f.write(up_som_tic.getbuffer())
-                st.success("Som Tic-Tac atualizado!")
-            up_som_dado = st.file_uploader("Som a Girar o Dado:", type=["mp3"], key="up_s2")
-            if up_som_dado:
+                st.session_state.up_cnt += 1
+                st.session_state.msg_upload_ok = "✅ Som Tic-Tac atualizado!"
+                st.rerun()
+            up_som_dado = st.file_uploader("Som a Girar o Dado:", type=["mp3"], key=f"up_s2_{st.session_state.up_cnt}")
+            if up_som_dado is not None:
                 with open(SOM_DADO, "wb") as f: f.write(up_som_dado.getbuffer())
-                st.success("Som do Dado atualizado!")
-            up_som_ok = st.file_uploader("Som de Resposta Certa (Aplausos):", type=["mp3"], key="up_s3")
-            if up_som_ok:
+                st.session_state.up_cnt += 1
+                st.session_state.msg_upload_ok = "✅ Som do Dado atualizado!"
+                st.rerun()
+            up_som_ok = st.file_uploader("Som de Resposta Certa (Aplausos):", type=["mp3"], key=f"up_s3_{st.session_state.up_cnt}")
+            if up_som_ok is not None:
                 with open(SOM_ACERTO, "wb") as f: f.write(up_som_ok.getbuffer())
-                st.success("Som de Acerto atualizado!")
-            up_som_err = st.file_uploader("Som de Resposta Errada:", type=["mp3"], key="up_s4")
-            if up_som_err:
+                st.session_state.up_cnt += 1
+                st.session_state.msg_upload_ok = "✅ Som de Acerto atualizado!"
+                st.rerun()
+            up_som_err = st.file_uploader("Som de Resposta Errada:", type=["mp3"], key=f"up_s4_{st.session_state.up_cnt}")
+            if up_som_err is not None:
                 with open(SOM_ERRO, "wb") as f: f.write(up_som_err.getbuffer())
-                st.success("Som de Erro atualizado!")
+                st.session_state.up_cnt += 1
+                st.session_state.msg_upload_ok = "✅ Som de Erro atualizado!"
+                st.rerun()
 
         st.divider()
         st.subheader("♻️ Restaurar Padrão de Fábrica")
-        if st.button("🔄 Restaurar Todas as Configurações para o Original"):
+        if st.button("🔄 Restaurar Todas as Configurações para o Original", key="btn_restaurar_orig"):
             salvar_config(obter_config_padrao())
-            st.success("Configurações restauradas para o padrão original!")
+            st.session_state.up_cnt += 1
+            st.session_state.msg_upload_ok = "🔄 Configurações restauradas para o padrão original!"
             st.rerun()
 
     st.write("---")
@@ -1286,11 +1311,11 @@ elif st.session_state.pagina == "configuracoes":
                 "ativar_baloes": bool(ativar_baloes_val)
             })
             salvar_config(config)
-            st.success("✅ Todas as modificações foram aplicadas e salvas com sucesso!")
-            time.sleep(0.5)
+            st.session_state.msg_upload_ok = "✅ Todas as modificações foram aplicadas e salvas com sucesso!"
             st.rerun()
             
     with col_bot2:
-        if st.button("⬅️ Voltar ao Menu Principal", use_container_width=True):
+        if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_rodape", use_container_width=True):
+            st.session_state.msg_upload_ok = ""
             st.session_state.pagina = "menu"
             st.rerun()
