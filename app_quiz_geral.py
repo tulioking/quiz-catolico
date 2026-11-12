@@ -1,5 +1,5 @@
 # ==============================================================================
-# QUIZ UNIVERSAL & FESTEJOS - VERSÃO ESTÚDIO PERSONALIZÁVEL (STREAMLIT) ⛪🎵🎲
+# QUIZ UNIVERSAL & FESTEJOS - VERSÃO ESTÚDIO PERSONALIZÁVEL (APP_QUIZ_GERAL) ⛪🎵🎲
 # ==============================================================================
 
 import streamlit as st
@@ -11,8 +11,9 @@ import time
 import base64
 import re
 
-ARQUIVO_DADOS = "dados_quiz_igreja.json"
-ARQUIVO_CONFIG = "config_quiz.json"
+# Ficheiros exclusivos para o Quiz Geral (não interfere no quiz da igreja!)
+ARQUIVO_DADOS = "dados_quiz_geral.json"
+ARQUIVO_CONFIG = "config_quiz_geral.json"
 
 # ==============================================================================
 # CONFIGURAÇÕES PADRÃO E TEMAS PRÉ-DEFINIDOS
@@ -48,7 +49,7 @@ def obter_config_padrao():
         "tamanho_imagem": 360,
         "borda_imagem": 12,
         "usar_fundo_img": False,
-        "imagem_fundo": "fundo_quiz.png",
+        "imagem_fundo": "fundo_quiz_geral.png",
         "opacidade_fundo": 0.7,
         
         # Regras do Jogo
@@ -82,15 +83,15 @@ def obter_config_padrao():
         "raio_borda_botao": 10,
         
         # Textos Físicos Personalizáveis
-        "titulo_aba": "Festejos da Imaculada Conceição",
-        "icone_aba": "⛪",
+        "titulo_aba": "Quiz Geral Personalizável",
+        "icone_aba": "🎲",
         "txt_titulo_menu": "⛪ Festejos da Imaculada Conceição ⛪",
-        "txt_subtitulo_menu": "Quiz da Imaculada (Pressione F11 para tela cheia)",
+        "txt_subtitulo_menu": "Quiz Interativo (Pressione F11 para ecrã inteiro)",
         "txt_titulo_imagem": "🌸 Imaculada Conceição",
         "txt_btn_jogar": "▶️ Jogar / Iniciar Quiz",
         "txt_btn_participantes": "👥 Cadastrar Participantes",
         "txt_btn_perguntas": "📝 Cadastrar / Gerir / Editar Perguntas",
-        "txt_btn_historico": "📊 Histórico de Acertos e Prêmios",
+        "txt_btn_historico": "📊 Histórico de Acertos e Prémios",
         "txt_btn_config": "⚙️ Estúdio de Personalização (Configurações)",
         "txt_btn_sair": "🚪 Sair / Fechar Sistema",
         "txt_sala_dado": "🎲 SALA DO DADO PREMIADO! 🎲",
@@ -120,8 +121,8 @@ def salvar_config(config_dict):
 config = carregar_config()
 
 st.set_page_config(
-    page_title=config.get("titulo_aba", "Quiz dos Festejos"),
-    page_icon=config.get("icone_aba", "⛪"),
+    page_title=config.get("titulo_aba", "Quiz Geral"),
+    page_icon=config.get("icone_aba", "🎲"),
     layout="wide"
 )
 
@@ -286,6 +287,9 @@ def obter_tempo_decorrido():
 
 def mostrar_santa(largura_custom=None, borda_custom=None, titulo_custom=None):
     img_path = config.get("imagem_ns", "nossa_senhora.png")
+    if not os.path.exists(img_path) and os.path.exists("nossa_senhora.png"):
+        img_path = "nossa_senhora.png"
+        
     largura = largura_custom if largura_custom is not None else config.get("tamanho_imagem", 360)
     borda = borda_custom if borda_custom is not None else config.get("borda_imagem", 12)
     titulo = titulo_custom if titulo_custom is not None else config.get("txt_titulo_imagem", "🌸 Imaculada Conceição")
@@ -365,7 +369,7 @@ def renderizar_dado_3d(numero_final=None, animar=False):
     if numero_final is not None and not animar:
         badge_html = f"<div class='resultado-texto'>🎉 SAIU O NÚMERO {numero_final}! 🎉</div>"
     elif animar:
-        badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>🎲 Lançando o dado...</div>"
+        badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>🎲 A lançar o dado...</div>"
     else:
         badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>Clique no botão abaixo para jogar o dado!</div>"
 
@@ -461,7 +465,7 @@ for chave, valor_padrao in estados_iniciais.items():
 
 perguntas, participantes, historico = carregar_dados()
 
-# Ficheiros de áudio locais
+# Ficheiros de áudio locais (partilhados na mesma pasta)
 SOM_TIC_TAK = "tictak.mp3"
 SOM_DADO = "paramomentododado.mp3"
 SOM_ACERTO = "ElevenLabs_Efeito_sonoro_de_aplausos_altos_indicando_uma_resposta.mp3"
@@ -515,7 +519,7 @@ if st.session_state.pagina == "menu":
             st.rerun()
             
         if st.button(config["txt_btn_sair"], key="sair_sis", use_container_width=True):
-            st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
+            st.warning("Para fechar o sistema no navegador, basta fechar este separador ou janela.")
 
 # ==============================================================================
 # 2. SELECIONAR PARTICIPANTE
@@ -715,12 +719,12 @@ elif st.session_state.pagina == "jogo":
                 if st.session_state.ultima_resposta_correta:
                     st.markdown(
                         f"<h3 style='text-align: center; color: {config['cor_destaque']};'>🏆 DADO PREMIADO LIBERADO ({st.session_state.acertos} ACERTOS)!<br>"
-                        f"<span style='font-size: 20px; opacity: 0.85;'>Quer continuar respondendo o desafio ou girar o dado agora?</span></h3>",
+                        f"<span style='font-size: 20px; opacity: 0.85;'>Quer continuar a responder ao desafio ou girar o dado agora?</span></h3>",
                         unsafe_allow_html=True
                     )
                 else:
                     st.markdown(
-                        f"<h3 style='text-align: center; color: {config['cor_destaque']};'>🏆 Fim da sequência! Mas você já garantiu seu Dado Premiado! 🏆</h3>",
+                        f"<h3 style='text-align: center; color: {config['cor_destaque']};'>🏆 Fim da sequência! Mas já garantiu o seu Dado Premiado! 🏆</h3>",
                         unsafe_allow_html=True
                     )
                 
@@ -731,7 +735,7 @@ elif st.session_state.pagina == "jogo":
                         st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                         st.rerun()
                 else:
-                    st.info("🎉 Você respondeu todas as perguntas cadastradas no sistema!")
+                    st.info("🎉 Respondeu a todas as perguntas cadastradas no sistema!")
                 
                 if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado", use_container_width=True):
                     st.session_state.acertos = 0
@@ -926,7 +930,7 @@ elif st.session_state.pagina == "cadastrar_participantes":
 elif st.session_state.pagina == "historico":
     col_top_h1, col_top_h2 = st.columns([2, 1])
     with col_top_h1:
-        st.markdown("<h2>📊 Histórico de Acertos, Tempos e Prêmios</h2>", unsafe_allow_html=True)
+        st.markdown("<h2>📊 Histórico de Acertos, Tempos e Prémios</h2>", unsafe_allow_html=True)
     with col_top_h2:
         if st.button("⬅️ Voltar ao Menu", key="voltar_hist_topo", use_container_width=True):
             st.session_state.pagina = "menu"
@@ -967,7 +971,6 @@ elif st.session_state.pagina == "historico":
 elif st.session_state.pagina == "gerir_perguntas":
     st.markdown("<h2>📝 Gestão e Edição de Perguntas</h2>", unsafe_allow_html=True)
     
-    # BARRA DE AÇÕES FIXA NO TOPO: VOLTAR E NOVA PERGUNTA LADO A LADO
     col_topo_esq, col_topo_dir = st.columns([1, 1])
     with col_topo_esq:
         if st.button("⬅️ Voltar ao Menu", key="btn_voltar_perg_topo", use_container_width=True):
@@ -1093,9 +1096,9 @@ elif st.session_state.pagina == "configuracoes":
         
         up_bg = st.file_uploader("Carregar Imagem de Plano de Fundo (PNG/JPG):", type=["png", "jpg", "jpeg"], key="up_bg_quiz")
         if up_bg is not None:
-            with open("fundo_quiz.png", "wb") as f:
+            with open("fundo_quiz_geral.png", "wb") as f:
                 f.write(up_bg.getbuffer())
-            config["imagem_fundo"] = "fundo_quiz.png"
+            config["imagem_fundo"] = "fundo_quiz_geral.png"
             config["usar_fundo_img"] = True
             salvar_config(config)
             st.success("Plano de fundo carregado com sucesso!")
@@ -1157,7 +1160,7 @@ elif st.session_state.pagina == "configuracoes":
             with col_aba1:
                 tit_aba_val = st.text_input("Nome na Aba do Navegador:", value=config.get("titulo_aba", ""))
             with col_aba2:
-                ico_aba_val = st.text_input("Ícone da Aba:", value=config.get("icone_aba", "⛪"))
+                ico_aba_val = st.text_input("Ícone da Aba:", value=config.get("icone_aba", "🎲"))
 
     # --------------------------------------------------------------------------
     # SUBMENU 4: IMAGEM LATERAL & REGRAS DO QUIZ
@@ -1171,9 +1174,10 @@ elif st.session_state.pagina == "configuracoes":
             
             up_img = st.file_uploader("Trocar Imagem Lateral (PNG/JPG):", type=["png", "jpg", "jpeg"], key="up_img_ns")
             if up_img is not None:
-                with open("nossa_senhora.png", "wb") as f:
+                # Salva como imagem_geral.png para não substituir a nossa_senhora.png do quiz original!
+                with open("imagem_geral.png", "wb") as f:
                     f.write(up_img.getbuffer())
-                config["imagem_ns"] = "nossa_senhora.png"
+                config["imagem_ns"] = "imagem_geral.png"
                 salvar_config(config)
                 st.success("Imagem atualizada com sucesso!")
                 st.rerun()
@@ -1202,12 +1206,12 @@ elif st.session_state.pagina == "configuracoes":
             ativar_sons_val = st.checkbox("🔊 Ativar Efeitos Sonoros do Jogo", value=config.get("ativar_sons", True))
             ativar_baloes_val = st.checkbox("🎈 Ativar Chuva de Balões nas Conquistas", value=config.get("ativar_baloes", True))
         with cs2:
-            st.write("**Substituir arquivos de áudio (MP3):**")
+            st.write("**Substituir ficheiros de áudio (MP3):**")
             up_som_tic = st.file_uploader("Som do Relógio (Tic-Tac):", type=["mp3"], key="up_s1")
             if up_som_tic:
                 with open(SOM_TIC_TAK, "wb") as f: f.write(up_som_tic.getbuffer())
                 st.success("Som Tic-Tac atualizado!")
-            up_som_dado = st.file_uploader("Som Girando o Dado:", type=["mp3"], key="up_s2")
+            up_som_dado = st.file_uploader("Som a Girar o Dado:", type=["mp3"], key="up_s2")
             if up_som_dado:
                 with open(SOM_DADO, "wb") as f: f.write(up_som_dado.getbuffer())
                 st.success("Som do Dado atualizado!")
@@ -1266,7 +1270,6 @@ elif st.session_state.pagina == "configuracoes":
                 "txt_msg_final": txt_msg_fim_val,
                 "txt_btn_jogar": txt_b_jogar_val,
                 "txt_btn_participantes": txt_b_part_val,
-                "txt_b_perguntas": txt_b_perg_val,
                 "txt_btn_perguntas": txt_b_perg_val,
                 "txt_btn_historico": txt_b_hist_val,
                 "txt_btn_config": txt_b_cfg_val,
