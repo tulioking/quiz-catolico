@@ -84,7 +84,7 @@ st.markdown("""
         padding: 12px 0px !important;
     }
     /* FORÇAR CENTRALIZAÇÃO ABSOLUTA DE TODOS OS BOTÕES E DO MENU */
-    div.stButton, [data-testid="stButton"] {
+    div.stButton, [data-testid="stButton"], .stElementContainer:has(button) {
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
@@ -110,12 +110,21 @@ st.markdown("""
         color: white;
         border-color: #F4D35E;
     }
-    /* BOTÃO ESPECIAL DOURADO PARA O DADO PREMIADO */
+    /* BOTÃO ESPECIAL DOURADO CENTRALIZADO PARA O DADO PREMIADO */
+    .st-key-btn_ir_dado, .st-key-btn_ir_dado > div {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
     .st-key-btn_ir_dado button {
         background-color: #F4D35E !important;
         color: #0B2545 !important;
         border: 3px solid #FFFFFF !important;
         font-size: 24px !important;
+        max-width: 420px !important;
+        width: 100% !important;
+        margin: 10px auto !important;
         box-shadow: 0 0 20px rgba(244, 211, 94, 0.7) !important;
     }
     .st-key-btn_ir_dado button:hover {
@@ -272,6 +281,7 @@ def renderizar_dado_3d(numero_final=None, animar=False):
             justify-content: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             position: relative;
+            margin: 0 auto;
         }}
         .scene {{
             width: 130px;
@@ -333,11 +343,12 @@ def renderizar_dado_3d(numero_final=None, animar=False):
         }}
         .resultado-texto {{
             margin-top: 18px;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             color: #F4D35E;
             text-shadow: 0 2px 8px rgba(0,0,0,0.5);
             text-align: center;
+            padding: 0 10px;
         }}
         {css_animacao}
     </style>
@@ -599,7 +610,7 @@ elif st.session_state.pagina == "jogo":
             
             aviso_selecao = st.empty()
             
-            if st.button("✅ Confirmar Resposta"):
+            if st.button("✅ Confirmar Resposta", use_container_width=True):
                 if escolha is None:
                     aviso_selecao.warning("⚠️ Selecione uma alternativa antes de confirmar!")
                 else:
@@ -613,7 +624,7 @@ elif st.session_state.pagina == "jogo":
                     st.rerun()
             
             st.write("")
-            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo", use_container_width=True):
                 st.session_state.respondido = False
                 st.session_state.pagina = "menu"
                 st.rerun()
@@ -652,7 +663,7 @@ elif st.session_state.pagina == "jogo":
                     st.session_state.baloes_mostrados = True
                 
                 st.markdown("<h3 style='text-align: center; color: #F4D35E;'>🏆 3 ACERTOS! GANHOU DIREITO AO DADO PREMIADO! 🏆</h3>", unsafe_allow_html=True)
-                if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado"):
+                if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado", use_container_width=True):
                     st.session_state.acertos = 0
                     st.session_state.respondido = False
                     st.session_state.pergunta_idx += 1
@@ -661,7 +672,7 @@ elif st.session_state.pagina == "jogo":
                     st.session_state.pagina = "dado"
                     st.rerun()
             else:
-                if st.button("➡️ Próxima Pergunta"):
+                if st.button("➡️ Próxima Pergunta", use_container_width=True):
                     st.session_state.respondido = False
                     st.session_state.pergunta_idx += 1
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
@@ -671,13 +682,13 @@ elif st.session_state.pagina == "jogo":
                     st.rerun()
             
             st.write("")
-            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo_resp"):
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo_resp", use_container_width=True):
                 st.session_state.respondido = False
                 st.session_state.pagina = "menu"
                 st.rerun()
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (DADO 3D REALISTA COM FÍSICA DE LANÇAMENTO)
+# 4. SALA DO DADO PREMIADO (DADO 3D REALISTA E BOTÃO 100% CENTRALIZADO)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
@@ -692,7 +703,7 @@ elif st.session_state.pagina == "dado":
             with placeholder_dado.container():
                 renderizar_dado_3d(numero_final=None, animar=False)
                 
-            if st.button("🎲 JOGAR O DADO AGORA", key="btn_ir_dado"):
+            if st.button("🎲 JOGAR O DADO AGORA", key="btn_ir_dado", use_container_width=True):
                 resultado_final = random.randint(1, 6)
                 tocar_audio_invisivel(SOM_DADO)
                 
@@ -721,12 +732,12 @@ elif st.session_state.pagina == "dado":
             st.write("")
             
             if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
-                if st.button("▶️ Continuar Quiz (Próxima Pergunta)"):
+                if st.button("▶️ Continuar Quiz (Próxima Pergunta)", use_container_width=True):
                     st.session_state.dado_girado = False
                     st.session_state.pagina = "jogo"
                     st.rerun()
                     
-            if st.button("🏠 Voltar ao Menu Inicial"):
+            if st.button("🏠 Voltar ao Menu Inicial", use_container_width=True):
                 st.session_state.dado_girado = False
                 st.session_state.pagina = "menu"
                 st.rerun()
@@ -752,7 +763,7 @@ elif st.session_state.pagina == "fim":
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🏠 Voltar ao Menu Inicial"):
+        if st.button("🏠 Voltar ao Menu Inicial", use_container_width=True):
             st.session_state.pagina = "menu"
             st.rerun()
 
