@@ -14,7 +14,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Alinhamento Perfeito da Imagem)
+# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Imagem Perfeita em Todas as Perguntas)
 st.markdown("""
     <style>
     .stApp {
@@ -52,7 +52,7 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* ALINHAMENTO E TAMANHO PERFEITO DA IMAGEM INSTITUCIONAL */
+    /* ALINHAMENTO E TAMANHO PERFEITO DA IMAGEM INSTITUCIONAL EM TODAS AS RONDAS */
     [data-testid="stImage"] img {
         max-width: 360px !important;
         margin: 0 auto !important;
@@ -283,7 +283,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM DUAS COLUNAS FIXAS: ESQ = JOGO, DIR = IMAGEM DA SANTA)
+# 3. TELA DO JOGO (COM AS DUAS COLUNAS FIXAS: ESQ = JOGO, DIR = IMAGEM GARANTIDA)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -295,7 +295,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Criamos sempre as duas colunas estruturais em primeiro lugar para a imagem nunca sumir
+    # CRIAMOS AS COLUNAS AQUI NO TOPO FORA DE QUALQUER CONDICIONAL DE PERGUNTA OU RESPOSTA
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -371,7 +371,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # Coluna da direita com a imagem institucional fixada permanentemente
+    # COLUNA DA DIREITA GARANTIDA E FIXA EM TODAS AS PERGUNTAS DO JOGO
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
