@@ -36,58 +36,58 @@ def carregar_config():
 config = carregar_config()
 
 # Estilos Visuais Aprimorados (Layout Centralizado, Ocultação de Players e Tamanho Dinâmico da Imagem)
-st.markdown(f"""
+st.markdown("""
     <style>
-    .stApp {{
+    .stApp {
         background-color: #0B2545;
         color: white;
-    }}
-    audio {{
+    }
+    audio {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
-    }}
-    .placar-topo {{
+    }
+    .placar-topo {
         font-size: 24px !important;
         font-weight: bold !important;
         color: #F4D35E !important;
-    }}
-    .main-card {{
+    }
+    .main-card {
         background-color: #134074;
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         margin-bottom: 25px;
-    }}
-    .main-card h3 {{
+    }
+    .main-card h3 {
         font-size: 32px !important;
         line-height: 1.4 !important;
         color: #FFFFFF !important;
-    }}
+    }
     /* RESPOSTAS BEM GRANDES E LEGÍVEIS */
-    .stRadio div[role="radiogroup"] label div p {{
+    .stRadio div[role="radiogroup"] label div p {
         font-size: 26px !important;
         font-weight: 700 !important;
         color: #FFFFFF !important;
-    }}
-    .stRadio div[role="radiogroup"] label {{
+    }
+    .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
-    }}
+    }
     /* IMAGEM CENTRALIZADA E COM TAMANHO CONFIGURÁVEL */
-    [data-testid="stImage"] img {{
-        max-width: {config.get("tamanho_imagem", 360)}px !important;
+    [data-testid="stImage"] img {
+        max-width: __TAMANHO_IMAGEM__px !important;
         margin: 0 auto !important;
         display: block !important;
         border-radius: 12px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }}
+    }
     /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
-    .stButton {{
+    .stButton {
         display: flex;
         justify-content: center;
         width: 100%;
-    }}
-    .stButton>button {{
+    }
+    .stButton>button {
         background-color: #134074;
         color: white;
         font-weight: bold;
