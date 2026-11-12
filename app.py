@@ -14,59 +14,80 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Imagem Perfeita em Todas as Perguntas)
-st.markdown("""
+def carregar_config():
+    config_padrao = {
+        "imagem_ns": "nossa_senhora.png",
+        "tempo_pergunta": 30,
+        "tempo_alerta": 4,
+        "tamanho_imagem": 360  # Tamanho padrão perfeito da imagem
+    }
+    if os.path.exists(ARQUIVO_CONFIG):
+        try:
+            with open(ARQUIVO_CONFIG, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+                for k, v in config_padrao.items():
+                    if k not in cfg:
+                        cfg[k] = v
+                return cfg
+        except Exception:
+            pass
+    return config_padrao
+
+config = carregar_config()
+
+# Estilos Visuais com Centralização Perfeita e Tamanho Dinâmico da Imagem Configurado pelo Utilizador
+st.markdown(f"""
     <style>
-    .stApp {
+    .stApp {{
         background-color: #0B2545;
         color: white;
-    }
-    audio {
+    }}
+    audio {{
         display: none !important;
         width: 0 !important;
         height: 0 !important;
-    }
-    .placar-topo {
+    }}
+    .placar-topo {{
         font-size: 24px !important;
         font-weight: bold !important;
         color: #F4D35E !important;
-    }
-    .main-card {
+    }}
+    .main-card {{
         background-color: #134074;
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         margin-bottom: 25px;
-    }
-    .main-card h3 {
+    }}
+    .main-card h3 {{
         font-size: 32px !important;
         line-height: 1.4 !important;
         color: #FFFFFF !important;
-    }
+    }}
     /* RESPOSTAS BEM GRANDES E LEGÍVEIS */
-    .stRadio div[role="radiogroup"] label div p {
+    .stRadio div[role="radiogroup"] label div p {{
         font-size: 26px !important;
         font-weight: 700 !important;
         color: #FFFFFF !important;
-    }
-    .stRadio div[role="radiogroup"] label {
+    }}
+    .stRadio div[role="radiogroup"] label {{
         padding: 12px 0px !important;
-    }
-    /* ALINHAMENTO E TAMANHO PERFEITO DA IMAGEM INSTITUCIONAL EM TODAS AS RONDAS */
-    [data-testid="stImage"] img {
-        max-width: 360px !important;
+    }}
+    /* IMAGEM CENTRALIZADA E CONTROLADA DINAMICAMENTE */
+    [data-testid="stImage"] img {{
+        max-width: {config.get("tamanho_imagem", 360)}px !important;
         margin: 0 auto !important;
         display: block !important;
         border-radius: 12px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
+    }}
     /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
-    .stButton {
+    .stButton {{
         display: flex;
         justify-content: center;
         width: 100%;
-    }
-    .stButton>button {
+    }}
+    .stButton>button {{
         background-color: #134074;
         color: white;
         font-weight: bold;
@@ -78,22 +99,22 @@ st.markdown("""
         font-size: 20px !important;
         display: block;
         margin: 8px auto;
-    }
-    .stButton>button:hover {
+    }}
+    .stButton>button:hover {{
         background-color: #1F618D;
         color: white;
-    }
-    .st-key-sair>button {
+    }}
+    .st-key-sair>button {{
         background-color: #E74C3C !important;
         border: none !important;
-    }
-    .st-key-sair>button:hover {
+    }}
+    .st-key-sair>button:hover {{
         background-color: #C0392B !important;
-    }
-    h1, h2, h3, h4 {
+    }}
+    h1, h2, h3, h4 {{
         color: #FFFFFF !important;
-    }
-    .dado-box {
+    }}
+    .dado-box {{
         font-size: 80px;
         text-align: center;
         font-weight: bold;
@@ -102,7 +123,7 @@ st.markdown("""
         padding: 20px;
         border-radius: 15px;
         margin: 20px 0;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -126,27 +147,9 @@ def salvar_dados(perguntas, participantes, historico):
     with open(ARQUIVO_DADOS, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, indent=4)
 
-def carregar_config():
-    config_padrao = {
-        "imagem_ns": "nossa_senhora.png",
-        "tempo_pergunta": 30,
-        "tempo_alerta": 4
-    }
-    if os.path.exists(ARQUIVO_CONFIG):
-        try:
-            with open(ARQUIVO_CONFIG, "r", encoding="utf-8") as f:
-                cfg = json.load(f)
-                for k, v in config_padrao.items():
-                    if k not in cfg:
-                        cfg[k] = v
-                return cfg
-        except Exception:
-            pass
-    return config_padrao
-
-def salvar_config(config):
+def salvar_config(config_dict):
     with open(ARQUIVO_CONFIG, "w", encoding="utf-8") as f:
-        json.dump(config, f, ensure_ascii=False, indent=4)
+        json.dump(config_dict, f, ensure_ascii=False, indent=4)
 
 # Inicialização de Estados da Sessão
 if "pagina" not in st.session_state:
@@ -175,7 +178,6 @@ if "tempo_restante" not in st.session_state:
     st.session_state.tempo_restante = 30
 
 perguntas, participantes, historico = carregar_dados()
-config = carregar_config()
 
 # Ficheiros de áudio locais
 SOM_TIC_TAK = "tictak.mp3"
@@ -283,7 +285,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM AS DUAS COLUNAS FIXAS: ESQ = JOGO, DIR = IMAGEM GARANTIDA)
+# 3. TELA DO JOGO (COM AS DUAS COLUNAS FIXAS E IMAGEM SEMPRE PRESENTE)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -295,7 +297,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # CRIAMOS AS COLUNAS AQUI NO TOPO FORA DE QUALQUER CONDICIONAL DE PERGUNTA OU RESPOSTA
+    # CRIAMOS AS DUAS COLUNAS NO TOPO, GARANTINDO QUE A DIREITA COM A IMAGEM NUNCA SOME
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -371,7 +373,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # COLUNA DA DIREITA GARANTIDA E FIXA EM TODAS AS PERGUNTAS DO JOGO
+    # Coluna da direita com a imagem perfeitamente centrada e presente em todas as perguntas
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
@@ -598,11 +600,11 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (IMAGEM & TEMPOS)
+# 9. PAINEL DE CONFIGURAÇÕES (IMAGEM, TAMANHO & TEMPOS)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
     st.markdown("<h2>⚙️ Painel de Configurações (Imagem & Tempos)</h2>", unsafe_allow_html=True)
-    st.write("Gere a imagem institucional e os tempos do quiz.")
+    st.write("Gere a imagem institucional, o tamanho dela na tela e os tempos do quiz.")
     st.write("")
     
     col_cfg1, col_cfg2 = st.columns([2, 1])
@@ -610,6 +612,7 @@ elif st.session_state.pagina == "configuracoes":
     with col_cfg1:
         tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
         tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
+        tamanho_img_val = st.slider("Tamanho da Imagem da Santa (Largura em Pixels):", min_value=200, max_value=600, value=config.get("tamanho_imagem", 360), step=10)
         
     with col_cfg2:
         st.markdown("### 🖼️ Pré-visualização da Imagem")
@@ -634,8 +637,10 @@ elif st.session_state.pagina == "configuracoes":
         if st.button("💾 Salvar Configurações"):
             config["tempo_pergunta"] = int(tempo_perg_val)
             config["tempo_alerta"] = int(tempo_alerta_val)
+            config["tamanho_imagem"] = int(tamanho_img_val)
             salvar_config(config)
-            st.success("Configurações salvas com sucesso!")
+            st.success("Configurações salvas com sucesso! As alterações já estão aplicadas.")
+            st.rerun()
             
     with col_bot2:
         if st.button("⬅️ Voltar ao Menu"):
