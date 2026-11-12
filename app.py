@@ -251,9 +251,11 @@ elif st.session_state.pagina == "selecionar_participante":
                     st.session_state.dado_girado = False
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
+                    # Embaralhar perguntas e também as opções de resposta de cada pergunta
                     sessao = []
                     for p in perguntas:
                         ops = list(p["opcoes"])
+                        random.shuffle(ops)
                         sessao.append({"pergunta": p["pergunta"], "opcoes": ops, "resposta": p["resposta"]})
                     random.shuffle(sessao)
                     st.session_state.perguntas_sessao = sessao
@@ -276,7 +278,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM IMAGEM FIXA NA DIREITA EM TODAS AS PERGUNTAS)
+# 3. TELA DO JOGO (COM LAYOUT ESTÁTICO E IMAGEM FIXA EM TODAS AS PERGUNTAS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -288,7 +290,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Criamos as colunas principais logo no topo para garantir que a direita nunca desapareça
+    # Colunas principais geradas uma única vez por frame para garantir que a imagem NUNCA suma
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -330,7 +332,7 @@ elif st.session_state.pagina == "jogo":
             else:
                 placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
                 
-                # Exibe o feedback e toca o som correspondente sem bloquear a interface
+                # Exibe o feedback e toca o som correspondente sem piscar a tela
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
                     tocar_audio_invisivel(SOM_ACERTO)
@@ -361,7 +363,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # Coluna da direita fixa, renderizada em todas as perguntas sem exceção
+    # Coluna da direita fixa em absolutamente todas as perguntas
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
