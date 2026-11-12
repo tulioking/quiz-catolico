@@ -251,7 +251,6 @@ elif st.session_state.pagina == "selecionar_participante":
                     st.session_state.dado_girado = False
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
-                    # Embaralhar perguntas e também as opções de resposta de cada pergunta
                     sessao = []
                     for p in perguntas:
                         ops = list(p["opcoes"])
@@ -278,7 +277,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM LAYOUT ESTÁTICO E IMAGEM FIXA EM TODAS AS PERGUNTAS)
+# 3. TELA DO JOGO (COM SELEÇÃO AUTOMÁTICA SE O TEMPO ACABAR)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -290,7 +289,6 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Colunas principais geradas uma única vez por frame para garantir que a imagem NUNCA suma
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -326,8 +324,12 @@ elif st.session_state.pagina == "jogo":
                     st.session_state.tempo_restante -= 1
                     st.rerun()
                 else:
+                    # Tempo esgotado: avalia automaticamente a opção que estava marcada
                     st.session_state.respondido = True
-                    st.session_state.ultima_resposta_correta = False
+                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                    if st.session_state.ultima_resposta_correta:
+                        st.session_state.pontuacao += 100
+                        st.session_state.acertos += 1
                     st.rerun()
             else:
                 placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
@@ -368,9 +370,7 @@ elif st.session_state.pagina == "jogo":
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
         if os.path.exists(img_path):
-            col_img1, col_img2, col_img3 = st.columns([1, 4, 1])
-            with col_img2:
-                st.image(img_path, use_container_width=True)
+            st.image(img_path, use_container_width=True)
 
 # ==============================================================================
 # 4. SALA DO DADO PREMIADO
