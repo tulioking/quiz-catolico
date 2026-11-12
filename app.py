@@ -116,8 +116,6 @@ def carregar_config():
     config_padrao = {
         "imagem_ns": "nossa_senhora.png",
         "youtube_url": "",
-        "youtube_acerto": "",
-        "youtube_erro": "",
         "tempo_pergunta": 30,
         "tempo_alerta": 4
     }
@@ -274,7 +272,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM ORDEM CORRETA A-D E EFEITOS SONOROS AUTOMÁTICOS INVISÍVEIS)
+# 3. TELA DO JOGO (COM ÁUDIOS NATIVOS PRÉ-DEFINIDOS DE APLAUSOS E ERRO)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -306,21 +304,11 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
-                        # Toca aplausos com o link de sucesso de forma invisível
-                        yt_acerto = config.get("youtube_acerto", "")
-                        if yt_acerto:
-                            v_id = yt_acerto.split("v=")[-1].split("&")[0]
-                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
-                        else:
-                            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+                        # Toca aplausos nativos instantâneos
+                        st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                     else:
-                        # Toca o quén-quén (trombeta triste) de forma invisível
-                        yt_erro = config.get("youtube_erro", "")
-                        if yt_erro:
-                            v_id = yt_erro.split("v=")[-1].split("&")[0]
-                            st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
-                        else:
-                            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/sad-trombone.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+                        # Toca trombeta triste nativa instantânea (quén-quén)
+                        st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/sad-trombone.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
@@ -389,12 +377,8 @@ elif st.session_state.pagina == "dado":
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
-            yt_acerto = config.get("youtube_acerto", "")
-            if yt_acerto:
-                v_id = yt_acerto.split("v=")[-1].split("&")[0]
-                st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
-            else:
-                st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+            # Toca aplausos nativos ao concluir o dado
+            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
@@ -553,19 +537,17 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (LINKS DO YOUTUBE PARA EFEITOS E TRILHA)
+# 9. PAINEL DE CONFIGURAÇÕES (LINK DE FUNDO, IMAGEM E TEMPOS)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
-    st.markdown("<h2>⚙️ Painel de Configurações (Músicas, Imagem & Sons)</h2>", unsafe_allow_html=True)
-    st.write("Insere os links do YouTube para a trilha sonora de fundo, som de acerto/aplausos e som de erro.")
+    st.markdown("<h2>⚙️ Painel de Configurações (Músicas, Imagem & Tempos)</h2>", unsafe_allow_html=True)
+    st.write("Insere o link do YouTube para a trilha sonora de fundo e gere a imagem institucional.")
     st.write("")
     
     col_cfg1, col_cfg2 = st.columns([2, 1])
     
     with col_cfg1:
         yt_input = st.text_input("🔗 Link do YouTube (Trilha Sonora de Fundo):", value=config.get("youtube_url", ""))
-        yt_acerto_input = st.text_input("🔗 Link do YouTube (Som de Acerto / Aplausos):", value=config.get("youtube_acerto", ""))
-        yt_erro_input = st.text_input("🔗 Link do YouTube (Som de Erro / Trombeta):", value=config.get("youtube_erro", ""))
         
         st.write("---")
         tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
@@ -593,8 +575,6 @@ elif st.session_state.pagina == "configuracoes":
     with col_bot1:
         if st.button("💾 Salvar Configurações"):
             config["youtube_url"] = yt_input
-            config["youtube_acerto"] = yt_acerto_input
-            config["youtube_erro"] = yt_erro_input
             config["tempo_pergunta"] = int(tempo_perg_val)
             config["tempo_alerta"] = int(tempo_alerta_val)
             salvar_config(config)
