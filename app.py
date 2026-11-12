@@ -276,7 +276,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM IMAGEM DA SANTA FIXA EM TODAS AS PERGUNTAS)
+# 3. TELA DO JOGO (COM IMAGEM FIXA NA DIREITA EM TODAS AS PERGUNTAS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -288,7 +288,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Layout com colunas principais fixas (Esquerda: Jogo | Direita: Imagem da Santa)
+    # Criamos as colunas principais logo no topo para garantir que a direita nunca desapareça
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -361,6 +361,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
+    # Coluna da direita fixa, renderizada em todas as perguntas sem exceção
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
