@@ -18,7 +18,6 @@ def carregar_config():
     config_padrao = {
         "imagem_ns": "nossa_senhora.png",
         "tempo_pergunta": 30,
-        "tempo_alerta": 4,
         "tamanho_imagem": 360
     }
     if os.path.exists(ARQUIVO_CONFIG):
@@ -57,7 +56,7 @@ st.markdown("""
         color: #F4D35E !important;
     }
     .placar-alerta {
-        font-size: 24px !important;
+        font-size: 26px !important;
         font-weight: bold !important;
         color: #FF4B4B !important;
     }
@@ -109,6 +108,18 @@ st.markdown("""
         color: white;
         border-color: #F4D35E;
     }
+    /* BOTÃO ESPECIAL DOURADO PARA O DADO PREMIADO */
+    .st-key-btn_ir_dado button {
+        background-color: #F4D35E !important;
+        color: #0B2545 !important;
+        border: 3px solid #FFFFFF !important;
+        font-size: 24px !important;
+        box-shadow: 0 0 20px rgba(244, 211, 94, 0.7) !important;
+    }
+    .st-key-btn_ir_dado button:hover {
+        background-color: #F7E185 !important;
+        color: #0B2545 !important;
+    }
     .st-key-sair_sis button {
         background-color: #E74C3C !important;
         border: none !important;
@@ -120,14 +131,15 @@ st.markdown("""
         color: #FFFFFF !important;
     }
     .dado-box {
-        font-size: 80px;
+        font-size: 90px;
         text-align: center;
         font-weight: bold;
         color: #F4D35E;
         background-color: #134074;
-        padding: 20px;
+        padding: 25px;
         border-radius: 15px;
         margin: 20px 0;
+        border: 2px solid #F4D35E;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -203,6 +215,8 @@ if "editando_idx" not in st.session_state:
     st.session_state.editando_idx = None
 if "tempo_restante" not in st.session_state:
     st.session_state.tempo_restante = 30
+if "baloes_mostrados" not in st.session_state:
+    st.session_state.baloes_mostrados = False
 
 perguntas, participantes, historico = carregar_dados()
 
@@ -244,7 +258,7 @@ if st.session_state.pagina == "menu":
             st.session_state.pagina = "historico"
             st.rerun()
             
-        if st.button("⚙️ Configurações (Imagem & Tempos)", use_container_width=True):
+        if st.button("⚙️ Configurações (Imagem & Tempo)", use_container_width=True):
             st.session_state.pagina = "configuracoes"
             st.rerun()
             
@@ -288,6 +302,7 @@ elif st.session_state.pagina == "selecionar_participante":
                     st.session_state.acertos = 0
                     st.session_state.respondido = False
                     st.session_state.dado_girado = False
+                    st.session_state.baloes_mostrados = False
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
                     sessao = []
@@ -308,7 +323,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.rerun()
 
 # ==============================================================================
-# 3. TELA DO JOGO (COL_DIR RENDERIZADA ANTES DE COL_ESQ E DO ST.RERUN)
+# 3. TELA DO JOGO (BOTÃO DO DADO IMEDIATO AO ATINGIR 3 ACERTOS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -350,6 +365,7 @@ elif st.session_state.pagina == "jogo":
             
             if st.button("✅ Confirmar Resposta"):
                 st.session_state.respondido = True
+                st.session_state.baloes_mostrados = False
                 st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
                 
                 if st.session_state.ultima_resposta_correta:
@@ -363,15 +379,16 @@ elif st.session_state.pagina == "jogo":
                 st.session_state.pagina = "menu"
                 st.rerun()
 
-            # Relógio dinâmico segundo a segundo (fica no fim de col_esq para não bloquear nada)
+            # Relógio dinâmico segundo a segundo (alerta vermelho automático nos últimos 5s)
             if st.session_state.tempo_restante > 0:
-                classe_cor = "placar-alerta" if st.session_state.tempo_restante <= config.get("tempo_alerta", 4) else "placar-topo"
+                classe_cor = "placar-alerta" if st.session_state.tempo_restante <= 5 else "placar-topo"
                 placeholder_tempo.markdown(f"<span class='{classe_cor}'>⏳ {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
                 time.sleep(1)
                 st.session_state.tempo_restante -= 1
                 st.rerun()
             else:
                 st.session_state.respondido = True
+                st.session_state.baloes_mostrados = False
                 st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
                 if st.session_state.ultima_resposta_correta:
                     st.session_state.pontuacao += 100
@@ -388,18 +405,31 @@ elif st.session_state.pagina == "jogo":
                 tocar_audio_invisivel(SOM_ERRO)
             
             st.write("")
-            if st.button("➡️ Próxima Pergunta"):
-                st.session_state.respondido = False
-                st.session_state.pergunta_idx += 1
-                st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+            
+            # SE ATINGIU 3 ACERTOS, MOSTRA IMEDIATAMENTE O BOTÃO DO DADO PREMIADO!
+            if st.session_state.acertos >= 3:
+                if not st.session_state.baloes_mostrados:
+                    st.balloons()
+                    st.session_state.baloes_mostrados = True
                 
-                if st.session_state.acertos >= 3:
+                st.markdown("<h3 style='text-align: center; color: #F4D35E;'>🏆 3 ACERTOS! GANHOU DIREITO AO DADO PREMIADO! 🏆</h3>", unsafe_allow_html=True)
+                if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado"):
                     st.session_state.acertos = 0
+                    st.session_state.respondido = False
+                    st.session_state.pergunta_idx += 1
+                    st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     st.session_state.dado_girado = False
                     st.session_state.pagina = "dado"
-                elif st.session_state.pergunta_idx >= total_p:
-                    st.session_state.pagina = "fim"
-                st.rerun()
+                    st.rerun()
+            else:
+                if st.button("➡️ Próxima Pergunta"):
+                    st.session_state.respondido = False
+                    st.session_state.pergunta_idx += 1
+                    st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+                    
+                    if st.session_state.pergunta_idx >= total_p:
+                        st.session_state.pagina = "fim"
+                    st.rerun()
             
             st.write("")
             if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo_resp"):
@@ -412,7 +442,7 @@ elif st.session_state.pagina == "jogo":
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Acertaste 3 perguntas seguidas!</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Conquistaste os 3 acertos!</h3>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -421,7 +451,7 @@ elif st.session_state.pagina == "dado":
         
         if not st.session_state.dado_girado:
             placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
-            if st.button("🎲 GIRAR O DADO AGORA"):
+            if st.button("🎲 GIRAR O DADO AGORA", key="btn_ir_dado"):
                 tocar_audio_invisivel(SOM_DADO)
                 
                 # Rotação de 36 passos
@@ -443,9 +473,17 @@ elif st.session_state.pagina == "dado":
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
             tocar_audio_invisivel(SOM_ACERTO)
+            st.balloons()
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
+            st.write("")
             
+            if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
+                if st.button("▶️ Continuar Quiz (Próxima Pergunta)"):
+                    st.session_state.dado_girado = False
+                    st.session_state.pagina = "jogo"
+                    st.rerun()
+                    
             if st.button("🏠 Voltar ao Menu Inicial"):
                 st.session_state.dado_girado = False
                 st.session_state.pagina = "menu"
@@ -623,18 +661,17 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (IMAGEM, TAMANHO EM TEMPO REAL & TEMPOS)
+# 9. PAINEL DE CONFIGURAÇÕES (SIMPLIFICADO E COM PRÉ-VISUALIZAÇÃO EM TEMPO REAL)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
-    st.markdown("<h2>⚙️ Painel de Configurações (Imagem & Tempos)</h2>", unsafe_allow_html=True)
-    st.write("Gere a imagem institucional, o tamanho dela na tela e os tempos do quiz.")
+    st.markdown("<h2>⚙️ Painel de Configurações (Imagem & Tempo)</h2>", unsafe_allow_html=True)
+    st.write("Ajuste o tamanho da imagem institucional na tela e o tempo por pergunta do quiz.")
     st.write("")
     
     col_cfg1, col_cfg2 = st.columns([2, 1])
     
     with col_cfg1:
-        tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
-        tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
+        tempo_perg_val = st.number_input("Tempo por pergunta (seg):", min_value=5, max_value=120, value=config.get("tempo_pergunta", 30))
         tamanho_img_val = st.slider("Tamanho da Imagem da Santa (Largura em Pixels):", min_value=200, max_value=600, value=config.get("tamanho_imagem", 360), step=10)
         
         up_img = st.file_uploader("Carregar nova imagem institucional", type=["png", "jpg", "jpeg"], key="up_img_ns")
@@ -655,7 +692,6 @@ elif st.session_state.pagina == "configuracoes":
     with col_bot1:
         if st.button("💾 Salvar Configurações"):
             config["tempo_pergunta"] = int(tempo_perg_val)
-            config["tempo_alerta"] = int(tempo_alerta_val)
             config["tamanho_imagem"] = int(tamanho_img_val)
             salvar_config(config)
             st.success("Configurações salvas com sucesso! As alterações já estão aplicadas.")
