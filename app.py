@@ -14,7 +14,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado, Controlo de Imagem e Ocultação de Players)
+# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Controlo Rígido da Imagem)
 st.markdown("""
     <style>
     .stApp {
@@ -51,6 +51,14 @@ st.markdown("""
     }
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
+    }
+    /* CONTROLAR O TAMANHO DA IMAGEM INSTITUCIONAL PARA NUNCA FICAR GIGANTE */
+    [data-testid="stImage"] img {
+        max-width: 380px !important;
+        margin: 0 auto !important;
+        display: block !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
     /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
     .stButton {
@@ -275,7 +283,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM IMAGEM FIXA E GARANTIDA EM TODAS AS PERGUNTAS)
+# 3. TELA DO JOGO (COM LAYOUT FIXO E IMAGEM SEMPRE PRESENTE NA DIREITA)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -287,7 +295,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Definimos as duas colunas principais lado a lado para o layout nunca perder a imagem
+    # Sempre criamos as duas colunas principais em primeiro lugar no frame
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -363,7 +371,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # Coluna da direita renderizada estaticamente em todas as rondas, com tamanho controlado
+    # Coluna da direita renderizada de forma permanente e blindada em todas as rondas
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
