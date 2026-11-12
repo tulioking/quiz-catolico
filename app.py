@@ -39,7 +39,7 @@ def salvar_config(config_dict):
 
 config = carregar_config()
 
-# Estilos Visuais Aprimorados (Layout Centralizado, Ocultação de Players e Estabilidade Visual)
+# Estilos Visuais Aprimorados (Centralização Blindada para Projetor e Estabilidade Visual)
 st.markdown("""
     <style>
     .stApp {
@@ -82,34 +82,38 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
-    .stButton {
-        display: flex;
-        justify-content: center;
-        width: 100%;
+    /* FORÇAR CENTRALIZAÇÃO ABSOLUTA DE TODOS OS BOTÕES E DO MENU */
+    div.stButton, [data-testid="stButton"] {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin: 0 auto !important;
     }
-    .stButton>button {
+    div.stButton > button, [data-testid="stButton"] > button {
         background-color: #134074;
         color: white;
         font-weight: bold;
         border-radius: 10px;
-        width: 100%;
-        max-width: 450px;
-        padding: 16px;
+        width: 100% !important;
+        max-width: 500px !important;
+        padding: 16px !important;
         border: 2px solid #1F618D;
-        font-size: 20px !important;
-        display: block;
-        margin: 8px auto;
+        font-size: 22px !important;
+        display: block !important;
+        margin: 8px auto !important;
+        text-align: center !important;
     }
-    .stButton>button:hover {
+    div.stButton > button:hover, [data-testid="stButton"] > button:hover {
         background-color: #1F618D;
         color: white;
+        border-color: #F4D35E;
     }
-    .st-key-sair>button {
+    .st-key-sair_sis button {
         background-color: #E74C3C !important;
         border: none !important;
     }
-    .st-key-sair>button:hover {
+    .st-key-sair_sis button:hover {
         background-color: #C0392B !important;
     }
     h1, h2, h3, h4 {
@@ -215,45 +219,43 @@ def tocar_audio_invisivel(caminho_arquivo):
             st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64}"></audio>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 1. MENU PRINCIPAL
+# 1. MENU PRINCIPAL (100% CENTRALIZADO PARA PROJETOR)
 # ==============================================================================
 if st.session_state.pagina == "menu":
-    st.markdown("<h1 style='text-align: center;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align: center; color: #8DA9C4;'>Quiz da Imaculada (Pressione F11 para tela cheia)</h4>", unsafe_allow_html=True)
-    st.write("")
+    st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; font-size: 46px;'>⛪ Festejos da Imaculada Conceição ⛪</h1>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center; color: #8DA9C4; margin-bottom: 35px;'>Quiz da Imaculada (Pressione F11 para tela cheia)</h4>", unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1.2, 1.6, 1.2])
     with col2:
-        if st.button("▶️ Jogar / Iniciar Quiz"):
+        if st.button("▶️ Jogar / Iniciar Quiz", use_container_width=True):
             st.session_state.pagina = "selecionar_participante"
             st.rerun()
             
-        if st.button("👥 Cadastrar Participantes"):
+        if st.button("👥 Cadastrar Participantes", use_container_width=True):
             st.session_state.pagina = "cadastrar_participantes"
             st.rerun()
             
-        if st.button("📝 Cadastrar / Gerir / Editar Perguntas"):
+        if st.button("📝 Cadastrar / Gerir / Editar Perguntas", use_container_width=True):
             st.session_state.pagina = "gerir_perguntas"
             st.rerun()
             
-        if st.button("📊 Histórico de Acertos e Prêmios"):
+        if st.button("📊 Histórico de Acertos e Prêmios", use_container_width=True):
             st.session_state.pagina = "historico"
             st.rerun()
             
-        if st.button("⚙️ Configurações (Imagem & Tempos)"):
+        if st.button("⚙️ Configurações (Imagem & Tempos)", use_container_width=True):
             st.session_state.pagina = "configuracoes"
             st.rerun()
             
-        st.markdown('<div class="st-key-sair">', unsafe_allow_html=True)
-        if st.button("🚪 Sair / Fechar Sistema", key="sair_sis"):
+        if st.button("🚪 Sair / Fechar Sistema", key="sair_sis", use_container_width=True):
             st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
-        st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 2. SELECIONAR PARTICIPANTE
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
-    st.markdown("<h2>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; margin-bottom: 25px;'>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
     
     col_esq, col_dir = st.columns([2, 1])
     
@@ -269,7 +271,7 @@ elif st.session_state.pagina == "selecionar_participante":
         st.write("")
         col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
         with col_btn2:
-            if st.button("▶️ Iniciar com este Participante"):
+            if st.button("▶️ Iniciar com este Participante", use_container_width=True):
                 nome_final = ""
                 if escolha_lista != "-- Selecione da lista --":
                     nome_final = escolha_lista
@@ -301,7 +303,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 else:
                     st.warning("Por favor, insira ou selecione um nome válido.")
                     
-            if st.button("⬅️ Voltar ao Menu"):
+            if st.button("⬅️ Voltar ao Menu", use_container_width=True):
                 st.session_state.pagina = "menu"
                 st.rerun()
 
@@ -326,8 +328,6 @@ elif st.session_state.pagina == "jogo":
     col_esq, col_dir = st.columns([2, 1])
     
     # 2º RENDERIZAMOS A IMAGEM DA SANTA IMEDIATAMENTE (ANTES DO LOOP DO RELÓGIO!)
-    # Assim, mesmo quando o st.rerun() do cronómetro interromper a execução em col_esq,
-    # a coluna da direita já foi desenhada no ecrã em todas as perguntas!
     with col_dir:
         mostrar_santa()
 
