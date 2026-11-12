@@ -170,11 +170,17 @@ if "tempo_restante" not in st.session_state:
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Ficheiros de áudio locais exatos baseados no repositório
+# Ficheiros de áudio locais exatos baseados no repositório[cite: 21, 22]
 SOM_TIC_TAK = "tictak.mp3"
 SOM_DADO = "paramomentododado.mp3"
 SOM_ACERTO = "ElevenLabs_Efeito_sonoro_de_aplausos_altos_indicando_uma_resposta.mp3"
 SOM_ERRO = "ElevenLabs_Efeito_sonoro_de_trombone_triste_quando_um_personagem.mp3"
+
+def tocar_audio_invisivel(caminho_arquivo):
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("utf-8")
+            st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64}"></audio>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 1. MENU PRINCIPAL
@@ -271,24 +277,19 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM CRONÓMETRO FUNCIONAL E TIC-TAK)
+# 3. TELA DO JOGO
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
-    # Toca o áudio tictak.mp3 invisível em background durante a pergunta
-    if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
-        with open(SOM_TIC_TAK, "rb") as f:
-            b64_str = base64.b64encode(f.read()).decode("utf-8")
-            st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_str}"></audio>', unsafe_allow_html=True)
+    # Toca o áudio tictak.mp3 invisível em background durante a pergunta se ainda não respondeu[cite: 21]
+    if not st.session_state.respondido:
+        tocar_audio_invisivel(SOM_TIC_TAK)
 
     c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
     c1.markdown(f"<span class='placar-topo'>👤 Participante: {st.session_state.participante}</span>", unsafe_allow_html=True)
-    
-    # Placeholder dinâmico para o cronómetro funcionar segundo a segundo
     placeholder_tempo = c2.empty()
-    
     c3.markdown(f"<span class='placar-topo'>⭐ Pontos: {st.session_state.pontuacao}</span>", unsafe_allow_html=True)
     c4.markdown(f"<span class='placar-topo'>🎯 Acertos: {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
     st.divider()
@@ -312,31 +313,21 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
-                        if os.path.exists(SOM_ACERTO):
-                            with open(SOM_ACERTO, "rb") as f:
-                                b64_a = base64.b64encode(f.read()).decode("utf-8")
-                                st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_a}"></audio>', unsafe_allow_html=True)
+                        tocar_audio_invisivel(SOM_ACERTO) #[cite: 22]
                     else:
-                        if os.path.exists(SOM_ERRO):
-                            with open(SOM_ERRO, "rb") as f:
-                                b64_e = base64.b64encode(f.read()).decode("utf-8")
-                                st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_e}"></audio>', unsafe_allow_html=True)
+                        tocar_audio_invisivel(SOM_ERRO) #[cite: 21]
                     st.rerun()
                 
-                # Relógio a correr se ainda não respondeu
+                # Relógio dinâmico segundo a segundo
                 if st.session_state.tempo_restante > 0:
                     placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Tempo: {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
                     time.sleep(1)
                     st.session_state.tempo_restante -= 1
                     st.rerun()
                 else:
-                    # Tempo esgotado conta como erro automático
                     st.session_state.respondido = True
                     st.session_state.ultima_resposta_correta = False
-                    if os.path.exists(SOM_ERRO):
-                        with open(SOM_ERRO, "rb") as f:
-                            b64_e = base64.b64encode(f.read()).decode("utf-8")
-                            st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_e}"></audio>', unsafe_allow_html=True)
+                    tocar_audio_invisivel(SOM_ERRO) #[cite: 21]
                     st.rerun()
             else:
                 placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Tempo: Encerrado</span>", unsafe_allow_html=True)
@@ -378,7 +369,7 @@ elif st.session_state.pagina == "jogo":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO
+# 4. SALA DO DADO PREMIADO (COM TEMPO DE ROTAÇÃO DUPLICADO)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
@@ -392,12 +383,10 @@ elif st.session_state.pagina == "dado":
         if not st.session_state.dado_girado:
             placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
             if st.button("🎲 GIRAR O DADO AGORA"):
-                if os.path.exists(SOM_DADO):
-                    with open(SOM_DADO, "rb") as f:
-                        b64_d = base64.b64encode(f.read()).decode("utf-8")
-                        st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_d}"></audio>', unsafe_allow_html=True)
+                tocar_audio_invisivel(SOM_DADO) #[cite: 21, 22]
                 
-                for _ in range(12):
+                # Dobro de tempo de rotação do dado (24 passos em vez de 12)
+                for _ in range(24):
                     num_aleatorio = random.randint(1, 6)
                     placeholder_dado.markdown(f"<div class='dado-box' style='color: #8DA9C4;'>【 {num_aleatorio} 】</div>", unsafe_allow_html=True)
                     time.sleep(0.08)
@@ -414,10 +403,7 @@ elif st.session_state.pagina == "dado":
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
-            if os.path.exists(SOM_ACERTO):
-                with open(SOM_ACERTO, "rb") as f:
-                    b64_ac = base64.b64encode(f.read()).decode("utf-8")
-                    st.markdown(f'<audio autoplay src="data:audio/mp3;base64,{b64_ac}"></audio>', unsafe_allow_html=True)
+            tocar_audio_invisivel(SOM_ACERTO) #[cite: 22]
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
