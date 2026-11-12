@@ -14,7 +14,7 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Controlo Rígido da Imagem)
+# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Alinhamento Perfeito da Imagem)
 st.markdown("""
     <style>
     .stApp {
@@ -52,9 +52,9 @@ st.markdown("""
     .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
     }
-    /* CONTROLAR O TAMANHO E CENTRALIZAÇÃO DA IMAGEM INSTITUCIONAL */
+    /* ALINHAMENTO E TAMANHO PERFEITO DA IMAGEM INSTITUCIONAL */
     [data-testid="stImage"] img {
-        max-width: 380px !important;
+        max-width: 360px !important;
         margin: 0 auto !important;
         display: block !important;
         border-radius: 12px !important;
@@ -283,7 +283,7 @@ elif st.session_state.pagina == "selecionar_participante":
             st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM LAYOUT FIXO E IMAGEM SEMPRE PRESENTE NA DIREITA)
+# 3. TELA DO JOGO (COM DUAS COLUNAS FIXAS: ESQ = JOGO, DIR = IMAGEM DA SANTA)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -295,7 +295,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Criamos sempre as duas colunas estruturais em primeiro lugar
+    # Criamos sempre as duas colunas estruturais em primeiro lugar para a imagem nunca sumir
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -371,7 +371,7 @@ elif st.session_state.pagina == "jogo":
             st.session_state.pagina = "fim"
             st.rerun()
             
-    # Coluna da direita renderizada fora de qualquer condicional de jogo, garantindo presença e tamanho perfeitos
+    # Coluna da direita com a imagem institucional fixada permanentemente
     with col_dir:
         st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
         img_path = config.get("imagem_ns", "nossa_senhora.png")
@@ -452,7 +452,7 @@ elif st.session_state.pagina == "fim":
             st.rerun()
 
 # ==============================================================================
-# 6. CADASTRAR PARTICIPANTES
+# 6. CADASTRAR PARTICIPANTES (COM OPÇÃO DE REMOVER)
 # ==============================================================================
 elif st.session_state.pagina == "cadastrar_participantes":
     st.markdown("<h2>👥 Gestão de Participantes</h2>", unsafe_allow_html=True)
@@ -462,12 +462,24 @@ elif st.session_state.pagina == "cadastrar_participantes":
             participantes.append(novo_p.strip())
             salvar_dados(perguntas, participantes, historico)
             st.success(f"Participante '{novo_p.strip()}' cadastrado com sucesso!")
+            st.rerun()
         else:
             st.warning("Insira um nome válido ou já existente.")
             
     st.write("### Participantes Atuais:")
-    for p in participantes:
-        st.write(f"- {p}")
+    if participantes:
+        for p in list(participantes):
+            col_p1, col_p2 = st.columns([4, 1])
+            with col_p1:
+                st.write(f"- {p}")
+            with col_p2:
+                if st.button("🗑️ Remover", key=f"del_part_{p}"):
+                    participantes.remove(p)
+                    salvar_dados(perguntas, participantes, historico)
+                    st.success(f"Participante '{p}' removido!")
+                    st.rerun()
+    else:
+        st.info("Nenhum participante cadastrado.")
         
     st.write("")
     if st.button("⬅️ Voltar ao Menu"):
