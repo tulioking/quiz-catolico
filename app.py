@@ -276,7 +276,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM IMAGEM FIXA E TIC-TAK EM SEGUNDO PLANO)
+# 3. TELA DO JOGO (COM IMAGEM DA SANTA FIXA EM TODAS AS PERGUNTAS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
