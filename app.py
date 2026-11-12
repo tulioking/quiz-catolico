@@ -14,14 +14,13 @@ ARQUIVO_CONFIG = "config_quiz.json"
 
 st.set_page_config(page_title="Festejos da Imaculada Conceição", page_icon="⛪", layout="wide")
 
-# Estilos Visuais Aprimorados (Oculta absolutamente qualquer player visual mantendo o som)
+# Estilos Visuais Aprimorados (Layout Limpo, Centralizado e Ocultação de Players)
 st.markdown("""
     <style>
     .stApp {
         background-color: #0B2545;
         color: white;
     }
-    /* OCULTAR COMPLETAMENTE QUALQUER BARRA DE PLAYER DE ÁUDIO VISUAL */
     audio {
         display: none !important;
         width: 0 !important;
@@ -277,7 +276,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM TIC-TAK 100% OCULTO EM SEGUNDO PLANO)
+# 3. TELA DO JOGO (COM IMAGEM FIXA E TIC-TAK EM SEGUNDO PLANO)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -289,7 +288,7 @@ elif st.session_state.pagina == "jogo":
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    # Layout de colunas fixo para evitar qualquer piscar ou sumir da imagem
+    # Layout com colunas principais fixas (Esquerda: Jogo | Direita: Imagem da Santa)
     col_esq, col_dir = st.columns([2, 1])
     
     with col_esq:
@@ -331,7 +330,7 @@ elif st.session_state.pagina == "jogo":
             else:
                 placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
                 
-                # Dispara o som correspondente sem interromper a interface
+                # Exibe o feedback e toca o som correspondente sem bloquear a interface
                 if st.session_state.ultima_resposta_correta:
                     st.success("🎉 Resposta CORRETA! Parabéns!")
                     tocar_audio_invisivel(SOM_ACERTO)
