@@ -1,5 +1,5 @@
 # ==============================================================================
-# SUPER QUIZ MULTI-TEMAS (2.100 PERGUNTAS + 4 NÍVEIS EM 4 GRANDES TEMAS) 🎲🏆🔥
+# SUPER QUIZ MULTI-TEMAS (400 PERGUNTAS 100% ÚNICAS E EXTREMAS DE ANIME!) 🎲⚔️🔥
 # ==============================================================================
 
 import streamlit as st
@@ -14,7 +14,6 @@ import re
 ARQUIVO_DADOS = "dados_quiz_geral.json"
 ARQUIVO_CONFIG = "config_quiz_geral.json"
 
-# Temas que possuem os 4 níveis de dificuldade (400 perguntas cada!)
 TEMAS_COM_DIFICULDADE = ["⛪ Igreja", "🦸 Super-Heróis", "🎨 Desenhos", "⚔️ Animes"]
 NIVEIS_DIFICULDADE = ["🟢 Fácil", "🟡 Normal", "🟠 Hard", "🔴 Impossível"]
 
@@ -81,7 +80,7 @@ INFO_MODOS = {
     "⚔️ Animes": {
         "cor_fundo": "#10002B", "cor_card": "#240046", "cor_texto": "#FFFFFF",
         "cor_destaque": "#00F5D4", "cor_botao": "#7209B7", "cor_texto_botao": "#FFFFFF", "cor_borda_botao": "#F72585",
-        "icone": "⚔️", "titulo_card": "🐉 Arena Otaku", "sub_card": "Dragon Ball, Naruto, One Piece, Solo Leveling e mais!",
+        "icone": "⚔️", "titulo_card": "🐉 Arena Otaku", "sub_card": "400 Perguntas Únicas: Fácil, Normal, Hard e Impossível!",
         "img_padrao": "tema_animes.png",
         "msg_final": "O seu poder de luta passou de 8.000! Você despertou o instinto superior e dominou a Arena Otaku! ⚔️🔥"
     },
@@ -102,17 +101,18 @@ INFO_MODOS = {
 }
 
 # ==============================================================================
-# GERADOR DE PERGUNTAS NATURAIS (COM 4 NÍVEIS EM IGREJA, HERÓIS, DESENHOS E ANIMES)
+# GERADOR DE PERGUNTAS (COM 400 FATOS 100% ÚNICOS E SEM REPETIÇÃO EM ANIMES!)
 # ==============================================================================
 def montar_100_perguntas(fatos, templates):
     todas_respostas = list(dict.fromkeys([f[2] for f in fatos]))
     perguntas_geradas = []
     rng = random.Random(42)
     
+    # Se a lista tiver 100 fatos exatos (como Animes), cada um gera 1 pergunta única sem repetir nunca!
+    total_gerar = max(100, len(fatos))
     for idx in range(100):
         item, sub, certa = fatos[idx % len(fatos)]
-        ciclo = idx // len(fatos)
-        molde = templates[ciclo % len(templates)]
+        molde = templates[idx % len(templates)]
         enunciado = molde.format(item=item, sub=sub)
         
         pool_erradas = [r for r in todas_respostas if r != certa]
@@ -131,13 +131,432 @@ def montar_100_perguntas(fatos, templates):
 def construir_bancos_completos():
     tpl_padrao = [
         "Sobre {item}, qual alternativa indica corretamente {sub}?",
-        "Qual das opções abaixo corresponde a {sub} em relação a {item}?",
-        "Quando falamos sobre {item}, o que define corretamente {sub}?",
+        "Qual das opções abaixo corresponde a {sub} em {item}?",
+        "No universo de {item}, o que define corretamente {sub}?",
         "Assinale a alternativa verdadeira sobre {sub} referente a {item}:"
     ]
 
     # --------------------------------------------------------------------------
-    # 1. IGREJA — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
+    # ⚔️ ANIMES — 400 FATOS 100% ÚNICOS (100 POR NÍVEL, ZERO REPETIÇÕES!)
+    # --------------------------------------------------------------------------
+    # NÍVEL 1: FÁCIL (100 fatos únicos)
+    animes_facil_100 = [
+        ("Dragon Ball Z", "o nome do protagonista criado na Terra que adora lutar", "Son Goku"),
+        ("Dragon Ball Z", "a quantidade de Esferas do Dragão necessárias para invocar Shenlong", "7 Esferas do Dragão"),
+        ("Dragon Ball Z", "o golpe de energia azul mais famoso lançado por Goku com as duas mãos", "Kamehameha"),
+        ("Dragon Ball Z", "o príncipe orgulhoso da raça Saiyajin que é o maior rival de Goku", "Vegeta"),
+        ("Dragon Ball Z", "o nome do primeiro filho de Goku com Chi-Chi", "Son Gohan"),
+        ("Dragon Ball Z", "o melhor amigo careca de Goku desde o treino com o Mestre Kame", "Kuririn"),
+        ("Dragon Ball Z", "o guerreiro de pele verde da raça Namekuseijin que treinou Gohan", "Piccolo"),
+        ("Dragon Ball Z", "a transformação lendária de cabelos dourados e olhos verdes", "Super Saiyajin"),
+        ("Dragon Ball Z", "a semente mágica cultivada pelo Mestre Karin que cura ferimentos na hora", "Semente dos Deuses"),
+        ("Dragon Ball Z", "a cientista genial de cabelos azuis criadora do Radar do Dragão", "Bulma"),
+        ("Naruto", "o grande sonho de infância de Naruto Uzumaki na Vila da Folha", "Tornar-se o Hokage"),
+        ("Naruto", "a criatura gigante de nove caudas selada dentro de Naruto", "Raposa de Nove Caudas (Kurama)"),
+        ("Naruto", "o rival de Naruto e sobrevivente do massacre do clã Uchiha", "Sasuke Uchiha"),
+        ("Naruto", "a kunoichi de cabelos rosas integrante do Time 7", "Sakura Haruno"),
+        ("Naruto", "o ninja copiador de cabelos grisalhos e máscara que lidera o Time 7", "Kakashi Hatake"),
+        ("Naruto", "o prato de macarrão japonês favorito de Naruto no Ichiraku", "Lámen (Ramen)"),
+        ("Naruto", "a técnica básica que Naruto usa para criar várias cópias físicas de si mesmo", "Jutsu Clone das Sombras"),
+        ("Naruto", "a esfera espiral de chakra azul giratória criada na palma da mão", "Rasengan"),
+        ("Naruto", "o poder ocular de olhos vermelhos exclusivo do clã Uchiha", "Sharingan"),
+        ("Naruto", "a vila oculta onde Naruto nasceu e cresceu", "Aldeia da Folha (Konoha)"),
+        ("One Piece", "o grande sonho de Monkey D. Luffy ao navegar pelos mares", "Ser o Rei dos Piratas"),
+        ("One Piece", "o acessório inseparável que Shanks entregou para Luffy usar na cabeça", "Chapéu de Palha"),
+        ("One Piece", "o poder que o corpo de Luffy ganhou após comer uma Akuma no Mi", "Corpo elástico de borracha"),
+        ("One Piece", "a grande fraqueza de qualquer pessoa que come uma Fruta do Diabo", "Perder as forças ao entrar na água do mar"),
+        ("One Piece", "o espadachim de cabelos verdes que luta usando três espadas", "Roronoa Zoro"),
+        ("One Piece", "a navegadora ruiva do bando apaixonada por mapas e dinheiro", "Nami"),
+        ("One Piece", "o cozinheiro loiro do bando que luta apenas usando chutes", "Sanji"),
+        ("One Piece", "o atirador narigudo e contador de histórias do bando", "Usopp"),
+        ("One Piece", "a pequena rena de nariz azul que é o médico da tripulação", "Tony Tony Chopper"),
+        ("One Piece", "a bandeira negra com caveira usada pelos navios piratas", "Jolly Roger"),
+        ("Pokémon", "o primeiro Pokémon amarelo do tipo elétrico parceiro de Ash Ketchum", "Pikachu"),
+        ("Pokémon", "o objeto esférico vermelho e branco usado para capturar Pokémon", "Pokébola"),
+        ("Pokémon", "a dupla de vilões atrapalhados da Equipe Rocket acompanhados por Meowth", "Jessie e James"),
+        ("Pokémon", "o Pokémon inicial de fogo com a ponta do rabo em chamas em Kanto", "Charmander"),
+        ("Pokémon", "o Pokémon inicial do tipo água em formato de tartaruga azul", "Squirtle"),
+        ("Pokémon", "o Pokémon inicial do tipo planta que carrega um bulbo nas costas", "Bulbasaur"),
+        ("Pokémon", "a evolução final em formato de dragão alado de fogo do Charmander", "Charizard"),
+        ("Pokémon", "o Pokémon psíquico lendário criado em laboratório a partir do DNA de Mew", "Mewtwo"),
+        ("Cavaleiros do Zodíaco", "a constelação protetora da armadura de bronze de Seiya", "Pégaso"),
+        ("Cavaleiros do Zodíaco", "a deusa grega da sabedoria que os Cavaleiros juraram proteger", "Deusa Atena (Saori Kido)"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Bronze que ficou cego para derrotar Algol de Perseu", "Shiryu de Dragão"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Bronze que domina o gelo e o Pó de Diamante", "Hyoga de Cisne"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Bronze gentil que usa correntes rosadas como arma", "Shun de Andrômeda"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro solitário cuja armadura renasce das cinzas", "Ikki de Fênix"),
+        ("Cavaleiros do Zodíaco", "a classe de elite formada pelos 12 guerreiros que protegem as 12 Casas", "Cavaleiros de Ouro"),
+        ("Death Note", "o que acontece com a pessoa cujo nome é escrito no Death Note", "Ela morre (geralmente de parada cardíaca)"),
+        ("Death Note", "o estudante brilhante que encontra o caderno e passa a ser chamado de Kira", "Light Yagami"),
+        ("Death Note", "a fruta favorita que o Shinigami Ryuk é completamente viciado em comer", "Maçã"),
+        ("Death Note", "o detetive genial que senta agachado e adora comer doces", "L"),
+        ("Demon Slayer", "o jovem bondoso de olfato apurado que vende carvão no início da obra", "Tanjiro Kamado"),
+        ("Demon Slayer", "a irmã de Tanjiro que foi transformada em Oni mas não ataca humanos", "Nezuko Kamado"),
+        ("Demon Slayer", "onde Tanjiro carrega sua irmã Nezuko durante o dia para protegê-la do sol", "Dentro de uma caixa de madeira nas costas"),
+        ("Demon Slayer", "o espadachim medroso de cabelos amarelos que luta dormindo com trovões", "Zenitsu Agatsuma"),
+        ("Demon Slayer", "o espadachim selvagem que usa uma cabeça de javali como máscara", "Inosuke Hashibira"),
+        ("Attack on Titan", "os monstros gigantes devoradores de humanos fora das muralhas", "Titãs"),
+        ("Attack on Titan", "o protagonista determinado a exterminar todos os Titãs do mundo", "Eren Yeager"),
+        ("Attack on Titan", "a guerreira habilidosa de cachecol vermelho que protege Eren", "Mikasa Ackerman"),
+        ("Attack on Titan", "o amigo estrategista loiro de Eren e Mikasa que sonhava em ver o mar", "Armin Arlert"),
+        ("Attack on Titan", "o ponto fraco fatal no corpo de qualquer Titã comum", "A nuca"),
+        ("One Punch Man", "a característica visual marcante da cabeça do herói Saitama", "Ele é totalmente careca"),
+        ("One Punch Man", "como Saitama derrota seus inimigos mais poderosos", "Com apenas um único soco"),
+        ("One Punch Man", "o ciborgue loiro que se torna discípulo fiel de Saitama", "Genos"),
+        ("My Hero Academia", "o jovem protagonista que nasceu sem individualidade num mundo de heróis", "Izuku Midoriya (Deku)"),
+        ("My Hero Academia", "o herói número 1 conhecido como o Símbolo da Paz", "All Might"),
+        ("My Hero Academia", "o rival explosivo de infância de Deku que cria explosões pelas mãos", "Katsuki Bakugo"),
+        ("Jujutsu Kaisen", "o estudante de cabelos rosas que engole um dedo amaldiçoado", "Yuji Itadori"),
+        ("Jujutsu Kaisen", "o professor de cabelos brancos e venda nos olhos dos alunos do 1º ano", "Satoru Gojo"),
+        ("Spy x Family", "a garotinha adotada por Loid e Yor que possui o poder de ler mentes", "Anya Forger"),
+        ("Spy x Family", "a verdadeira profissão secreta do pai adotivo Loid Forger (Twilight)", "Espião secreto"),
+        ("Spy x Family", "a verdadeira profissão secreta da mãe adotiva Yor Forger", "Assassina profissional (Princesa Espinho)"),
+        ("Solo Leveling", "o protagonista que começa a história como o caçador mais fraco da humanidade", "Sung Jin-Woo"),
+        ("Solo Leveling", "a classificação inicial mais baixa de todas que Jin-Woo tinha na Associação", "Caçador de Rank E"),
+        ("Black Clover", "o jovem protagonista órfão que grita muito e sonha em ser o Rei Mago", "Asta"),
+        ("Black Clover", "o livro mágico que cada mago recebe aos 15 anos na cerimônia da torre", "Grimório"),
+        ("Bleach", "o adolescente de cabelos laranjas que consegue ver fantasmas desde criança", "Ichigo Kurosaki"),
+        ("Bleach", "a Shinigami que transfere seus poderes para Ichigo no primeiro episódio", "Rukia Kuchiki"),
+        ("Tokyo Revengers", "o jovem protagonista que descobre a habilidade de voltar no tempo", "Takemichi Hanagaki"),
+        ("Mashle: Magia e Músculos", "o que Mash faz todos os dias na floresta já que não possui magia", "Musculação e levantamento de peso"),
+        ("Slime (Tensura)", "a criatura gelatinosa azul em que Satoru Mikami reencarna no outro mundo", "Um Slime"),
+        ("Cyberpunk: Edgerunners", "o jovem estudante de jaqueta amarela que entra para o mundo dos mercenários", "David Martinez"),
+        ("Yu-Gi-Oh!", "o objeto egípcio dourado em forma de pirâmide que Yugi usa no pescoço", "Enigma do Milênio"),
+        ("Digimon Adventure", "o monstrinho amarelo parecido com um pequeno dinossauro parceiro de Tai", "Agumon"),
+        ("Beyblade", "o brinquedo usado nas batalhas de estádio pelos competidores", "Piões de batalha (Beyblades)"),
+        ("Sailor Moon", "o animal falante com uma meia-lua na testa que entrega o broche a Usagi", "Uma gata preta chamada Luna"),
+        ("Sakura Card Captors", "o guardião amarelo com asas parecido com um bichinho de pelúcia", "Kerberos (Kero)"),
+        ("InuYasha", "a metade não-humana do protagonista InuYasha de orelhas brancas", "Meio-Youkai cão"),
+        ("Yu Yu Hakusho", "o adolescente rebelde que morre salvando uma criança e vira Detetive Espiritual", "Yusuke Urameshi"),
+        ("Fullmetal Alchemist", "a ciência mística usada pelos irmãos Elric batendo as palmas das mãos", "Alquimia"),
+        ("Hunter x Hunter", "o garoto de roupas verdes que sai da Ilha da Baleia para procurar seu pai", "Gon Freecss"),
+        ("Blue Lock", "o esporte em que 300 jovens atacantes competem dentro do projeto Blue Lock", "Futebol"),
+        ("Haikyuu!!", "o esporte de quadra com rede pelo qual Shoyo Hinata é apaixonado", "Voleibol"),
+        ("Captain Tsubasa (Super Campeões)", "a posição de ataque e liderança de Oliver Tsubasa em campo", "Camisa 10 e capitão do time"),
+        ("Chainsaw Man", "a arma em que a cabeça e os braços de Denji se transformam ao puxar a corda", "Motosserras"),
+        ("Chainsaw Man", "o pequeno demônio cachorrinho laranja com uma motosserra na testa", "Pochita"),
+        ("Dr. Stone", "o que aconteceu misteriosamente com todos os seres humanos da Terra no início", "Foram transformados em estátuas de pedra"),
+        ("Dr. Stone", "o jovem gênio cientista que conta os segundos por 3.700 anos", "Senku Ishigami"),
+        ("The Seven Deadly Sins (Nanatsu no Taizai)", "o capitão loiro baixinho dono da taverna Chapéu de Javali", "Meliodas, o Pecado da Ira do Dragão"),
+        ("Fairy Tail", "o tipo de magia elemental dominada por Natsu Dragneel, criado por Igneel", "Magia de Dragon Slayer do Fogo"),
+        ("Baki", "o objetivo de Baki Hanma ao treinar artes marciais extremas desde criança", "Derrotar seu pai Yujiro Hanma, a criatura mais forte da Terra"),
+        ("Dandadan", "as duas coisas em que Momo Ayase e Okarun acreditavam no começo da história", "Fantasmas e Alienígenas")
+    ]
+
+    # NÍVEL 2: NORMAL (100 fatos únicos)
+    animes_normal_100 = [
+        ("Solo Leveling", "a palavra de comando que Sung Jin-Woo pronuncia para extrair sombras", "Erga-se (Arise)"),
+        ("Solo Leveling", "o melhor amigo rico de Jin-Woo que usa uma armadura caríssima e escudo", "Yoo Jin-Ho"),
+        ("Solo Leveling", "a caçadora de Rank S loira que sente um cheiro diferente e agradável em Jin-Woo", "Cha Hae-In"),
+        ("Black Clover", "o número de folhas no trevo do grimório de Asta que representa um demônio", "Trevo de Cinco Folhas"),
+        ("Black Clover", "o irmão de criação e rival prodígio de Asta que recebeu o grimório de 4 folhas", "Yuno"),
+        ("Black Clover", "o esquadrão mais bagunceiro dos Cavaleiros Mágicos no qual Asta entra", "Touros Negros"),
+        ("Black Clover", "a nobre da família Silva que usa magia de água e não controlava seu poder no início", "Noelle Silva"),
+        ("Bleach", "o nome da espada gigante de Ichigo Kurosaki em sua forma liberada inicial (Shikai)", "Zangetsu"),
+        ("Bleach", "o amigo de óculos de Ichigo que pertence ao clã de arqueiros espirituais Quincy", "Uryu Ishida"),
+        ("Bleach", "a amiga de classe de Ichigo que possui os grampos mágicos Shun Shun Rikka", "Orihime Inoue"),
+        ("Bleach", "a organização militar dividida em 13 divisões que protege a Soul Society", "Gotei 13"),
+        ("Tokyo Revengers", "o nome verdadeiro completo do líder invencível Mikey da Toman", "Manjiro Sano"),
+        ("Tokyo Revengers", "o vice-líder alto da Toman que tem uma tatuagem de dragão na têmpora", "Draken (Ken Ryuguji)"),
+        ("Tokyo Revengers", "a namorada de adolescência que Takemichi tenta salvar da morte no futuro", "Hinata Tachibana"),
+        ("Mashle: Magia e Músculos", "o doce recheado de creme que Mash come o tempo inteiro", "Profiteroles (bombinhas de creme)"),
+        ("Mashle: Magia e Músculos", "o nome da famosa escola de magia onde Mash precisa se tornar Visionário Divino", "Academia de Magia Easton"),
+        ("Slime (Tensura)", "o Dragão da Tempestade que se torna o primeiro amigo de Rimuru na caverna", "Veldora Tempest"),
+        ("Slime (Tensura)", "o nome da nação de monstros fundada e governada por Rimuru", "Federação Jura Tempest"),
+        ("Cyberpunk: Edgerunners", "o implante militar na coluna que deixa David com reflexos em câmera lenta", "Sandevistan"),
+        ("Cyberpunk: Edgerunners", "o líder veterano de braços gigantes que acolhe David no seu grupo", "Maine"),
+        ("Cyberpunk: Edgerunners", "a pistoleira baixinha e explosiva de pele azulada do grupo de Maine", "Rebecca"),
+        ("Dragon Ball Z", "o imperador galáctico que destruiu o Planeta Vegeta e matou Kuririn em Namekusei", "Freeza"),
+        ("Dragon Ball Z", "o bioandroide perfeito criado pelo computador do Dr. Gero que organizou um torneio", "Cell"),
+        ("Dragon Ball Z", "o monstro rosado mágico despertado pelo mago Babidi que transforma pessoas em doce", "Majin Boo"),
+        ("Dragon Ball Z", "a dança ou técnica que une Goku e Vegeta num único guerreiro superpoderoso", "Fusão (Gogeta na dança / Vegetto nos brincos Potara)"),
+        ("Dragon Ball Z", "o jovem vindo do futuro com uma espada nas costas para avisar sobre os Androides", "Trunks do Futuro"),
+        ("Dragon Ball Super", "o Deus da Destruição do Sétimo Universo que tem aparência de gato roxo", "Bills (Beerus)"),
+        ("Naruto", "o mestre lendário Sannin conhecido como Sábio Tarado que treinou Naruto", "Jiraiya"),
+        ("Naruto", "o irmão mais velho de Sasuke que aniquilou o clã e entrou para a Akatsuki", "Itachi Uchiha"),
+        ("Naruto", "o Jinchuuriki da Areia que controla a areia com sua cabaça nas costas", "Gaara do Deserto"),
+        ("Naruto", "o ninja de sobrancelhas grossas e macacão verde que usa apenas Taijutsu", "Rock Lee"),
+        ("Naruto", "o estrategista preguiçoso do clã Nara que controla sombras e tem QI acima de 200", "Shikamaru Nara"),
+        ("Naruto", "a garota tímida do clã Hyuga que possui o olho Byakugan e sempre amou Naruto", "Hinata Hyuga"),
+        ("Naruto", "o vilão Sannin das cobras obcecado pela imortalidade que marcou Sasuke", "Orochimaru"),
+        ("Naruto Shippuden", "o líder da Akatsuki que possui o olho Rinnegan e destruiu Konoha com o Shinra Tensei", "Pain (Nagato)"),
+        ("One Piece", "o primeiro navio com cabeça de ovelha que o bando ganhou na vila de Kaya", "Going Merry"),
+        ("One Piece", "o irmão mais velho adotivo de Luffy que comeu a Fruta do Fogo (Mera Mera no Mi)", "Portgas D. Ace"),
+        ("One Piece", "a arqueóloga do bando capaz de ler as pedras históricas chamadas Poneglyphs", "Nico Robin"),
+        ("One Piece", "o esqueleto músico afro que voltou à vida graças à Fruta da Ressurreição", "Brook"),
+        ("One Piece", "o pirata lendário executado em Loguetown que deixou o tesouro One Piece", "Gol D. Roger"),
+        ("One Piece", "o espadachim número 1 do mundo que carrega a espada negra Yoru nas costas", "Dracule Mihawk"),
+        ("One Piece", "o cirurgião da morte capitão dos Piratas Heart que comeu a Ope Ope no Mi", "Trafalgar Law"),
+        ("Attack on Titan", "o comandante da Tropa de Exploração famoso pelo grito 'Shinzou wo Sasageyo!'", "Erwin Smith"),
+        ("Attack on Titan", "o capitão baixinho considerado o soldado mais forte da humanidade", "Levi Ackerman"),
+        ("Attack on Titan", "as três grandes muralhas concêntricas que protegiam o reino humano", "Muralhas Maria, Rose e Sina"),
+        ("Attack on Titan", "o aparelho com cabos de aço e gás usado pelos soldados para voar entre prédios", "Equipamento de Manobra Tridimensional (DMT)"),
+        ("Attack on Titan", "os dois guerreiros infiltrados que se revelaram o Titã Blindado e o Titã Colossal", "Reiner Braun e Bertholdt Hoover"),
+        ("Demon Slayer", "o rei progenitor de todos os Onis que tem aparência semelhante a Michael Jackson", "Muzan Kibutsuji"),
+        ("Demon Slayer", "o Hashira das Chamas que protegeu todos os passageiros no Trem Infinito", "Kyojuro Rengoku"),
+        ("Demon Slayer", "o Hashira da Água calmo que salvou Tanjiro e Nezuko no primeiro episódio", "Giyu Tomioka"),
+        ("Demon Slayer", "a Hashira dos Insetos que usa veneno de glicínia na ponta da espada", "Shinobu Kocho"),
+        ("Demon Slayer", "o minério especial que absorve luz solar usado para forjar as espadas dos caçadores", "Minério Escarlate para Espadas Nichirin"),
+        ("Jujutsu Kaisen", "o aluno do 1º ano do clã Zenin que invoca shikigamis através das Dez Sombras", "Megumi Fushiguro"),
+        ("Jujutsu Kaisen", "a aluna do 1º ano que luta usando um martelo, pregos e bonecos de palha", "Nobara Kugisaki"),
+        ("Jujutsu Kaisen", "o feiticeiro de Grau 1 ex-assalariado que usa gravata e a técnica de proporção 7:3", "Kento Nanami"),
+        ("Jujutsu Kaisen", "o estudante grandalhão de Kyoto que pergunta 'Qual é o seu tipo de mulher?'", "Aoi Todo"),
+        ("My Hero Academia", "o estudante que tem metade do corpo de gelo e metade de fogo, filho de Endeavor", "Shoto Todoroki"),
+        ("My Hero Academia", "a estudante que remove a gravidade das coisas que toca com as pontas dos dedos", "Ochaco Uraraka"),
+        ("My Hero Academia", "o professor cansado da Turma 1-A que apaga individualidades com o olhar", "Shota Aizawa (Eraser Head)"),
+        ("My Hero Academia", "o líder da Liga dos Vilões que desintegra tudo o que toca com os cinco dedos", "Tomura Shigaraki"),
+        ("Death Note", "a modelo famosa apaixonada por Light que também possui um Death Note e os olhos de Shinigami", "Misa Amane"),
+        ("Death Note", "o acordo que um humano pode fazer com um Shinigami em troca de metade do seu tempo de vida", "Acordo dos Olhos de Shinigami (para ver o nome e tempo de vida)"),
+        ("Fullmetal Alchemist", "o que os irmãos Elric tentaram fazer na infância quebrando o maior tabu da alquimia", "Transmutação Humana para reviver a mãe Trisha"),
+        ("Fullmetal Alchemist", "onde a alma de Alphonse Elric foi selada por Edward após perder o corpo físico", "Dentro de uma grande armadura de ferro"),
+        ("Fullmetal Alchemist", "o Alquimista das Chamas que cria explosões estalando os dedos com luvas especiais", "Coronel Roy Mustang"),
+        ("Hunter x Hunter", "o sobrevivente do clã Kurta cujos olhos ficam escarlates quando sente fortes emoções", "Kurapika"),
+        ("Hunter x Hunter", "o amigo de Gon que entrou no Exame Hunter com o objetivo de pagar a faculdade de medicina", "Leorio Paradinight"),
+        ("Hunter x Hunter", "o mágico psicopata que usa cartas de baralho e a habilidade elástica Bungee Gum", "Hisoka Morow"),
+        ("Yu Yu Hakusho", "o guerreiro baixinho de três olhos que domina as Chamas Negras Mortais", "Hiei"),
+        ("Yu Yu Hakusho", "o Youkai raposa reencarnado como humano ruivo que controla plantas e chicote de rosas", "Kurama (Shuichi Minamino)"),
+        ("Yu Yu Hakusho", "o valentão ruivo amigo de Yusuke que cria uma espada espiritual de energia", "Kazuma Kuwabara"),
+        ("Yu Yu Hakusho", "a mestra idosa da Doutrina Genkai que treinou Yusuke e lhe passou a Onda Espiritual", "Mestra Genkai"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro de Áries que conserta as armaduras em Jamiel", "Mu de Áries"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro brasileiro que protege a segunda casa do Santuário", "Aldebaran de Touro"),
+        ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro de Leão, irmão mais novo do herói Aiolos de Sagitário", "Aiolia de Leão"),
+        ("One Punch Man", "a heroína de Classe S Rank 2 conhecida como Tornado do Terror que usa telecinese", "Tatsumaki"),
+        ("One Punch Man", "o vilão caçador de heróis discípulo rebelde de Bang (Silver Fang)", "Garou"),
+        ("One Punch Man", "o homem considerado o mais forte da Terra que na verdade só tem sorte e joga videogame", "King (e o Motor King)"),
+        ("Spy x Family", "o cachorro branco grande adotado pelos Forger que consegue prever o futuro", "Bond Forger"),
+        ("Chainsaw Man", "a mulher misteriosa de olhos amarelos em anéis que chefia a Divisão Especial 4", "Makima"),
+        ("Chainsaw Man", "a Infernal de Sangue com chifres vermelhos que divide apartamento com Denji e Aki", "Power"),
+        ("Blue Lock", "o protagonista que possui excelente visão espacial e o chute direto de primeira", "Yoichi Isagi"),
+        ("Blue Lock", "o gênio preguiçoso de cabelos brancos que domina qualquer bola com controle absurdo", "Seishiro Nagi"),
+        ("Haikyuu!!", "o levantador prodígio chamado de Rei da Quadra que faz a dupla rápida com Hinata", "Tobio Kageyama"),
+        ("Haikyuu!!", "a escola de uniforme preto associada a corvos onde Hinata e Kageyama jogam", "Colégio Karasuno"),
+        ("InuYasha", "o meio-irmão mais velho de InuYasha, um Youkai completo elegante e poderoso", "Sesshomaru"),
+        ("InuYasha", "a espada forjada a partir do dente do pai de InuYasha capaz de cortar 100 Youkais", "Tessaiga"),
+        ("Code Geass", "o nome falso adotado pelo príncipe exilado Lelouch na Academia Ashford", "Lelouch Lamperouge"),
+        ("Sword Art Online", "o espadachim negro que zerou o jogo mortal Aincrad usando duas espadas", "Kirito (Kazuto Kirigaya)"),
+        ("The Seven Deadly Sins", "o Pecado do Orgulho do Leão que fica invencível quando o sol atinge o meio-dia", "Escanor"),
+        ("Dr. Stone", "o líquido químico feito com ácido nítrico e álcool que desfaz a petrificação", "Fluido de Revivamento (Água Milagrosa)"),
+        ("Mob Psycho 100", "o charlatão sem poderes psíquicos que é o chefe e mentor de Shigeo Kageyama (Mob)", "Arataka Reigen"),
+        ("Fire Force", "o jovem bombeiro que solta fogo pelos pés e sorri quando fica nervoso", "Shinra Kusakabe"),
+        ("Frieren e a Jornada para o Além", "a raça longeva da maga Frieren que vive milhares de anos", "Elfa"),
+        ("Bocchi the Rock!", "o instrumento musical que a tímida Hitori Gotoh toca com maestria na banda Kessoku", "Guitarra elétrica"),
+        ("Oshi no Ko", "a idol lendária do grupo B-Komachi que teve os gêmeos Aqua e Ruby", "Ai Hoshino"),
+        ("Re:Zero", "a maldição/habilidade que faz Subaru Natsuki voltar a um ponto salvo toda vez que morre", "Retorno através da Morte"),
+        ("Konosuba", "a deusa da água inútil que Kazuma escolheu levar consigo para o outro mundo", "Aqua"),
+        ("Overlord", "o esqueleto mago supremo líder da Grande Tumba de Nazarick", "Ainz Ooal Gown (Momonga)"),
+        ("Vinland Saga", "o jovem guerreiro islandês que busca duelo contra Askeladd para vingar seu pai Thors", "Thorfinn")
+    ]
+
+    # NÍVEL 3: HARD (100 fatos únicos — para quem realmente manja!)
+    animes_hard_100 = [
+        ("Solo Leveling", "o cavaleiro vermelho-sangue comandante que Jin-Woo derrota na missão de troca de classe", "Igris, o Comandante Vermelho-Sangue"),
+        ("Solo Leveling", "o rei formiga alado nascido na Ilha de Jeju que Jin-Woo transforma em sua sombra mais fiel", "Beru"),
+        ("Solo Leveling", "o alto orc xamã que Jin-Woo renomeia ao transformar em general do seu exército de sombras", "Tusk (Presa)"),
+        ("Solo Leveling", "o título oficial da classe oculta que o Sistema concede a Sung Jin-Woo", "Monarca das Sombras (inicialmente Necromante)"),
+        ("Solo Leveling", "o caçador norte-americano de Nível Nacional conhecido como Golias e líder da Guilda Scavenger", "Thomas Andre"),
+        ("Solo Leveling", "o nome do pai de Sung Jin-Woo que ficou desaparecido dentro de um portal por 10 anos", "Sung Il-Hwan"),
+        ("Bleach: Thousand-Year Blood War", "o nome da Bankai de chamas supremas do Comandante Genryusai Yamamoto", "Zanka no Tachi"),
+        ("Bleach: Thousand-Year Blood War", "a verdadeira identidade da Capitã da 4ª Divisão Retsu Unohana no passado", "Yachiru Unohana, a primeira Kenpachi da história"),
+        ("Bleach: Thousand-Year Blood War", "o nome da Bankai de gelo absoluto verdadeiro de Rukia Kuchiki", "Hakka no Togame"),
+        ("Bleach: Thousand-Year Blood War", "o nome da Shikai e da Bankai finalmente despertadas por Kenpachi Zaraki", "Nozarashi (Shikai) e transformação berserk demoníaca (Bankai)"),
+        ("Bleach: Thousand-Year Blood War", "o nome da Bankai teatral em atos sombrios do Capitão Shunsui Kyoraku", "Katen Kyokotsu: Karamatsu Shinju"),
+        ("Bleach", "o grupo de 10 Arrancars de elite numerados de 1 a 10 comandados por Sosuke Aizen", "Os Espada"),
+        ("Bleach", "o Espada de número 4 que enfrenta Ichigo no domo de Las Noches com a Segunda Etapa", "Ulquiorra Cifer"),
+        ("Black Clover", "o capitão estrangeiro dos Touros Negros que usa Magia de Escuridão e katana", "Yami Sukehiro"),
+        ("Black Clover", "o capitão do Alvorecer Dourado que dividia o mesmo corpo com o líder dos elfos Patry", "William Vangeance"),
+        ("Black Clover", "o 28º Rei Mago do Reino de Clover que possui Magia do Tempo", "Julius Novachrono"),
+        ("Black Clover", "a irmã mais velha de Fuegoleon que domina a zona de mana Calidus Brachium", "Mereoleona Vermillion"),
+        ("Black Clover", "o vice-capitão dos Touros Negros que fez um pacto com quatro demônios diferentes", "Nacht Faust"),
+        ("Tokyo Revengers", "o fundador da 1ª geração da Blackiku/Black Dragons e irmão mais velho de Mikey", "Shinichiro Sano"),
+        ("Tokyo Revengers", "o capitão da 1ª divisão da Toman e amigo de infância que deu o amuleto a Chifuyu", "Keisuke Baji"),
+        ("Tokyo Revengers", "o líder implacável da gangue Tenjiku em Yokohama e meio-irmão adotivo de Mikey", "Izana Kurokawa"),
+        ("Mashle: Magia e Músculos", "o estudante de duas linhas que controla gravidade e vira rival/amigo de Mash", "Lance Crown"),
+        ("Mashle: Magia e Músculos", "o líder do grupo Magia Lupus que usa Magia de Marionetes e três linhas", "Abel Walker"),
+        ("Mashle: Magia e Músculos", "o Visionário Divino da Areia considerado o mais forte entre os estudantes", "Orter Madl"),
+        ("Slime (Tensura)", "a Habilidade Única inicial de Rimuru que analisa tudo e depois evolui para o Senhor da Sabedoria", "Grande Sábio (que evolui para Rafael)"),
+        ("Slime (Tensura)", "a Lorde Demônio mais antiga de cabelos rosas conhecida como a Destruidora", "Milim Nava"),
+        ("Slime (Tensura)", "o espadachim Kijin mestre de Rimuru cujo golpe corta até o espírito do oponente", "Hakurou"),
+        ("Slime (Tensura)", "a aventureira japonesa dona da máscara anti-magia que deixou sua vontade para Rimuru", "Shizue Izawa (Shizu)"),
+        ("Cyberpunk: Edgerunners", "o lendário mercenário 96% ciborgue segurança da Arasaka que derrota David", "Adam Smasher"),
+        ("Cyberpunk: Edgerunners", "o transtorno mental causado pelo excesso de implantes cibernéticos no corpo", "Ciberpsicose (Cyberpsychosis)"),
+        ("Cyberpunk: Edgerunners", "o fixer traidor de quatro olhos cibernéticos que contratava a equipe de Maine e David", "Faraday"),
+        ("Dragon Ball Z", "o cientista da Patrulha Vermelha que criou os Androides 16, 17, 18 e Cell", "Dr. Maki Gero (Androide 20)"),
+        ("Dragon Ball Z", "o planeta cujos habitantes ensinaram a técnica do Teletransporte para Goku", "Planeta Yardrat"),
+        ("Dragon Ball Z", "o guerreiro do Outro Mundo do Oeste que enfrentou Goku na final do Torneio do Outro Mundo", "Paikuhan (Pikkon)"),
+        ("Dragon Ball Super", "o guerreiro mortal do Universo 11 cujo poder supera o de um Deus da Destruição", "Jiren, o Cinzento"),
+        ("Dragon Ball Super", "o Kaioshin do Universo 10 que roubou o corpo de Goku para executar o Plano Zero Mortais", "Zamasu (Goku Black)"),
+        ("Naruto", "o nome verdadeiro do Quarto Hokage, criador do Rasengan e pai de Naruto", "Minato Namikaze"),
+        ("Naruto", "a mãe de Naruto que foi a segunda Jinchuuriki da Kyuubi antes dele nascer", "Kushina Uzumaki"),
+        ("Naruto Shippuden", "o último estágio proibido dos Oito Portões Internos usado por Might Guy contra Madara", "Oitavo Portão: Portão da Morte (Formação da Noite / Guy Noturno)"),
+        ("Naruto Shippuden", "a técnica ocular suprema de espaço-tempo do Mangekyou Sharingan de Obito e Kakashi", "Kamui"),
+        ("Naruto Shippuden", "os nomes dos dois irmãos fundadores de Konoha dos clãs Senju e Uchiha", "Hashirama Senju e Madara Uchiha"),
+        ("Naruto Shippuden", "a espada lendária sem lâmina de Kisame Hoshigaki que absorve chakra", "Samehada (Pele de Tubarão)"),
+        ("One Piece", "os três tipos de Haki existentes no mundo de One Piece", "Haki da Observação, Haki do Armamento e Haki do Rei (Conquistador)"),
+        ("One Piece", "a antiga organização de 7 grandes piratas corsários aliados ao Governo Mundial", "Os Shichibukai"),
+        ("One Piece", "o nome do cientista mais genial do mundo que trabalhava para a Marinha em Egghead", "Dr. Vegapunk"),
+        ("One Piece", "o verdadeiro nome da Akuma no Mi de Luffy revelado no Despertar do Gear 5", "Hito Hito no Mi, Modelo: Nika (Deus do Sol)"),
+        ("One Piece", "o carpinteiro mestre de Water 7 que construiu o navio Oro Jackson de Gol D. Roger", "Tom"),
+        ("One Piece", "o primeiro imediato da tripulação de Gol D. Roger conhecido como o Rei das Trevas", "Silvers Rayleigh"),
+        ("Attack on Titan", "o meio-irmão mais velho de Eren Yeager que possuía o poder do Titã Bestial", "Zeke Yeager"),
+        ("Attack on Titan", "o nome da nação continental onde os Eldianos viviam presos na zona de internamento de Liberio", "Marley"),
+        ("Attack on Titan", "a maldição que limita o tempo de vida de qualquer portador dos Nove Titãs", "Maldição de Ymir (máximo de 13 anos de vida após herdar o poder)"),
+        ("Attack on Titan", "o evento apocalíptico ativado por Eren marchando com milhões de Titãs das Muralhas", "O Estrondo (The Rumbling)"),
+        ("Demon Slayer", "o Lua Superior Número 1 de seis olhos que usa a Respiração da Lua", "Kokushibo (Michikatsu Tsugikuni)"),
+        ("Demon Slayer", "o Lua Superior Número 3 mestre em artes marciais Soryu que matou Rengoku", "Akaza (Hakuji)"),
+        ("Demon Slayer", "o lendário espadachim criador da Respiração do Sol original da Era Sengoku", "Yoriichi Tsugikuni"),
+        ("Demon Slayer", "o ferreiro de máscara Hyottoko que fica furioso toda vez que Tanjiro quebra a espada", "Hotaru Haganezuka"),
+        ("Jujutsu Kaisen", "o nome da Expansão de Domínio de Ryomen Sukuna que não possui barreira fechada", "Santuário Malevolente (Fukuma Mizushi)"),
+        ("Jujutsu Kaisen", "o assassino de feiticeiros do clã Zenin sem nenhuma energia amaldiçoada e pai de Megumi", "Toji Fushiguro (Toji Zenin)"),
+        ("Jujutsu Kaisen", "o artefato amaldiçoado de Grau Especial usado para selar Satoru Gojo em Shibuya", "Reino da Prisão (Prison Realm / Gokumonkyo)"),
+        ("Jujutsu Kaisen", "o estudante do 3º ano cuja Expansão de Domínio funciona como um jogo de pachinko com jackpot imortal", "Kinji Hakari"),
+        ("My Hero Academia", "o antigo parceiro de All For One e vilão principal por trás da Liga dos Vilões", "All For One (Shigaraki)"),
+        ("My Hero Academia", "o estudante do 3º ano do Big 3 da U.A. que atravessa paredes com a individualidade Permeação", "Mirio Togata (Lemillion)"),
+        ("My Hero Academia", "a mestra de All Might e sétima portadora do One For All", "Nana Shimura"),
+        ("Death Note", "os dois jovens prodígios criados no orfanato Wammy's House como sucessores de L", "Near (Nate River) e Mello (Mihael Keehl)"),
+        ("Death Note", "a agente do FBI noiva de Raye Penber que quase descobriu a identidade de Kira no início", "Naomi Misora"),
+        ("Fullmetal Alchemist: Brotherhood", "o criador original dos 7 Homúnculos que nasceu dentro de um frasco de vidro", "Pai (O Homúnculo no Frasco)"),
+        ("Fullmetal Alchemist: Brotherhood", "o melhor amigo de Roy Mustang que foi assassinado por Inveja numa cabine telefônica", "Maes Hughes"),
+        ("Hunter x Hunter", "os seis tipos de aura do sistema de Nen ensinados por Wing", "Reforço, Emissão, Transformação, Materialização, Manipulação e Especialização"),
+        ("Hunter x Hunter", "o presidente da Associação Hunter que enfrentou o Rei Formiga Quimera Meruem", "Isaac Netero"),
+        ("Hunter x Hunter", "o jogo de videogame criado por Ging Freecss que na verdade ficava no mundo real", "Greed Island"),
+        ("Yu Yu Hakusho", "o ex-Detetive Espiritual que abriu o buraco para o Makai e possui sete personalidades", "Shinobu Sensui"),
+        ("Yu Yu Hakusho", "o líder da equipe adversária na final do Torneio das Trevas que controla 100% dos seus músculos", "Toguro Mais Jovem"),
+        ("Cavaleiros do Zodíaco", "o golpe supremo proibido por Atena executado por três Cavaleiros de Ouro juntos", "Exclamação de Atena"),
+        ("Cavaleiros do Zodíaco", "o sentido além dos seis sentidos que permite aos Cavaleiros atingirem a velocidade da luz", "O Sétimo Sentido"),
+        ("Cavaleiros do Zodíaco", "o sentido necessário para descer vivo ao Mundo dos Mortos (Submundo de Hades)", "O Oitavo Sentido (Arayashiki)"),
+        ("One Punch Man", "o conquistador alienígena líder dos ladrões da Matéria Escura que enfrentou Saitama na nave", "Lord Boros"),
+        ("One Punch Man", "o herói número 1 da Classe S que raramente aparece na Associação de Heróis", "Blast"),
+        ("Chainsaw Man", "o Demônio das Armas que matou a família de Aki Hayakawa em poucos segundos", "Demônio da Pistola (Gun Devil)"),
+        ("Chainsaw Man", "o caçador de demônios veterano considerado o mais forte da Divisão 4 que treinou Denji e Power", "Kishibe"),
+        ("Blue Lock", "o idealizador excêntrico de óculos que criou e comanda todo o projeto Blue Lock", "Jinpachi Ego"),
+        ("Blue Lock", "o irmão mais novo prodígio de Sae Itoshi e rival número 1 dentro do Blue Lock", "Rin Itoshi"),
+        ("Haikyuu!!", "o capitão e levantador da escola Aoba Johsai conhecido pelo saque viagem devastador", "Toru Oikawa"),
+        ("Haikyuu!!", "o capitão canhoto da academia Shiratorizawa considerado um dos três melhores atacantes do Japão", "Wakatoshi Ushijima"),
+        ("Code Geass", "o robô mecha Knightmare Frame preto e dourado com asas de energia pilotado por Zero", "Guren / Shinkiro / Lancelot (de Suzaku)"),
+        ("Steins;Gate", "o codinome usado por John Titor no futuro que na verdade era filha de Daru", "Suzuha Amane"),
+        ("InuYasha", "o vilão principal meio-Youkai nascido da junção de centenas de demônios com o bandido Onigumo", "Naraku"),
+        ("InuYasha", "a sacerdotisa guardiã da Joia de Quatro Almas que selou InuYasha na árvore há 50 anos", "Kikyo"),
+        ("Evangelion", "as criaturas misteriosas gigantes que atacam Tokyo-3 após o Segundo Impacto", "Anjos (Angels)"),
+        ("Cowboy Bebop", "o caçador de recompensas ex-membro do sindicato Red Dragon que pilota a nave Swordfish II", "Spike Spiegel"),
+        ("Berserk", "o bando mercenário lendário liderado por Griffith durante a Era de Ouro", "Bando do Falcão"),
+        ("Vinland Saga", "o líder astuto do bando viking que matou Thors numa emboscada nas Ilhas Faroé", "Askeladd"),
+        ("Dr. Stone", "o primata colegial mais forte que queria destruir as estátuas dos adultos corruptos", "Tsukasa Shishio"),
+        ("Mob Psycho 100", "o espírito maligno de bochechas vermelhas que vira parceiro flutuante de Mob", "Covinhas (Ekubo / Dimple)"),
+        ("Frieren", "o herói humano do grupo original cuja morte de velhice motivou a nova jornada de Frieren", "Himmel, o Herói"),
+        ("Re:Zero", "a Bruxa da Inveja que deu a Subaru a habilidade de Retorno através da Morte", "Satella"),
+        ("Overlord", "a supervisora dos Guardiões de Andar de Nazarick que tem asas negras na cintura e ama Ainz", "Albedo"),
+        ("The Seven Deadly Sins", "o irmão mais novo de Meliodas que possui o mandamento da Piedade", "Zeldris"),
+        ("Fairy Tail", "o mago negro imortal criador dos demônios do livro de Zeref e irmão mais velho de Natsu", "Zeref Dragneel"),
+        ("Dandadan", "o espírito de alta velocidade que possuiu Okarun dentro do túnel abandonado", "Vovó Turbo (Turbo Granny)"),
+        ("Kaiju No. 8", "o trabalhador de limpeza de monstros de 32 anos que engole um parasita e vira o Kaiju Nº 8", "Kafka Hibino")
+    ]
+
+    # NÍVEL 4: IMPOSSÍVEL (100 fatos únicos — Nível Extremo para o seu amigo!)
+    animes_impossivel_100 = [
+        ("Solo Leveling", "o nome verdadeiro do Monarca das Sombras original e ex-Fragmento da Luz Brilhante", "Ashborn"),
+        ("Solo Leveling", "o nome do arquiteto demoníaco da Estátua de Deus do Templo Cartenon que criou o Sistema", "Kandiaru"),
+        ("Solo Leveling", "o nome do Monarca da Destruição e Rei dos Dragões que é o inimigo final da obra", "Antares"),
+        ("Solo Leveling", "o cálice divino usado pelos Governantes para voltar 10 anos no tempo toda vez que a Terra era destruída", "Cálice da Reencarnação"),
+        ("Solo Leveling", "o nome da doença do sono causada pela exposição excessiva à mana que afetou a mãe de Jin-Woo", "Sono Eterno (Eternal Slumber)"),
+        ("Solo Leveling", "as adagas lendárias criadas a partir da presa do próprio Rei dos Dragões Kamish", "Ira de Kamish (Kamish's Wrath)"),
+        ("Bleach: Thousand-Year Blood War", "a letra e o nome do Schrift do Imperador Quincy Yhwach e de Uryu Ishida", "Letra 'A' — The Almighty (Yhwach) e The Antithesis (Uryu)"),
+        ("Bleach: Thousand-Year Blood War", "o membro da Guarda Real (Divisão Zero) que batizou tudo o que existe na Soul Society", "Ichibe Hyosube (Monge que chama o Nome Verdadeiro)"),
+        ("Bleach: Thousand-Year Blood War", "o Sternritter de letra 'V' (The Visionary) que transforma qualquer imaginação em realidade", "Gremmy Thoumeaux"),
+        ("Bleach: Thousand-Year Blood War", "o Sternritter de letra 'M' (The Miracle) que é o próprio coração do Rei das Almas", "Gerard Valkyrie"),
+        ("Bleach: Thousand-Year Blood War", "o nome da Bankai de Kisuke Urahara que reconstrói tudo o que toca com costuras", "Kannonbiraki Benihime Aratame"),
+        ("Bleach", "o número e nome do Hado de nível 90 sem encantamento favorito de Sosuke Aizen", "Hado #90: Kurohitsugi (Sarcófago Negro)"),
+        ("Black Clover", "o nome do demônio sem mana que foi criado pela mãe de Asta (Licita) dentro do grimório", "Liebe"),
+        ("Black Clover", "os três irmãos Zogratis da Tríade Negra do Reino de Spade e seus respectivos demônios", "Dante (Lucifero), Vanica (Megicula) e Zenon (Beelzebub)"),
+        ("Black Clover", "o verdadeiro nome do primeiro Rei Mago da história que derrotou o demônio ancestral Licht", "Lemiel Silvamillion Clover"),
+        ("Black Clover", "o demônio de nível supremo que manipulou elfos e humanos por 500 anos usando Magia de Kotodama (Palavra)", "Zagred"),
+        ("Tokyo Revengers", "o nome do meio-irmão mais velho de Hinata e Naoto que não precisou voltar no tempo para instigar Kisaki", "Tetta Kisaki (e o segundo viajante do tempo original Shinichiro Sano)"),
+        ("Tokyo Revengers", "o nome da gangue de Mikey no arco final composta pelas três divindades (Brahman, Rokuhara e Kanto)", "Kanto Manji Gang"),
+        ("Mashle: Magia e Músculos", "o vilão principal pai de Mash que buscava fundir o coração de seus seis filhos para virar um deus", "Innocent Zero (Cyril Marcus)"),
+        ("Mashle: Magia e Músculos", "o filho mais velho de Innocent Zero considerado uma obra-prima com Magia de Espaço", "Doom (e o caçula prodígio Domina Blowelive)"),
+        ("Slime (Tensura)", "os nomes das quatro cores dos Demônios Primordiais que passam a servir Rimuru", "Diablo (Noir/Preto), Testarossa (Blanc/Branco), Ultima (Violet/Roxo) e Carrera (Jaune/Amarelo)"),
+        ("Slime (Tensura)", "o nome do Dragão Verdadeiro criador do mundo e pai de Milim Nava", "Veldanava"),
+        ("Slime (Tensura)", "o nome da entidade consciente que nasce quando Rimuru dá um nome para a habilidade Rafael", "Ciel (Manas: Ciel)"),
+        ("Cyberpunk: Edgerunners", "a dupla de estúdio japonês e diretor responsável pela criação do anime para a CD Projekt Red", "Studio Trigger, dirigido por Hiroyuki Imaishi"),
+        ("Cyberpunk: Edgerunners", "o nome da música de Rosa Walton que virou o hino emocional de David e Lucy na Lua", "I Really Want to Stay at Your House"),
+        ("Dragon Ball", "o ano exato em que Akira Toriyama publicou o capítulo 1 do mangá Dragon Ball na Weekly Shonen Jump", "1984"),
+        ("Dragon Ball Z", "o nome da mãe biológica de Goku mostrada em Dragon Ball Minus e no filme de Broly", "Gine"),
+        ("Dragon Ball Z", "o nome do avô adotivo terráqueo que encontrou Goku bebê na montanha Paozu", "Son Gohan (Avô Gohan)"),
+        ("Dragon Ball Super", "o nome do Sumo Sacerdote pai de Whis e Vados e conselheiro de Zeno", "Daishinkan (Grand Priest)"),
+        ("Dragon Ball Z", "o poder de luta exato que o rastreador de Raditz marcou ao medir o fazendeiro com espingarda no episódio 1", "Poder de luta igual a 5"),
+        ("Naruto", "o nome do Sábio dos Seis Caminhos e do seu irmão gêmeo que foi morar na Lua", "Hagoromo Otsutsuki e Hamura Otsutsuki"),
+        ("Naruto", "os nomes verdadeiros das nove Bijuus de 1 a 9 caudas", "Shukaku, Matatabi, Isobu, Son Goku, Kokuo, Saiken, Chomei, Gyuki e Kurama"),
+        ("Naruto", "o nome da técnica de teletransporte instantâneo criada por Tobirama Senju e aperfeiçoada por Minato", "Hiraishin no Jutsu (Deus Voador do Trovão)"),
+        ("Naruto", "o nome verdadeiro do pai de Kakashi Hatake conhecido como o Canino Branco de Konoha", "Sakumo Hatake"),
+        ("One Piece", "o nome do incidente lendário há 38 anos onde Garp e Roger se uniram para derrotar Rocks D. Xebec", "Incidente de God Valley"),
+        ("One Piece", "o nome completo do infame pirata capitão dos Piratas Rocks antes da era de Roger", "Rocks D. Xebec"),
+        ("One Piece", "os nomes das três Armas Ancestrais capazes de destruir o mundo de One Piece", "Pluton, Poseidon e Uranus"),
+        ("One Piece", "o soberano secreto que senta no Trono Vazio em Mary Geoise acima dos Cinco Anciões (Gorosei)", "Imu-sama"),
+        ("One Piece", "a ilha final da Grand Line batizada por Gol D. Roger ao ler a história de Joy Boy", "Laugh Tale"),
+        ("Attack on Titan", "o nome da fundadora original que entrou na árvore gigante e tocou a criatura da vida há 2.000 anos", "Ymir Fritz"),
+        ("Attack on Titan", "o sobrenome real da família real verdadeira que governava dentro das muralhas sob nome falso", "Família Reiss (verdadeira família real Fritz)"),
+        ("Attack on Titan", "o nome da cidade natal de Eren, Mikasa e Armin localizada no sul da Muralha Maria", "Distrito de Shiganshina"),
+        ("Demon Slayer", "a flor rara que floresce apenas poucos dias por ano à luz do sol e que Muzan procurava à noite", "Lírio da Aranha Azul"),
+        ("Demon Slayer", "a idade máxima que um espadachim que desperta a Marca do Caçador consegue viver (com exceção de Yoriichi)", "25 anos de idade"),
+        ("Demon Slayer", "o nome humano original de Muzan Kibutsuji ou a era japonesa em que foi transformado por um médico", "Era Heian (há mais de mil anos)"),
+        ("Jujutsu Kaisen", "o feiticeiro milenar que troca de corpos transplantando o cérebro e gerou Yuji Itadori", "Kenjaku"),
+        ("Jujutsu Kaisen", "o nome do Shikigami supremo não domado das Dez Sombras invocado por Megumi em Shibuya", "General Divino Oito Cabos Divergente Sila Mahoraga"),
+        ("Jujutsu Kaisen", "o cântico completo recitado por Satoru Gojo para amplificar o Vazio Roxo a 200%", "Nove Cordas, Luz Polarizada, Corvo e Shomyo, a Lacuna entre o Dentro e o Fora"),
+        ("My Hero Academia", "o nome completo do primeiro portador do One For All, irmão mais novo do vilão All For One", "Yoichi Shigaraki"),
+        ("My Hero Academia", "o verdadeiro nome civil de All Might", "Toshinori Yagi"),
+        ("Death Note", "o nome verdadeiro completo de L e a data de seu nascimento na enciclopédia How to Read 13", "L Lawliet"),
+        ("Death Note", "o nome do Shinigami que amava Misa Amane e se sacrificou matando L para salvar a vida dela", "Rem"),
+        ("Fullmetal Alchemist", "a frase e a data exata gravadas na tampa interna do relógio de bolso de Alquimista Federal de Edward", "Don't Forget 3.Oct.11 (Não esqueça 3 de outubro de 1911)"),
+        ("Fullmetal Alchemist", "o nome do país oriental de onde vieram Ling Yao, Lan Fan e a arte da Alkahestria", "Império de Xing"),
+        ("Hunter x Hunter", "o nome da habilidade de Nen de Kurapika que só pode ser usada contra a Trupe Fantasma sob pena de morte", "Chain Jail (Corrente de Prisão) e Emperor Time"),
+        ("Hunter x Hunter", "o jogo de estratégia de tabuleiro do Leste Gorteau no qual Meruem jamais derrotou a cega Komugi", "Gungi"),
+        ("Hunter x Hunter", "a irmã mais nova de Killua Zoldyck que abriga a entidade misteriosa capaz de realizar qualquer desejo", "Alluka Zoldyck (Nanika)"),
+        ("Yu Yu Hakusho", "o nome do pai ancestral Youkai de Yusuke Urameshi que era um dos três reis do Makai", "Raizen"),
+        ("Cavaleiros do Zodíaco", "o nome do autor do mangá original Saint Seiya publicado em 1986", "Masami Kurumada"),
+        ("Cavaleiros do Zodíaco", "o verdadeiro Cavaleiro de Ouro de Áries na Guerra Santa de 1743 e mestre de Shiryu", "Dohko de Libra (Mestre Ancião) e Shion de Áries"),
+        ("One Punch Man", "o pseudônimo do autor original que criou a webcomic One Punch Man e Mob Psycho 100", "ONE (e redesenhado por Yusuke Murata)"),
+        ("Chainsaw Man", "o autor do mangá Chainsaw Man, também criador de Fire Punch e Look Back", "Tatsuki Fujimoto"),
+        ("Chainsaw Man", "o Demônio Primordial sem olhos e com vários corpos de astronautas cortados ao meio no Inferno", "Demônio da Escuridão (Darkness Devil)"),
+        ("Blue Lock", "o atacante francês número 1 do mundo no qual Jinpachi Ego se inspirou e que joga no Bastard München", "Noel Noa"),
+        ("Haikyuu!!", "o time profissional da Divisão 1 da V.League do Brasil ou Japão onde Hinata joga após treinar no Rio de Janeiro", "MSBY Black Jackals (após treinar vôlei de praia no Brasil)"),
+        ("Evangelion", "de quem era a alma que habitava dentro do núcleo da Unidade Evangelion-01 de Shinji", "Yui Ikari (a mãe de Shinji)"),
+        ("Evangelion", "o significado literal da sigla alemã NERV na organização de Gendo Ikari", "Nervo (com o lema: Deus está em seu céu, tudo está bem com o mundo)"),
+        ("Code Geass", "o nome do plano final de Lelouch e Suzaku para concentrar todo o ódio do mundo nele mesmo", "Zero Requiem"),
+        ("Steins;Gate", "o número exato da divergência da linha de mundo Steins Gate onde Kurisu e Mayuri sobrevivem", "1.048596%"),
+        ("Berserk", "o nome que Griffith recebe ao renascer como o quinto membro da Mão de Deus durante o Eclipse", "Femto, o Falcão da Escuridão"),
+        ("Berserk", "o nome do autor lendário de Berserk que dedicou mais de 30 anos de vida à obra", "Kentaro Miura"),
+        ("Monster", "o nome do livro infantil ilustrado tcheco usado no seminário 511 Kinderheim que influenciou Johan Liebert", "O Monstro Sem Nome (de Emil Sebe / Franz Bonaparta)"),
+        ("Vinland Saga", "o navegador histórico real que encontrou a terra de Vinland na América do Norte", "Leif Erikson (e Thorfinn Karlsefni)"),
+        ("Dr. Stone", "a identidade misteriosa do 'Why-Man' na Lua que enviava o código Morse WHY", "Uma colônia de dispositivos alienígenas mecânicos parasitas (Medusas)"),
+        ("Frieren", "a Grande Maga lendária da era mítica que foi a mestra da própria Frieren há mil anos", "serie (e a mestra humana Flamme)"),
+        ("Re:Zero", "o nome do Grande Espírito do Fogo na forma de gatinho cinza que acompanha Emilia", "Puck"),
+        ("Overlord", "o nome do jogo DMMORPG de realidade virtual do ano 2138 que deu origem ao mundo de Ainz", "YGGDRASIL"),
+        ("InuYasha", "o nome da autora consagrada de InuYasha, Ranma 1/2 e Urusei Yatsura", "Rumiko Takahashi"),
+        ("Fairy Tail", "o verdadeiro significado do acrônimo E.N.D., o demônio mais forte do livro de Zeref", "Etherious Natsu Dragneel"),
+        ("The Seven Deadly Sins", "a entidade suprema do universo de Britannia que criou a Divindade Suprema e o Rei dos Demônios", "O Caos (selado dentro de Arthur Pendragon)"),
+        ("Cowboy Bebop", "a frase final icônica que aparece no canto da tela no encerramento do último episódio", "You're Gonna Carry That Weight (Você vai carregar esse peso)"),
+        ("Akira", "o ano em que se passa a história de Kaneda e Tetsuo em Neo-Tokyo (e em que seriam as Olimpíadas)", "Ano de 2019"),
+        ("Ghost in the Shell", "o nome da Major ciborgue protagonista da Seção 9 de Segurança Pública", "Major Motoko Kusanagi"),
+        ("Hellsing Ultimate", "a identidade histórica real do vampiro supremo Alucard que serve a Integra Hellsing", "Conde Drácula (Vlad, o Empalador)"),
+        ("JoJo's Bizarre Adventure", "o nome do Stand de DIO na Parte 3 capaz de parar o tempo por alguns segundos", "The World (Za Warudo)"),
+        ("JoJo's Bizarre Adventure", "o Stand evoluído de Giorno Giovanna na Parte 5 que anula qualquer ação de volta ao zero", "Gold Experience Requiem"),
+        ("Gurren Lagann", "a frase clássica de Kamina para Simon sobre a sua broca", "A sua broca é a broca que vai perfurar os céus!"),
+        ("Kill la Kill", "o nome da espada em forma de metade de tesoura vermelha empunhada por Ryuko Matoi", "Lâmina Decapitadora (Scissor Blade)"),
+        ("Fate/stay night", "a verdadeira identidade histórica lendária da serva da classe Saber invocada por Shirou Emiya", "Rei Artur Pendragon (Artoria Pendragon)"),
+        ("Made in Abyss", "a maldição da 6ª Camada do Abismo que faz o explorador perder a humanidade (ou morrer)", "Perda da humanidade (transformação em Narehate) ou morte"),
+        ("The Promised Neverland", "os números de identificação tatuados no pescoço de Emma, Norman e Ray em Grace Field", "63194 (Emma), 22194 (Norman) e 81194 (Ray)"),
+        ("Tokyo Ghoul", "o que significa estalar o dedo indicador como Kaneki passou a fazer após a tortura de Yamori (Jason)", "Um hábito adquirido de Jason e contagem regressiva de 1000 menos 7"),
+        ("Parasyte (Kiseijuu)", "o nome do parasita alienígena que se alojou na mão direita de Shinichi Izumi", "Migi (que significa Direita em japonês)"),
+        ("Assassination Classroom", "a velocidade máxima em Mach que o professor polvo amarelo Koro-sensei consegue atingir", "Mach 20"),
+        ("Haikyuu!!", "a frase escrita na faixa preta da torcida da escola Inarizaki dos irmãos Miya", "Não precisamos das memórias de ontem"),
+        ("Slam Dunk", "o número da camisa vermelha do time Shohoku usada pelo protagonista ruivo Hanamichi Sakuragi", "Camisa número 10"),
+        ("Hajime no Ippo", "o golpe assinatura de Ippo Makunouchi que gira o tronco em forma de oito infinito", "Dempsey Roll"),
+        ("Baki", "a marca demoníaca que aparece nos músculos das costas dos membros puros da família Hanma", "As Costas de Ogro (Demon Back)"),
+        ("Yu-Gi-Oh!", "o nome verdadeiro do Faraó do Antigo Egito cuja alma habitava o Enigma do Milênio", "Faraó Atem"),
+        ("Dragon Ball Z", "o nome verdadeiro humano dos Androides gêmeos Nº 17 e Nº 18 antes de serem modificados", "Lapis (Nº 17) e Lazuli (Nº 18)")
+    ]
+
+    # --------------------------------------------------------------------------
+    # DEMAIS TEMAS (IGREJA, HERÓIS, DESENHOS, FRUTAS, COMIDAS, NOVELAS, FILMES, TRABALHOS)
     # --------------------------------------------------------------------------
     igreja_facil = [
         ("o Natal", "o grande acontecimento celebrado em 25 de dezembro", "Nascimento de Jesus em Belém"),
@@ -228,9 +647,6 @@ def construir_bancos_completos():
         ("o Tratado da Verdadeira Devoção à Santíssima Virgem", "o santo francês que escreveu esta obra-prima mariana", "São Luís Maria Grignion de Montfort")
     ]
 
-    # --------------------------------------------------------------------------
-    # 2. SUPER-HERÓIS — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
-    # --------------------------------------------------------------------------
     herois_facil = [
         ("o Homem-Aranha", "o animal que picou Peter Parker e lhe deu superpoderes", "Uma aranha radioativa"),
         ("o Batman", "a cidade sombria que ele jurou proteger do crime", "Gotham City"),
@@ -292,7 +708,7 @@ def construir_bancos_completos():
         ("o simbionte Venom", "o jornalista rival de Peter Parker que se tornou o primeiro hospedeiro famoso do Venom", "Eddie Brock"),
         ("o Cavaleiro da Lua (Moon Knight)", "o deus egípcio da Lua de quem Marc Spector se torna o avatar", "Khonshu"),
         ("o Justiceiro (Punisher)", "o nome verdadeiro do ex-fuzileiro naval que combate o crime sem piedade", "Frank Castle"),
-        ("o surfista prateado", "o devorador de mundos gigante de quem Norrin Radd era arauto", "Galactus"),
+        ("o Surfista Prateado", "o devorador de mundos gigante de quem Norrin Radd era arauto", "Galactus"),
         ("o Doutor Destino (Doctor Doom)", "o país fictício do leste europeu governado com mão de ferro por Victor Von Doom", "Latvéria"),
         ("a inteligência artificial Ultron", "quem criou o robô Ultron originalmente nos quadrinhos clássicos da Marvel", "Hank Pym (o Homem-Formiga original)"),
         ("a Tropa dos Lanternas", "as emoções que alimentam os anéis Amarelo, Vermelho e Azul", "Medo (Amarelo/Sinestro), Ira (Vermelho/Atrocitus) e Esperança (Azul)")
@@ -320,9 +736,6 @@ def construir_bancos_completos():
         ("a entidade suprema da Marvel", "o ser onipotente que está acima do Tribunal Vivo e de todas as entidades cósmicas", "The One Above All (Aquele Acima de Tudo)")
     ]
 
-    # --------------------------------------------------------------------------
-    # 3. DESENHOS — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
-    # --------------------------------------------------------------------------
     desenhos_facil = [
         ("Bob Esponja", "o formato da casa onde ele mora no fundo do mar", "Um abacaxi"),
         ("Patrick Estrela", "o seu parentesco e amizade com Bob Esponja", "Uma estrela-do-mar rosa e melhor amigo do Bob Esponja"),
@@ -412,101 +825,6 @@ def construir_bancos_completos():
         ("He-Man e os Mestres do Universo", "o verdadeiro nome do Príncipe de Eternia e do seu tigre", "Príncipe Adam e Pacato (Gato Guerreiro)")
     ]
 
-    # --------------------------------------------------------------------------
-    # 4. ANIMES — 4 NÍVEIS (FÁCIL, NORMAL, HARD, IMPOSSÍVEL)
-    # --------------------------------------------------------------------------
-    animes_facil = [
-        ("Dragon Ball Z", "o nome do protagonista criado na Terra que busca as Esferas do Dragão", "Son Goku"),
-        ("Dragon Ball Z", "quantas Esferas do Dragão existem na Terra para invocar Shenlong", "7 Esferas do Dragão"),
-        ("Naruto", "o sonho principal de Naruto Uzumaki desde criança", "Tornar-se o Hokage da Vila da Folha"),
-        ("One Piece", "o acessório famoso que Monkey D. Luffy usa na cabeça", "Um Chapéu de Palha"),
-        ("Pokémon", "o primeiro Pokémon amarelo de tipo elétrico parceiro de Ash", "Pikachu"),
-        ("Cavaleiros do Zodíaco", "a constelação protetora do protagonista Seiya", "Pégaso"),
-        ("Death Note", "o que acontece quando o nome de alguém é escrito no caderno", "A pessoa morre"),
-        ("One Punch Man", "como Saitama derrota praticamente qualquer inimigo", "Com apenas um soco"),
-        ("Demon Slayer", "quem Tanjiro carrega dentro de uma caixa de madeira nas costas", "Sua irmã Nezuko Kamado"),
-        ("Dragon Ball Z", "o príncipe orgulhoso dos Saiyajins que se torna rival de Goku", "Vegeta"),
-        ("Naruto", "o melhor amigo e rival de Naruto, último sobrevivente do clã Uchiha", "Sasuke Uchiha"),
-        ("One Piece", "o espadachim do bando que luta usando três espadas ao mesmo tempo", "Roronoa Zoro"),
-        ("Spy x Family", "a garotinha de cabelo rosa que consegue ler mentes", "Anya Forger"),
-        ("Attack on Titan", "as criaturas gigantes que devoravam humanos fora das muralhas", "Titãs"),
-        ("Yu-Gi-Oh!", "o jogo que Yugi Muto domina usando o Enigma do Milênio", "Duelo de Monstros (Cartas)"),
-        ("Beyblade", "o objeto giratório usado nas batalhas de arena", "Piões de batalha Beyblade"),
-        ("Digimon", "o parceiro dinossauro laranja de Tai Kamiya", "Agumon"),
-        ("Super Campeões (Captain Tsubasa)", "o esporte praticado por Oliver Tsubasa", "Futebol"),
-        ("Sailor Moon", "a guerreira mágica que luta pelo amor e pela justiça", "Usagi Tsukino (Sailor Moon)"),
-        ("Sakura Card Captors", "o que Sakura Kinomoto precisa capturar ao longo do anime", "As Cartas Clow")
-    ]
-    animes_normal = [
-        ("Solo Leveling", "o comando que Sung Jin-Woo usa para erguer seu exército de sombras", "Erga-se (Arise)"),
-        ("Black Clover", "a característica única de Asta num mundo onde todos usam magia", "Ele nasceu sem magia e usa espadas de Anti-Magia"),
-        ("Bleach", "a raça de ceifadores de almas da qual Ichigo Kurosaki faz parte", "Shinigami"),
-        ("Tokyo Revengers", "o apelido do líder invencível da gangue Tokyo Manji (Toman)", "Mikey (Manjiro Sano)"),
-        ("Mashle: Magia e Músculos", "o doce que Mash Burnedead é completamente viciado em comer", "Profiteroles (bombinhas de creme)"),
-        ("That Time I Got Reincarnated as a Slime", "o nome que o protagonista recebe do dragão Veldora ao reencarnar", "Rimuru Tempest"),
-        ("Cyberpunk: Edgerunners", "a netrunner de cabelos coloridos por quem David se apaixona", "Lucy"),
-        ("Jujutsu Kaisen", "o Rei das Maldições cujos dedos foram engolidos por Yuji Itadori", "Ryomen Sukuna"),
-        ("My Hero Academia", "o Símbolo da Paz que passa seu poder para Izuku Midoriya", "All Might"),
-        ("Naruto Shippuden", "a organização criminosa de mantos pretos com nuvens vermelhas", "Akatsuki"),
-        ("Dragon Ball Z", "quem Goku derrota em Namekusei após a morte de Kuririn", "Freeza"),
-        ("Dragon Ball Z", "quem derrota o vilão Cell ao atingir o Super Saiyajin 2", "Son Gohan"),
-        ("One Piece", "a fruta mística que deu a Luffy um corpo de borracha", "Gomu Gomu no Mi (Hito Hito no Mi, Modelo: Nika)"),
-        ("Fullmetal Alchemist", "os nomes dos dois irmãos alquimistas protagonistas", "Edward e Alphonse Elric"),
-        ("Hunter x Hunter", "o melhor amigo de Gon Freecss que vem de uma família de assassinos", "Killua Zoldyck"),
-        ("Yu Yu Hakusho", "os quatro amigos protagonistas que lutam no Torneio das Trevas", "Yusuke, Kuwabara, Kurama e Hiei"),
-        ("InuYasha", "a estudante do presente que volta ao Japão Feudal pelo poço", "Kagome Higurashi"),
-        ("Death Note", "o maior detetive do mundo que investiga o caso Kira", "L (Lawliet)"),
-        ("Demon Slayer", "o título dado aos espadachins de mais alto nível da corporação", "Hashiras (Pilares)"),
-        ("Attack on Titan", "o capitão da Tropa de Exploração conhecido como o mais forte da humanidade", "Capitão Levi Ackerman")
-    ]
-    animes_hard = [
-        ("Bleach: Thousand-Year Blood War", "o nome da Bankai de Ichigo Kurosaki", "Tensa Zangetsu"),
-        ("Solo Leveling", "a primeira sombra de cavaleiro vermelho-sangue que Jin-Woo extrai", "Igris, o Comandante Vermelho-Sangue"),
-        ("Black Clover", "o capitão do esquadrão Touros Negros que usa Magia de Escuridão", "Yami Sukehiro"),
-        ("Cyberpunk: Edgerunners", "o lendário mercenário ciborgue que David enfrenta na Arasaka Tower", "Adam Smasher"),
-        ("Attack on Titan", "os nove Titãs Originais liderados pelo poder máximo de Eren", "Titã Fundador, Titã de Ataque, Colossal, Blindado, Fêmea, Bestial, Mandíbula, Quadrúpede e Martelo de Guerra"),
-        ("Dragon Ball Super", "a técnica divina que Goku domina no Torneio do Poder contra Jiren", "Instinto Superior (Ultra Instinct)"),
-        ("Naruto", "o nome verdadeiro do Quarto Hokage, pai de Naruto", "Minato Namikaze (Relâmpago Amarelo de Konoha)"),
-        ("Jujutsu Kaisen", "o nome da Expansão de Domínio de Satoru Gojo", "Vazio Infinito (Muryokusho)"),
-        ("Demon Slayer", "o primeiro usuário da Respiração do Sol que quase derrotou Muzan", "Yoriichi Tsugikuni"),
-        ("That Time I Got Reincarnated as a Slime", "a habilidade suprema de inteligência que guia Rimuru desde o início", "Grande Sábio (que evolui para Rafael)"),
-        ("Tokyo Revengers", "como Takemichi Hanagaki ativa sua viagem no tempo de 12 anos no passado", "Através de um aperto de mão com Naoto Tachibana"),
-        ("Mashle: Magia e Músculos", "o título dado aos alunos de elite que recebem moedas de ouro em Easton", "Visionários Divinos"),
-        ("One Piece", "o nome do médico rena e do carpinteiro ciborgue do bando do Chapéu de Palha", "Tony Tony Chopper e Franky"),
-        ("Death Note", "o nome do Shinigami que deixou o caderno cair no mundo humano", "Ryuk"),
-        ("Fullmetal Alchemist: Brotherhood", "o líder dos Homúnculos que comanda o exército de Amestris", "King Bradley (Ira / Wrath)"),
-        ("Hunter x Hunter", "o líder da Trupe Fantasma (Genei Ryodan) que rouba habilidades", "Chrollo Lucilfer"),
-        ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro de Virgem conhecido como o homem mais próximo de Deus", "Shaka de Virgem"),
-        ("Yu Yu Hakusho", "a transformação de cabelos longos prateados de Kurama", "Kurama Youko"),
-        ("Code Geass", "o protagonista que recebe o poder da obediência absoluta de C.C.", "Lelouch vi Britannia (Zero)"),
-        ("Steins;Gate", "o aparelho doméstico que Okabe transforma numa máquina de enviar mensagens ao passado", "Um forno de micro-ondas conectado a um celular")
-    ]
-    animes_impossivel = [
-        ("Solo Leveling", "o título e nome do Monarca original de quem Sung Jin-Woo herdou o coração negro", "Ashborn, o Monarca das Sombras"),
-        ("Bleach: Thousand-Year Blood War", "o nome do Imperador Quincy pai de todos os Quincies e sua habilidade 'A'", "Yhwach e o poder 'The Almighty' (O Onipotente)"),
-        ("Black Clover", "o nome do demônio de Anti-Magia que habitava o grimório de cinco folhas de Asta", "Liebe"),
-        ("Dragon Ball", "o nome verdadeiro de Goku dado por seu pai Bardock no planeta Vegeta", "Kakarotto"),
-        ("Attack on Titan", "o nome da fundadora original que obteve o poder dos Titãs há 2.000 anos", "Ymir Fritz"),
-        ("Cyberpunk: Edgerunners", "a música famosa de Rosa Walton que toca na cena final da Lua", "I Really Want to Stay at Your House"),
-        ("That Time I Got Reincarnated as a Slime", "o nome do mordomo demônio primordial Preto invocado por Rimuru", "Diablo (Noir)"),
-        ("Mashle: Magia e Músculos", "o nome do vilão principal pai de Mash que busca o coração dos 6 filhos", "Innocent Zero"),
-        ("Tokyo Revengers", "o nome do irmão mais velho de Mikey que era dono de uma oficina de motos", "Shinichiro Sano"),
-        ("Naruto Shippuden", "o nome do Sábio dos Seis Caminhos que criou o Ninshu", "Hagoromo Otsutsuki"),
-        ("One Piece", "a ilha final da Grand Line onde Gol D. Roger deixou o grande tesouro", "Laugh Tale"),
-        ("Demon Slayer", "o nome da flor rara que Muzan Kibutsuji procurou por mil anos para vencer o sol", "Lírio da Aranha Azul"),
-        ("Jujutsu Kaisen", "o feiticeiro milenar que possui o corpo de Suguru Geto usando pontos na testa", "Kenjaku"),
-        ("Death Note", "o nome verdadeiro completo de L revelado na enciclopédia oficial", "L Lawliet"),
-        ("Hunter x Hunter", "o jogo de tabuleiro estratégico em que o Rei Meruem nunca venceu Komugi", "Gungi"),
-        ("Fullmetal Alchemist", "a data gravada dentro do relógio de bolso de prata de Edward Elric", "Don't Forget 3.Oct.11 (Não esqueça 3 de outubro de 1911)"),
-        ("Neon Genesis Evangelion", "o nome do comandante da NERV e pai de Shinji Ikari", "Gendo Ikari"),
-        ("Cavaleiros do Zodíaco", "o Cavaleiro de Ouro de Gêmeos que assumiu o lugar do Grande Mestre", "Saga de Gêmeos"),
-        ("Monster", "o nome do neurocirurgião japonês que salvou a vida do menino Johan Liebert", "Dr. Kenzo Tenma"),
-        ("Berserk", "o nome do artefato em forma de rosto vermelho que ativa a Mão de Deus no Eclipse", "Behelit Carmesim (O Ovo do Rei)")
-    ]
-
-    # --------------------------------------------------------------------------
-    # DEMAIS TEMAS (100 PERGUNTAS CADA)
-    # --------------------------------------------------------------------------
     fatos_frutas = [
         ("o Abacaxi", "a característica visual famosa no topo da fruta", "Possui uma coroa de folhas espinhosas"),
         ("a Melancia", "a sua composição ideal para hidratação no verão", "Mais de 90% de água e polpa vermelha"),
@@ -663,10 +981,10 @@ def construir_bancos_completos():
             "🔴 Impossível": montar_100_perguntas(desenhos_impossivel, tpl_padrao)
         },
         "⚔️ Animes": {
-            "🟢 Fácil": montar_100_perguntas(animes_facil, tpl_padrao),
-            "🟡 Normal": montar_100_perguntas(animes_normal, tpl_padrao),
-            "🟠 Hard": montar_100_perguntas(animes_hard, tpl_padrao),
-            "🔴 Impossível": montar_100_perguntas(animes_impossivel, tpl_padrao)
+            "🟢 Fácil": montar_100_perguntas(animes_facil_100, tpl_padrao),
+            "🟡 Normal": montar_100_perguntas(animes_normal_100, tpl_padrao),
+            "🟠 Hard": montar_100_perguntas(animes_hard_100, tpl_padrao),
+            "🔴 Impossível": montar_100_perguntas(animes_impossivel_100, tpl_padrao)
         },
         "🍎 Frutas": montar_100_perguntas(fatos_frutas, tpl_padrao),
         "🍔 Comidas": montar_100_perguntas(fatos_comidas, tpl_padrao),
@@ -984,7 +1302,7 @@ def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=
     st.markdown(html_bloco, unsafe_allow_html=True)
 
 # ==============================================================================
-# FUNÇÕES DE DADOS (COM SUPORTE A NÍVEIS EM IGREJA, HERÓIS, DESENHOS E ANIMES)
+# FUNÇÕES DE DADOS (ATUALIZA AUTOMATICAMENTE PARA A VERSÃO V5 COM 400 PERGUNTAS ÚNICAS DE ANIME!)
 # ==============================================================================
 def copiar_bancos_padrao():
     copia = {}
@@ -1005,8 +1323,8 @@ def carregar_dados():
         try:
             with open(ARQUIVO_DADOS, "r", encoding="utf-8") as f:
                 dados = json.load(f)
-                # Verifica a flag v4 (que inclui os 4 níveis de Super-Heróis)
-                if not dados.get("niveis_dificuldade_v4", False):
+                # Verifica a flag v5 (que garante os 400 fatos únicos de Animes sem repetição!)
+                if not dados.get("animes_400_unicos_v5", False):
                     precisa_salvar = True
                 elif "bancos_perguntas" in dados and isinstance(dados["bancos_perguntas"], dict):
                     for k, val_salvo in dados["bancos_perguntas"].items():
@@ -1041,7 +1359,7 @@ def carregar_dados():
 
 def salvar_dados(bancos_perguntas, participantes, historico):
     dados = {
-        "niveis_dificuldade_v4": True,
+        "animes_400_unicos_v5": True,
         "bancos_perguntas": bancos_perguntas,
         "participantes": participantes,
         "historico": historico
@@ -1316,7 +1634,7 @@ if st.session_state.pagina == "menu":
                 st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE (IGREJA, HERÓIS, DESENHOS E ANIMES!)
+# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     slot_jogo.empty()
@@ -1347,7 +1665,6 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.session_state.modo_jogo_ativo = modo_escolhido
                 st.rerun()
 
-            # SE FOR IGREJA, SUPER-HERÓIS, DESENHOS OU ANIMES, EXIBE O SELETOR DE DIFICULDADE!
             pts_base_cfg = config.get("pontos_por_acerto", 100)
             if modo_escolhido in TEMAS_COM_DIFICULDADE:
                 idx_dif = NIVEIS_DIFICULDADE.index(st.session_state.dificuldade_ativa) if st.session_state.dificuldade_ativa in NIVEIS_DIFICULDADE else 0
@@ -1637,7 +1954,7 @@ elif st.session_state.pagina == "jogo":
                     ir_para_pagina("fim")
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO
+# 4. SALA DO DADO PREMIADO (SEM BOTÃO DE VOLTAR PRO QUIZ — VAI PRO RESUMO FINAL!)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     slot_selecao.empty()
