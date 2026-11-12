@@ -442,7 +442,7 @@ elif st.session_state.pagina == "jogo":
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Conquistaste os 3 acertos!</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}!</h3>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
