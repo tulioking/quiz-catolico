@@ -115,7 +115,6 @@ def salvar_dados(perguntas, participantes, historico):
 def carregar_config():
     config_padrao = {
         "imagem_ns": "nossa_senhora.png",
-        "youtube_url": "",
         "tempo_pergunta": 30,
         "tempo_alerta": 4
     }
@@ -158,25 +157,15 @@ if "resultado_dado" not in st.session_state:
     st.session_state.resultado_dado = None
 if "editando_idx" not in st.session_state:
     st.session_state.editando_idx = None
-if "musica_pausada" not in st.session_state:
-    st.session_state.musica_pausada = False
 
 perguntas, participantes, historico = carregar_dados()
 config = carregar_config()
 
-# Trilha Sonora de Fundo Oculta em Background
-yt_url = config.get("youtube_url", "")
-if yt_url and not st.session_state.musica_pausada:
-    v_id = yt_url.split("v=")[-1].split("&")[0]
-    st.markdown(f'<iframe src="https://www.youtube.com/embed/{v_id}?autoplay=1&loop=1&playlist={v_id}" style="display:none;" allow="autoplay"></iframe>', unsafe_allow_html=True)
-
-# Botão Discreto de Pausa da Música de Fundo no Topo
-col_t1, col_t2 = st.columns([9, 2])
-with col_t2:
-    label_audio = "⏹️ Pausar Música de Fundo" if not st.session_state.musica_pausada else "▶️ Retomar Música de Fundo"
-    if st.button(label_audio, key="btn_toggle_musica"):
-        st.session_state.musica_pausada = not st.session_state.musica_pausada
-        st.rerun()
+# Ficheiros de áudio locais exatos baseados no repositório[cite: 21, 22]
+SOM_TIC_TAK = "tictak.mp3"
+SOM_DADO = "paramomentododado.mp3"
+SOM_ACERTO = "ElevenLabs_Efeito_sonoro_de_aplausos_altos_indicando_uma_resposta.mp3"
+SOM_ERRO = "ElevenLabs_Efeito_sonoro_de_trombone_triste_quando_um_personagem.mp3"
 
 # ==============================================================================
 # 1. MENU PRINCIPAL
@@ -204,7 +193,7 @@ if st.session_state.pagina == "menu":
             st.session_state.pagina = "historico"
             st.rerun()
             
-        if st.button("⚙️ Configurações (Músicas, Imagem e Sons)"):
+        if st.button("⚙️ Configurações (Imagem & Tempos)"):
             st.session_state.pagina = "configuracoes"
             st.rerun()
             
@@ -272,11 +261,15 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM ÁUDIOS NATIVOS PRÉ-DEFINIDOS DE APLAUSOS E ERRO)
+# 3. TELA DO JOGO (COM ÁUDIO TIC-TAK DE FUNDO E EFEITOS LOCAIS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
+    
+    # Toca o áudio tictak.mp3 em loop discreto durante o jogo[cite: 21]
+    if os.path.exists(SOM_TIC_TAK):
+        st.audio(SOM_TIC_TAK, autoplay=True, loop=True)
     
     c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
     c1.markdown(f"<span class='placar-topo'>👤 Participante: {st.session_state.participante}</span>", unsafe_allow_html=True)
@@ -304,11 +297,11 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.session_state.pontuacao += 100
                         st.session_state.acertos += 1
-                        # Toca aplausos nativos instantâneos
-                        st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+                        if os.path.exists(SOM_ACERTO):
+                            st.audio(SOM_ACERTO, autoplay=True)[cite: 22]
                     else:
-                        # Toca trombeta triste nativa instantânea (quén-quén)
-                        st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/sad-trombone.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+                        if os.path.exists(SOM_ERRO):
+                            st.audio(SOM_ERRO, autoplay=True)[cite: 21]
                     st.rerun()
             else:
                 if st.session_state.ultima_resposta_correta:
@@ -360,6 +353,10 @@ elif st.session_state.pagina == "dado":
         if not st.session_state.dado_girado:
             placeholder_dado.markdown("<div class='dado-box'>🎲</div>", unsafe_allow_html=True)
             if st.button("🎲 GIRAR O DADO AGORA"):
+                # Toca o áudio especial do momento do dado ao apertar o botão[cite: 21, 22]
+                if os.path.exists(SOM_DADO):
+                    st.audio(SOM_DADO, autoplay=True)
+                
                 for _ in range(12):
                     num_aleatorio = random.randint(1, 6)
                     placeholder_dado.markdown(f"<div class='dado-box' style='color: #8DA9C4;'>【 {num_aleatorio} 】</div>", unsafe_allow_html=True)
@@ -377,8 +374,9 @@ elif st.session_state.pagina == "dado":
             res = st.session_state.resultado_dado
             placeholder_dado.markdown(f"<div class='dado-box' style='color: #2ECC71;'>【 {res} 】 🎉</div>", unsafe_allow_html=True)
             
-            # Toca aplausos nativos ao concluir o dado
-            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/applause.mp3" type="audio/mp3"></audio>', unsafe_allow_html=True)
+            # Toca aplausos ao concluir o resultado do dado[cite: 22]
+            if os.path.exists(SOM_ACERTO):
+                st.audio(SOM_ACERTO, autoplay=True)
                 
             st.success(f"O participante {st.session_state.participante} tirou o número {res} e ganhou o prémio!")
             
@@ -537,19 +535,16 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (LINK DE FUNDO, IMAGEM E TEMPOS)
+# 9. PAINEL DE CONFIGURAÇÕES (IMAGEM & TEMPOS)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
-    st.markdown("<h2>⚙️ Painel de Configurações (Músicas, Imagem & Tempos)</h2>", unsafe_allow_html=True)
-    st.write("Insere o link do YouTube para a trilha sonora de fundo e gere a imagem institucional.")
+    st.markdown("<h2>⚙️ Painel de Configurações (Imagem & Tempos)</h2>", unsafe_allow_html=True)
+    st.write("Gere a imagem institucional e os tempos do quiz.")
     st.write("")
     
     col_cfg1, col_cfg2 = st.columns([2, 1])
     
     with col_cfg1:
-        yt_input = st.text_input("🔗 Link do YouTube (Trilha Sonora de Fundo):", value=config.get("youtube_url", ""))
-        
-        st.write("---")
         tempo_perg_val = st.number_input("Tempo por pergunta (seg):", value=config.get("tempo_pergunta", 30))
         tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
         
@@ -574,7 +569,6 @@ elif st.session_state.pagina == "configuracoes":
     col_bot1, col_bot2 = st.columns([1, 1])
     with col_bot1:
         if st.button("💾 Salvar Configurações"):
-            config["youtube_url"] = yt_input
             config["tempo_pergunta"] = int(tempo_perg_val)
             config["tempo_alerta"] = int(tempo_alerta_val)
             salvar_config(config)
