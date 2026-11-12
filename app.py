@@ -3,11 +3,13 @@
 # ==============================================================================
 
 import streamlit as st
+import streamlit.components.v1 as components
 import random
 import json
 import os
 import time
 import base64
+import re
 
 ARQUIVO_DADOS = "dados_quiz_igreja.json"
 ARQUIVO_CONFIG = "config_quiz.json"
@@ -130,17 +132,6 @@ st.markdown("""
     h1, h2, h3, h4 {
         color: #FFFFFF !important;
     }
-    .dado-box {
-        font-size: 90px;
-        text-align: center;
-        font-weight: bold;
-        color: #F4D35E;
-        background-color: #134074;
-        padding: 25px;
-        border-radius: 15px;
-        margin: 20px 0;
-        border: 2px solid #F4D35E;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -163,6 +154,10 @@ def salvar_dados(perguntas, participantes, historico):
     dados = {"perguntas": perguntas, "participantes": participantes, "historico": historico}
     with open(ARQUIVO_DADOS, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, indent=4)
+
+def limpar_prefixo_opcao(texto):
+    """Remove 'A) ', 'B. ', 'c - ' do início para reordenar A, B, C, D limpo."""
+    return re.sub(r'^[A-Da-d][\)\.\-]\s*', '', texto.strip())
 
 # Função blindada em Base64 HTML: nunca some no st.rerun(), não pisca e fica 100% centralizada
 def mostrar_santa(largura_custom=None):
@@ -189,6 +184,216 @@ def mostrar_santa(largura_custom=None):
         
     html_bloco += "</div>"
     st.markdown(html_bloco, unsafe_allow_html=True)
+
+def renderizar_dado_3d(numero_final=None, animar=False):
+    """Renderiza um cubo 3D realista com física de lançamento e quique na mesa."""
+    rotacoes_finais = {
+        1: "rotateX(0deg) rotateY(0deg) rotateZ(0deg)",
+        2: "rotateX(0deg) rotateY(-180deg) rotateZ(0deg)",
+        3: "rotateX(0deg) rotateY(-90deg) rotateZ(0deg)",
+        4: "rotateX(0deg) rotateY(90deg) rotateZ(0deg)",
+        5: "rotateX(-90deg) rotateY(0deg) rotateZ(0deg)",
+        6: "rotateX(90deg) rotateY(0deg) rotateZ(0deg)"
+    }
+    
+    if numero_final is None:
+        transform_final = "rotateX(-22deg) rotateY(-38deg) rotateZ(5deg)"
+    else:
+        transform_final = rotacoes_finais.get(numero_final, "rotateX(0deg) rotateY(0deg)")
+
+    css_animacao = ""
+    classe_cubo = "cube"
+    classe_sombra = "shadow"
+    
+    if animar and numero_final is not None:
+        classe_cubo = "cube rolando"
+        classe_sombra = "shadow sombra-rolando"
+        css_animacao = f"""
+        @keyframes lancamentoDado {{
+            0%   {{ transform: translateY(40px) scale(0.6) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }}
+            20%  {{ transform: translateY(-95px) scale(1.18) rotateX(540deg) rotateY(360deg) rotateZ(180deg); }}
+            45%  {{ transform: translateY(15px) scale(0.95) rotateX(1080deg) rotateY(720deg) rotateZ(360deg); }}
+            65%  {{ transform: translateY(-45px) scale(1.06) rotateX(1440deg) rotateY(1080deg) rotateZ(520deg); }}
+            82%  {{ transform: translateY(8px) scale(0.98) rotateX(1750deg) rotateY(1380deg) rotateZ(690deg); }}
+            92%  {{ transform: translateY(-12px) scale(1.02) {transform_final}; }}
+            100% {{ transform: translateY(0px) scale(1) {transform_final}; }}
+        }}
+        @keyframes sombraPulando {{
+            0%   {{ transform: scale(0.5); opacity: 0.2; }}
+            20%  {{ transform: scale(1.5); opacity: 0.12; filter: blur(16px); }}
+            45%  {{ transform: scale(0.85); opacity: 0.55; filter: blur(6px); }}
+            65%  {{ transform: scale(1.25); opacity: 0.22; filter: blur(12px); }}
+            82%  {{ transform: scale(0.92); opacity: 0.55; filter: blur(6px); }}
+            92%  {{ transform: scale(1.05); opacity: 0.38; filter: blur(8px); }}
+            100% {{ transform: scale(0.95); opacity: 0.5; filter: blur(7px); }}
+        }}
+        .rolando {{
+            animation: lancamentoDado 3.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards !important;
+        }}
+        .sombra-rolando {{
+            animation: sombraPulando 3.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards !important;
+        }}
+        """
+
+    badge_html = ""
+    if numero_final is not None and not animar:
+        badge_html = f"<div class='resultado-texto'>🎉 SAIU O NÚMERO {numero_final}! 🎉</div>"
+    elif animar:
+        badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>🎲 Lançando o dado...</div>"
+    else:
+        badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>Clique no botão abaixo para jogar o dado!</div>"
+
+    html_code = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+            overflow: hidden;
+        }}
+        .palco-dado {{
+            background: radial-gradient(circle, #184E8E 0%, #134074 70%, #0E315A 100%);
+            border: 3px solid {'#2ECC71' if (numero_final and not animar) else '#F4D35E'};
+            border-radius: 20px;
+            width: 92%;
+            max-width: 520px;
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }}
+        .scene {{
+            width: 130px;
+            height: 130px;
+            perspective: 750px;
+            margin-top: 25px;
+        }}
+        .cube {{
+            width: 130px;
+            height: 130px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: {transform_final};
+            transition: transform 0.5s ease;
+        }}
+        .face {{
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            background: linear-gradient(145deg, #FFFFFF, #E4E7EC);
+            border: 2px solid #CBD2D9;
+            border-radius: 22px;
+            box-sizing: border-box;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            box-shadow: inset 0 0 14px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.25);
+        }}
+        .pip {{
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #333333, #090909);
+            align-self: center;
+            justify-self: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.7), 0 1px 1px rgba(255,255,255,0.8);
+        }}
+        /* Ponto central da face 1 em vermelho estilo dado clássico */
+        .pip.red {{
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 35% 35%, #FF4B4B, #B80000);
+        }}
+        .front  {{ transform: rotateY(0deg) translateZ(65px); }}
+        .back   {{ transform: rotateY(180deg) translateZ(65px); }}
+        .right  {{ transform: rotateY(90deg) translateZ(65px); }}
+        .left   {{ transform: rotateY(-90deg) translateZ(65px); }}
+        .top    {{ transform: rotateX(90deg) translateZ(65px); }}
+        .bottom {{ transform: rotateX(-90deg) translateZ(65px); }}
+
+        .shadow {{
+            width: 115px;
+            height: 26px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            filter: blur(7px);
+            margin-top: 38px;
+        }}
+        .resultado-texto {{
+            margin-top: 18px;
+            font-size: 28px;
+            font-weight: 800;
+            color: #F4D35E;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-align: center;
+        }}
+        {css_animacao}
+    </style>
+    </head>
+    <body>
+        <div class="palco-dado">
+            <div class="scene">
+                <div class="{classe_cubo}">
+                    <!-- Face 1 -->
+                    <div class="face front">
+                        <span class="pip red" style="grid-area: 2 / 2;"></span>
+                    </div>
+                    <!-- Face 2 -->
+                    <div class="face back">
+                        <span class="pip" style="grid-area: 1 / 1;"></span>
+                        <span class="pip" style="grid-area: 3 / 3;"></span>
+                    </div>
+                    <!-- Face 3 -->
+                    <div class="face right">
+                        <span class="pip" style="grid-area: 1 / 1;"></span>
+                        <span class="pip" style="grid-area: 2 / 2;"></span>
+                        <span class="pip" style="grid-area: 3 / 3;"></span>
+                    </div>
+                    <!-- Face 4 -->
+                    <div class="face left">
+                        <span class="pip" style="grid-area: 1 / 1;"></span>
+                        <span class="pip" style="grid-area: 1 / 3;"></span>
+                        <span class="pip" style="grid-area: 3 / 1;"></span>
+                        <span class="pip" style="grid-area: 3 / 3;"></span>
+                    </div>
+                    <!-- Face 5 -->
+                    <div class="face top">
+                        <span class="pip" style="grid-area: 1 / 1;"></span>
+                        <span class="pip" style="grid-area: 1 / 3;"></span>
+                        <span class="pip" style="grid-area: 2 / 2;"></span>
+                        <span class="pip" style="grid-area: 3 / 1;"></span>
+                        <span class="pip" style="grid-area: 3 / 3;"></span>
+                    </div>
+                    <!-- Face 6 -->
+                    <div class="face bottom">
+                        <span class="pip" style="grid-area: 1 / 1;"></span>
+                        <span class="pip" style="grid-area: 1 / 3;"></span>
+                        <span class="pip" style="grid-area: 2 / 1;"></span>
+                        <span class="pip" style="grid-area: 2 / 3;"></span>
+                        <span class="pip" style="grid-area: 3 / 1;"></span>
+                        <span class="pip" style="grid-area: 3 / 3;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="{classe_sombra}"></div>
+            {badge_html}
+        </div>
+    </body>
+    </html>
+    """
+    components.html(html_code, height=345)
 
 # Inicialização de Estados da Sessão
 if "pagina" not in st.session_state:
@@ -266,7 +471,7 @@ if st.session_state.pagina == "menu":
             st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE
+# 2. SELECIONAR PARTICIPANTE (EMBARALHA CONTEÚDO MAS MANTÉM A, B, C, D NA ORDEM)
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     st.markdown("<h2 style='text-align: center; margin-bottom: 25px;'>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
@@ -305,11 +510,33 @@ elif st.session_state.pagina == "selecionar_participante":
                     st.session_state.baloes_mostrados = False
                     st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
                     
+                    letras_fixas = ["A)", "B)", "C)", "D)"]
                     sessao = []
                     for p in perguntas:
-                        ops = list(p["opcoes"])
-                        random.shuffle(ops)
-                        sessao.append({"pergunta": p["pergunta"], "opcoes": ops, "resposta": p["resposta"]})
+                        # Extrai o texto puro sem A), B), C), D) para embaralhar o conteúdo
+                        resp_limpa = limpar_prefixo_opcao(p["resposta"])
+                        opcoes_limpas = [limpar_prefixo_opcao(op) for op in p["opcoes"]]
+                        random.shuffle(opcoes_limpas)
+                        
+                        # Reaplica A), B), C), D) sempre na ordem certinha
+                        opcoes_formatadas = []
+                        nova_resposta_correta = ""
+                        for idx_letra, texto_op in enumerate(opcoes_limpas):
+                            prefixo = letras_fixas[idx_letra] if idx_letra < len(letras_fixas) else f"{idx_letra+1})"
+                            op_final = f"{prefixo} {texto_op}"
+                            opcoes_formatadas.append(op_final)
+                            if texto_op == resp_limpa:
+                                nova_resposta_correta = op_final
+                                
+                        if not nova_resposta_correta and opcoes_formatadas:
+                            nova_resposta_correta = opcoes_formatadas[0]
+                            
+                        sessao.append({
+                            "pergunta": p["pergunta"],
+                            "opcoes": opcoes_formatadas,
+                            "resposta": nova_resposta_correta
+                        })
+                        
                     random.shuffle(sessao)
                     st.session_state.perguntas_sessao = sessao
                     
@@ -323,7 +550,7 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.rerun()
 
 # ==============================================================================
-# 3. TELA DO JOGO (BOTÃO DO DADO IMEDIATO AO ATINGIR 3 ACERTOS)
+# 3. TELA DO JOGO (SEM OPÇÃO PRÉ-MARCADA E COM BOTÃO DO DADO IMEDIATO NOS 3 ACERTOS)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
@@ -360,18 +587,30 @@ elif st.session_state.pagina == "jogo":
         st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
         
         if not st.session_state.respondido:
-            escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
+            # index=None garante que nenhuma resposta venha pré-selecionada!
+            escolha = st.radio(
+                "Escolha a alternativa correta:",
+                p["opcoes"],
+                index=None,
+                key=f"resp_{p_idx}",
+                label_visibility="collapsed"
+            )
             st.write("")
             
+            aviso_selecao = st.empty()
+            
             if st.button("✅ Confirmar Resposta"):
-                st.session_state.respondido = True
-                st.session_state.baloes_mostrados = False
-                st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                
-                if st.session_state.ultima_resposta_correta:
-                    st.session_state.pontuacao += 100
-                    st.session_state.acertos += 1
-                st.rerun()
+                if escolha is None:
+                    aviso_selecao.warning("⚠️ Selecione uma alternativa antes de confirmar!")
+                else:
+                    st.session_state.respondido = True
+                    st.session_state.baloes_mostrados = False
+                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                    
+                    if st.session_state.ultima_resposta_correta:
+                        st.session_state.pontuacao += 100
+                        st.session_state.acertos += 1
+                    st.rerun()
             
             st.write("")
             if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
@@ -389,7 +628,7 @@ elif st.session_state.pagina == "jogo":
             else:
                 st.session_state.respondido = True
                 st.session_state.baloes_mostrados = False
-                st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                st.session_state.ultima_resposta_correta = (escolha is not None and escolha == p["resposta"])
                 if st.session_state.ultima_resposta_correta:
                     st.session_state.pontuacao += 100
                     st.session_state.acertos += 1
@@ -438,41 +677,31 @@ elif st.session_state.pagina == "jogo":
                 st.rerun()
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (COM DADO REAL GIRANDO E MOSTRANDO AS FACES)
+# 4. SALA DO DADO PREMIADO (DADO 3D REALISTA COM FÍSICA DE LANÇAMENTO)
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     st.markdown("<h1 style='text-align: center;'>🎲 SALA DO DADO PREMIADO! 🎲</h1>", unsafe_allow_html=True)
     st.markdown(f"<h3 style='text-align: center; color: #8DA9C4;'>Parabéns, {st.session_state.participante}! Conquistaste os 3 acertos!</h3>", unsafe_allow_html=True)
     st.write("")
     
-    FACES_DADO = {1: "⚀", 2: "⚁", 3: "⚂", 4: "⚃", 5: "⚄", 6: "⚅"}
-    
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         placeholder_dado = st.empty()
         
         if not st.session_state.dado_girado:
-            placeholder_dado.markdown("<div class='dado-box' style='font-size: 130px;'>🎲</div>", unsafe_allow_html=True)
-            if st.button("🎲 GIRAR O DADO AGORA", key="btn_ir_dado"):
+            with placeholder_dado.container():
+                renderizar_dado_3d(numero_final=None, animar=False)
+                
+            if st.button("🎲 JOGAR O DADO AGORA", key="btn_ir_dado"):
+                resultado_final = random.randint(1, 6)
                 tocar_audio_invisivel(SOM_DADO)
                 
-                # Rotação de 36 passos com dado real girando em diferentes ângulos
-                angulos = [-25, -12, 0, 12, 25, 18, -18, 8, -8]
-                for passo in range(36):
-                    num_aleatorio = random.randint(1, 6)
-                    face_atual = FACES_DADO[num_aleatorio]
-                    ang = angulos[passo % len(angulos)]
-                    escala = 1.12 if passo % 2 == 0 else 0.95
-                    placeholder_dado.markdown(
-                        f"<div class='dado-box'>"
-                        f"<div style='display: inline-block; font-size: 150px; line-height: 1; color: #FFFFFF; "
-                        f"transform: rotate({ang}deg) scale({escala});'>{face_atual}</div>"
-                        f"</div>",
-                        unsafe_allow_html=True
-                    )
-                    time.sleep(0.1)
+                # Mostra a animação 3D do dado sendo jogado, quicando e parando exatamente no número sorteado
+                with placeholder_dado.container():
+                    renderizar_dado_3d(numero_final=resultado_final, animar=True)
                 
-                resultado_final = random.randint(1, 6)
+                time.sleep(3.7)
+                
                 st.session_state.resultado_dado = resultado_final
                 st.session_state.dado_girado = True
                 
@@ -482,19 +711,13 @@ elif st.session_state.pagina == "dado":
                 st.rerun()
         else:
             res = st.session_state.resultado_dado
-            face_final = FACES_DADO.get(res, "🎲")
-            placeholder_dado.markdown(
-                f"<div class='dado-box' style='border-color: #2ECC71;'>"
-                f"<div style='font-size: 165px; line-height: 1; color: #2ECC71; text-shadow: 0 0 25px rgba(46,204,113,0.6);'>{face_final}</div>"
-                f"<div style='font-size: 32px; color: #F4D35E; margin-top: 10px;'>🎉 SAIU O NÚMERO {res}! 🎉</div>"
-                f"</div>",
-                unsafe_allow_html=True
-            )
+            with placeholder_dado.container():
+                renderizar_dado_3d(numero_final=res, animar=False)
             
             tocar_audio_invisivel(SOM_ACERTO)
             st.balloons()
                 
-            st.success(f"O participante {st.session_state.participante} tirou o dado {face_final} (número {res}) e ganhou o prémio!")
+            st.success(f"O participante {st.session_state.participante} tirou o número {res} no dado e ganhou o prémio!")
             st.write("")
             
             if st.session_state.pergunta_idx < len(st.session_state.perguntas_sessao):
