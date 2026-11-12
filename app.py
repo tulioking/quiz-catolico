@@ -33,61 +33,62 @@ def carregar_config():
             pass
     return config_padrao
 
+def salvar_config(config_dict):
+    with open(ARQUIVO_CONFIG, "w", encoding="utf-8") as f:
+        json.dump(config_dict, f, ensure_ascii=False, indent=4)
+
 config = carregar_config()
 
-# Estilos Visuais Aprimorados (Centralização Perfeita e Tamanho Dinâmico da Imagem)
-st.markdown(f"""
+# Estilos Visuais Aprimorados (Layout Centralizado, Ocultação de Players e Estabilidade Visual)
+st.markdown("""
     <style>
-    .stApp {{
+    .stApp {
         background-color: #0B2545;
         color: white;
-    }}
-    audio {{
+    }
+    audio {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
-    }}
-    .placar-topo {{
+    }
+    .placar-topo {
         font-size: 24px !important;
         font-weight: bold !important;
         color: #F4D35E !important;
-    }}
-    .main-card {{
+    }
+    .placar-alerta {
+        font-size: 24px !important;
+        font-weight: bold !important;
+        color: #FF4B4B !important;
+    }
+    .main-card {
         background-color: #134074;
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         margin-bottom: 25px;
-    }}
-    .main-card h3 {{
+    }
+    .main-card h3 {
         font-size: 32px !important;
         line-height: 1.4 !important;
         color: #FFFFFF !important;
-    }}
+    }
     /* RESPOSTAS BEM GRANDES E LEGÍVEIS */
-    .stRadio div[role="radiogroup"] label div p {{
+    .stRadio div[role="radiogroup"] label div p {
         font-size: 26px !important;
         font-weight: 700 !important;
         color: #FFFFFF !important;
-    }}
-    .stRadio div[role="radiogroup"] label {{
+    }
+    .stRadio div[role="radiogroup"] label {
         padding: 12px 0px !important;
-    }}
-    /* IMAGEM CENTRALIZADA E COM TAMANHO CONFIGURÁVEL */
-    [data-testid="stImage"] img {{
-        max-width: {config.get("tamanho_imagem", 360)}px !important;
-        margin: 0 auto !important;
-        display: block !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }}
+    }
     /* FORÇAR CENTRALIZAÇÃO E TAMANHO IDEAL DE TODOS OS BOTÕES */
-    .stButton {{
+    .stButton {
         display: flex;
         justify-content: center;
         width: 100%;
-    }}
-    .stButton>button {{
+    }
+    .stButton>button {
         background-color: #134074;
         color: white;
         font-weight: bold;
@@ -99,22 +100,22 @@ st.markdown(f"""
         font-size: 20px !important;
         display: block;
         margin: 8px auto;
-    }}
-    .stButton>button:hover {{
+    }
+    .stButton>button:hover {
         background-color: #1F618D;
         color: white;
-    }}
-    .st-key-sair>button {{
+    }
+    .st-key-sair>button {
         background-color: #E74C3C !important;
         border: none !important;
-    }}
-    .st-key-sair>button:hover {{
+    }
+    .st-key-sair>button:hover {
         background-color: #C0392B !important;
-    }}
-    h1, h2, h3, h4 {{
+    }
+    h1, h2, h3, h4 {
         color: #FFFFFF !important;
-    }}
-    .dado-box {{
+    }
+    .dado-box {
         font-size: 80px;
         text-align: center;
         font-weight: bold;
@@ -123,7 +124,7 @@ st.markdown(f"""
         padding: 20px;
         border-radius: 15px;
         margin: 20px 0;
-    }}
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -147,9 +148,31 @@ def salvar_dados(perguntas, participantes, historico):
     with open(ARQUIVO_DADOS, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, indent=4)
 
-def salvar_config(config_dict):
-    with open(ARQUIVO_CONFIG, "w", encoding="utf-8") as f:
-        json.dump(config_dict, f, ensure_ascii=False, indent=4)
+# Função blindada em Base64 HTML: nunca some no st.rerun(), não pisca e fica 100% centralizada
+def mostrar_santa(largura_custom=None):
+    img_path = config.get("imagem_ns", "nossa_senhora.png")
+    largura = largura_custom if largura_custom is not None else config.get("tamanho_imagem", 360)
+    
+    html_bloco = "<div style='text-align: center; width: 100%;'>"
+    html_bloco += "<h3 style='margin-bottom: 15px; color: #FFFFFF;'>🌸 Imaculada Conceição</h3>"
+    
+    if os.path.exists(img_path):
+        try:
+            with open(img_path, "rb") as f:
+                b64_img = base64.b64encode(f.read()).decode("utf-8")
+            html_bloco += (
+                f"<img src='data:image/png;base64,{b64_img}' "
+                f"style='width: {largura}px; max-width: 100%; height: auto; "
+                f"margin: 0 auto; display: block; border-radius: 12px; "
+                f"box-shadow: 0 4px 15px rgba(0,0,0,0.4);' />"
+            )
+        except Exception:
+            html_bloco += "<p style='color: #F4D35E;'>Erro ao ler imagem.</p>"
+    else:
+        html_bloco += f"<p style='color: #8DA9C4;'>Imagem '{img_path}' não encontrada.</p>"
+        
+    html_bloco += "</div>"
+    st.markdown(html_bloco, unsafe_allow_html=True)
 
 # Inicialização de Estados da Sessão
 if "pagina" not in st.session_state:
@@ -233,6 +256,10 @@ elif st.session_state.pagina == "selecionar_participante":
     st.markdown("<h2>👤 Identificação do Participante</h2>", unsafe_allow_html=True)
     
     col_esq, col_dir = st.columns([2, 1])
+    
+    with col_dir:
+        mostrar_santa()
+        
     with col_esq:
         nome_digitado = st.text_input("Selecione ou Insira o Participante:")
         st.write("Ou escolha da lista cadastrada:")
@@ -277,130 +304,108 @@ elif st.session_state.pagina == "selecionar_participante":
             if st.button("⬅️ Voltar ao Menu"):
                 st.session_state.pagina = "menu"
                 st.rerun()
-            
-    with col_dir:
-        st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
-        img_path = config.get("imagem_ns", "nossa_senhora.png")
-        if os.path.exists(img_path):
-            st.image(img_path, use_container_width=True)
 
 # ==============================================================================
-# 3. TELA DO JOGO (COM COLUNAS FORÇADAS EM AMBOS OS ESTADOS - GAMBIARRA PERFEITA)
+# 3. TELA DO JOGO (COL_DIR RENDERIZADA ANTES DE COL_ESQ E DO ST.RERUN)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     p_idx = st.session_state.pergunta_idx
     total_p = len(st.session_state.perguntas_sessao)
     
+    if p_idx >= total_p:
+        st.session_state.pagina = "fim"
+        st.rerun()
+
     # Tocar o tic-tak em segundo plano de forma 100% invisível
     if not st.session_state.respondido and os.path.exists(SOM_TIC_TAK):
         with open(SOM_TIC_TAK, "rb") as f:
             b64_t = base64.b64encode(f.read()).decode("utf-8")
             st.markdown(f'<audio autoplay loop src="data:audio/mp3;base64,{b64_t}"></audio>', unsafe_allow_html=True)
 
-    if p_idx < total_p:
+    # 1º Criamos as duas colunas
+    col_esq, col_dir = st.columns([2, 1])
+    
+    # 2º RENDERIZAMOS A IMAGEM DA SANTA IMEDIATAMENTE (ANTES DO LOOP DO RELÓGIO!)
+    # Assim, mesmo quando o st.rerun() do cronómetro interromper a execução em col_esq,
+    # a coluna da direita já foi desenhada no ecrã em todas as perguntas!
+    with col_dir:
+        mostrar_santa()
+
+    # 3º Agora processamos a pergunta e o cronómetro na coluna da esquerda
+    with col_esq:
         p = st.session_state.perguntas_sessao[p_idx]
         
+        c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1])
+        c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
+        placeholder_tempo = c2.empty()
+        c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
+        c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
+        st.divider()
+
+        st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
+        
         if not st.session_state.respondido:
-            col_esq, col_dir = st.columns([2, 1])
+            escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
+            st.write("")
             
-            with col_esq:
-                c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1])
-                c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
-                placeholder_tempo = c2.empty()
-                c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
-                c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
-                st.divider()
-
-                st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
+            if st.button("✅ Confirmar Resposta"):
+                st.session_state.respondido = True
+                st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
                 
-                escolha = st.radio("Escolha a alternativa correta:", p["opcoes"], key=f"resp_{p_idx}", label_visibility="collapsed")
-                st.write("")
-                
-                if st.button("✅ Confirmar Resposta"):
-                    st.session_state.respondido = True
-                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                    
-                    if st.session_state.ultima_resposta_correta:
-                        st.session_state.pontuacao += 100
-                        st.session_state.acertos += 1
-                    st.rerun()
-                
-                # Relógio dinâmico segundo a segundo
-                if st.session_state.tempo_restante > 0:
-                    placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
-                    time.sleep(1)
-                    st.session_state.tempo_restante -= 1
-                    st.rerun()
-                else:
-                    st.session_state.respondido = True
-                    st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
-                    if st.session_state.ultima_resposta_correta:
-                        st.session_state.pontuacao += 100
-                        st.session_state.acertos += 1
-                    st.rerun()
-                
-                st.write("")
-                if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
-                    st.session_state.respondido = False
-                    st.session_state.pagina = "menu"
-                    st.rerun()
-
-            with col_dir:
-                st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
-                img_path = config.get("imagem_ns", "nossa_senhora.png")
-                if os.path.exists(img_path):
-                    st.image(img_path, use_container_width=True)
-        else:
-            col_esq, col_dir = st.columns([2, 1])
-            
-            with col_esq:
-                c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1])
-                c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
-                placeholder_tempo = c2.empty()
-                c3.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao} pts</span>", unsafe_allow_html=True)
-                c4.markdown(f"<span class='placar-topo'>🎯 {st.session_state.acertos}/3</span>", unsafe_allow_html=True)
-                st.divider()
-
-                st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
-                
-                placeholder_tempo.markdown(f"<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
-                
-                # Exibe o feedback e toca o som correspondente sem piscar a tela
                 if st.session_state.ultima_resposta_correta:
-                    st.success("🎉 Resposta CORRETA! Parabéns!")
-                    tocar_audio_invisivel(SOM_ACERTO)
-                else:
-                    st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
-                    tocar_audio_invisivel(SOM_ERRO)
-                
-                st.write("")
-                if st.button("➡️ Próxima Pergunta"):
-                    st.session_state.respondido = False
-                    st.session_state.pergunta_idx += 1
-                    st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
-                    
-                    if st.session_state.acertos >= 3:
-                        st.session_state.acertos = 0
-                        st.session_state.dado_girado = False
-                        st.session_state.pagina = "dado"
-                    elif st.session_state.pergunta_idx >= total_p:
-                        st.session_state.pagina = "fim"
-                    st.rerun()
-                
-                st.write("")
-                if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo_resp"):
-                    st.session_state.respondido = False
-                    st.session_state.pagina = "menu"
-                    st.rerun()
+                    st.session_state.pontuacao += 100
+                    st.session_state.acertos += 1
+                st.rerun()
+            
+            st.write("")
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo"):
+                st.session_state.respondido = False
+                st.session_state.pagina = "menu"
+                st.rerun()
 
-            with col_dir:
-                st.markdown("<div style='text-align: center;'><h3 style='margin-bottom: 10px;'>🌸 Imaculada Conceição</h3></div>", unsafe_allow_html=True)
-                img_path = config.get("imagem_ns", "nossa_senhora.png")
-                if os.path.exists(img_path):
-                    st.image(img_path, use_container_width=True)
-    else:
-        st.session_state.pagina = "fim"
-        st.rerun()
+            # Relógio dinâmico segundo a segundo (fica no fim de col_esq para não bloquear nada)
+            if st.session_state.tempo_restante > 0:
+                classe_cor = "placar-alerta" if st.session_state.tempo_restante <= config.get("tempo_alerta", 4) else "placar-topo"
+                placeholder_tempo.markdown(f"<span class='{classe_cor}'>⏳ {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
+                time.sleep(1)
+                st.session_state.tempo_restante -= 1
+                st.rerun()
+            else:
+                st.session_state.respondido = True
+                st.session_state.ultima_resposta_correta = (escolha == p["resposta"])
+                if st.session_state.ultima_resposta_correta:
+                    st.session_state.pontuacao += 100
+                    st.session_state.acertos += 1
+                st.rerun()
+        else:
+            placeholder_tempo.markdown("<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
+            
+            if st.session_state.ultima_resposta_correta:
+                st.success("🎉 Resposta CORRETA! Parabéns!")
+                tocar_audio_invisivel(SOM_ACERTO)
+            else:
+                st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
+                tocar_audio_invisivel(SOM_ERRO)
+            
+            st.write("")
+            if st.button("➡️ Próxima Pergunta"):
+                st.session_state.respondido = False
+                st.session_state.pergunta_idx += 1
+                st.session_state.tempo_restante = config.get("tempo_pergunta", 30)
+                
+                if st.session_state.acertos >= 3:
+                    st.session_state.acertos = 0
+                    st.session_state.dado_girado = False
+                    st.session_state.pagina = "dado"
+                elif st.session_state.pergunta_idx >= total_p:
+                    st.session_state.pagina = "fim"
+                st.rerun()
+            
+            st.write("")
+            if st.button("🚪 Parar e Voltar ao Menu", key="sair_jogo_resp"):
+                st.session_state.respondido = False
+                st.session_state.pagina = "menu"
+                st.rerun()
 
 # ==============================================================================
 # 4. SALA DO DADO PREMIADO
@@ -419,7 +424,7 @@ elif st.session_state.pagina == "dado":
             if st.button("🎲 GIRAR O DADO AGORA"):
                 tocar_audio_invisivel(SOM_DADO)
                 
-                # Triplo do tempo de rotação do dado (36 passos)
+                # Rotação de 36 passos
                 for _ in range(36):
                     num_aleatorio = random.randint(1, 6)
                     placeholder_dado.markdown(f"<div class='dado-box' style='color: #8DA9C4;'>【 {num_aleatorio} 】</div>", unsafe_allow_html=True)
@@ -460,13 +465,9 @@ elif st.session_state.pagina == "fim":
     st.markdown(f"<h2 style='text-align: center; color: #F4D35E;'>Pontuação Final: {st.session_state.pontuacao} Pontos</h2>", unsafe_allow_html=True)
     st.write("")
     
-    img_path = config.get("imagem_ns", "nossa_senhora.png")
-    if os.path.exists(img_path):
-        col_img1, col_img2, col_img3 = st.columns([2, 1, 2])
-        with col_img2:
-            st.image(img_path, use_container_width=True)
+    mostrar_santa()
             
-    st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-style: italic; font-size: 20px; margin-top: 15px;'>Que Nossa Senhora Imaculada Conceição abençoe grandemente a tua família!</p>", unsafe_allow_html=True)
     st.write("")
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -622,7 +623,7 @@ elif st.session_state.pagina == "gerir_perguntas":
         st.rerun()
 
 # ==============================================================================
-# 9. PAINEL DE CONFIGURAÇÕES (IMAGEM, TAMANHO & TEMPOS)
+# 9. PAINEL DE CONFIGURAÇÕES (IMAGEM, TAMANHO EM TEMPO REAL & TEMPOS)
 # ==============================================================================
 elif st.session_state.pagina == "configuracoes":
     st.markdown("<h2>⚙️ Painel de Configurações (Imagem & Tempos)</h2>", unsafe_allow_html=True)
@@ -636,14 +637,6 @@ elif st.session_state.pagina == "configuracoes":
         tempo_alerta_val = st.number_input("Tempo Alerta Vermelho (seg):", value=config.get("tempo_alerta", 4))
         tamanho_img_val = st.slider("Tamanho da Imagem da Santa (Largura em Pixels):", min_value=200, max_value=600, value=config.get("tamanho_imagem", 360), step=10)
         
-    with col_cfg2:
-        st.markdown("### 🖼️ Pré-visualização da Imagem")
-        img_path = config.get("imagem_ns", "nossa_senhora.png")
-        if os.path.exists(img_path):
-            col_pr1, col_pr2, col_pr3 = st.columns([1, 4, 1])
-            with col_pr2:
-                st.image(img_path, use_container_width=True)
-            
         up_img = st.file_uploader("Carregar nova imagem institucional", type=["png", "jpg", "jpeg"], key="up_img_ns")
         if up_img is not None:
             with open("nossa_senhora.png", "wb") as f:
@@ -652,6 +645,10 @@ elif st.session_state.pagina == "configuracoes":
             salvar_config(config)
             st.success("Imagem atualizada com sucesso!")
             st.rerun()
+
+    with col_cfg2:
+        st.markdown("<h4 style='text-align: center;'>🖼️ Pré-visualização em Tempo Real</h4>", unsafe_allow_html=True)
+        mostrar_santa(largura_custom=tamanho_img_val)
 
     st.write("")
     col_bot1, col_bot2 = st.columns([1, 1])
