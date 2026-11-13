@@ -1,5 +1,5 @@
 # ==============================================================================
-# SUPER QUIZ MULTI-TEMAS (400 PERGUNTAS 100% ÚNICAS E EXTREMAS DE ANIME!) 🎲⚔️🔥
+# SUPER QUIZ MULTI-TEMAS (COM MODO MOBILE / PAISAGEM E 2.100 PERGUNTAS) 📱🖥️🎲
 # ==============================================================================
 
 import streamlit as st
@@ -108,8 +108,6 @@ def montar_100_perguntas(fatos, templates):
     perguntas_geradas = []
     rng = random.Random(42)
     
-    # Se a lista tiver 100 fatos exatos (como Animes), cada um gera 1 pergunta única sem repetir nunca!
-    total_gerar = max(100, len(fatos))
     for idx in range(100):
         item, sub, certa = fatos[idx % len(fatos)]
         molde = templates[idx % len(templates)]
@@ -136,10 +134,7 @@ def construir_bancos_completos():
         "Assinale a alternativa verdadeira sobre {sub} referente a {item}:"
     ]
 
-    # --------------------------------------------------------------------------
     # ⚔️ ANIMES — 400 FATOS 100% ÚNICOS (100 POR NÍVEL, ZERO REPETIÇÕES!)
-    # --------------------------------------------------------------------------
-    # NÍVEL 1: FÁCIL (100 fatos únicos)
     animes_facil_100 = [
         ("Dragon Ball Z", "o nome do protagonista criado na Terra que adora lutar", "Son Goku"),
         ("Dragon Ball Z", "a quantidade de Esferas do Dragão necessárias para invocar Shenlong", "7 Esferas do Dragão"),
@@ -243,7 +238,6 @@ def construir_bancos_completos():
         ("Dandadan", "as duas coisas em que Momo Ayase e Okarun acreditavam no começo da história", "Fantasmas e Alienígenas")
     ]
 
-    # NÍVEL 2: NORMAL (100 fatos únicos)
     animes_normal_100 = [
         ("Solo Leveling", "a palavra de comando que Sung Jin-Woo pronuncia para extrair sombras", "Erga-se (Arise)"),
         ("Solo Leveling", "o melhor amigo rico de Jin-Woo que usa uma armadura caríssima e escudo", "Yoo Jin-Ho"),
@@ -347,7 +341,6 @@ def construir_bancos_completos():
         ("Vinland Saga", "o jovem guerreiro islandês que busca duelo contra Askeladd para vingar seu pai Thors", "Thorfinn")
     ]
 
-    # NÍVEL 3: HARD (100 fatos únicos — para quem realmente manja!)
     animes_hard_100 = [
         ("Solo Leveling", "o cavaleiro vermelho-sangue comandante que Jin-Woo derrota na missão de troca de classe", "Igris, o Comandante Vermelho-Sangue"),
         ("Solo Leveling", "o rei formiga alado nascido na Ilha de Jeju que Jin-Woo transforma em sua sombra mais fiel", "Beru"),
@@ -367,7 +360,7 @@ def construir_bancos_completos():
         ("Black Clover", "o 28º Rei Mago do Reino de Clover que possui Magia do Tempo", "Julius Novachrono"),
         ("Black Clover", "a irmã mais velha de Fuegoleon que domina a zona de mana Calidus Brachium", "Mereoleona Vermillion"),
         ("Black Clover", "o vice-capitão dos Touros Negros que fez um pacto com quatro demônios diferentes", "Nacht Faust"),
-        ("Tokyo Revengers", "o fundador da 1ª geração da Blackiku/Black Dragons e irmão mais velho de Mikey", "Shinichiro Sano"),
+        ("Tokyo Revengers", "o fundador da 1ª geração da Black Dragons e irmão mais velho de Mikey", "Shinichiro Sano"),
         ("Tokyo Revengers", "o capitão da 1ª divisão da Toman e amigo de infância que deu o amuleto a Chifuyu", "Keisuke Baji"),
         ("Tokyo Revengers", "o líder implacável da gangue Tenjiku em Yokohama e meio-irmão adotivo de Mikey", "Izana Kurokawa"),
         ("Mashle: Magia e Músculos", "o estudante de duas linhas que controla gravidade e vira rival/amigo de Mash", "Lance Crown"),
@@ -409,7 +402,7 @@ def construir_bancos_completos():
         ("Jujutsu Kaisen", "o assassino de feiticeiros do clã Zenin sem nenhuma energia amaldiçoada e pai de Megumi", "Toji Fushiguro (Toji Zenin)"),
         ("Jujutsu Kaisen", "o artefato amaldiçoado de Grau Especial usado para selar Satoru Gojo em Shibuya", "Reino da Prisão (Prison Realm / Gokumonkyo)"),
         ("Jujutsu Kaisen", "o estudante do 3º ano cuja Expansão de Domínio funciona como um jogo de pachinko com jackpot imortal", "Kinji Hakari"),
-        ("My Hero Academia", "o antigo parceiro de All For One e vilão principal por trás da Liga dos Vilões", "All For One (Shigaraki)"),
+        ("My Hero Academia", "o antigo inimigo de All Might e vilão mestre por trás da Liga dos Vilões", "All For One"),
         ("My Hero Academia", "o estudante do 3º ano do Big 3 da U.A. que atravessa paredes com a individualidade Permeação", "Mirio Togata (Lemillion)"),
         ("My Hero Academia", "a mestra de All Might e sétima portadora do One For All", "Nana Shimura"),
         ("Death Note", "os dois jovens prodígios criados no orfanato Wammy's House como sucessores de L", "Near (Nate River) e Mello (Mihael Keehl)"),
@@ -432,8 +425,8 @@ def construir_bancos_completos():
         ("Blue Lock", "o irmão mais novo prodígio de Sae Itoshi e rival número 1 dentro do Blue Lock", "Rin Itoshi"),
         ("Haikyuu!!", "o capitão e levantador da escola Aoba Johsai conhecido pelo saque viagem devastador", "Toru Oikawa"),
         ("Haikyuu!!", "o capitão canhoto da academia Shiratorizawa considerado um dos três melhores atacantes do Japão", "Wakatoshi Ushijima"),
-        ("Code Geass", "o robô mecha Knightmare Frame preto e dourado com asas de energia pilotado por Zero", "Guren / Shinkiro / Lancelot (de Suzaku)"),
-        ("Steins;Gate", "o codinome usado por John Titor no futuro que na verdade era filha de Daru", "Suzuha Amane"),
+        ("Code Geass", "o robô mecha Knightmare Frame branco de 7ª geração pilotado por Suzaku Kururugi", "Lancelot"),
+        ("Steins;Gate", "o verdadeiro nome da viajante do tempo John Titor que na verdade era filha de Daru", "Suzuha Amane"),
         ("InuYasha", "o vilão principal meio-Youkai nascido da junção de centenas de demônios com o bandido Onigumo", "Naraku"),
         ("InuYasha", "a sacerdotisa guardiã da Joia de Quatro Almas que selou InuYasha na árvore há 50 anos", "Kikyo"),
         ("Evangelion", "as criaturas misteriosas gigantes que atacam Tokyo-3 após o Segundo Impacto", "Anjos (Angels)"),
@@ -451,7 +444,6 @@ def construir_bancos_completos():
         ("Kaiju No. 8", "o trabalhador de limpeza de monstros de 32 anos que engole um parasita e vira o Kaiju Nº 8", "Kafka Hibino")
     ]
 
-    # NÍVEL 4: IMPOSSÍVEL (100 fatos únicos — Nível Extremo para o seu amigo!)
     animes_impossivel_100 = [
         ("Solo Leveling", "o nome verdadeiro do Monarca das Sombras original e ex-Fragmento da Luz Brilhante", "Ashborn"),
         ("Solo Leveling", "o nome do arquiteto demoníaco da Estátua de Deus do Templo Cartenon que criou o Sistema", "Kandiaru"),
@@ -469,17 +461,17 @@ def construir_bancos_completos():
         ("Black Clover", "os três irmãos Zogratis da Tríade Negra do Reino de Spade e seus respectivos demônios", "Dante (Lucifero), Vanica (Megicula) e Zenon (Beelzebub)"),
         ("Black Clover", "o verdadeiro nome do primeiro Rei Mago da história que derrotou o demônio ancestral Licht", "Lemiel Silvamillion Clover"),
         ("Black Clover", "o demônio de nível supremo que manipulou elfos e humanos por 500 anos usando Magia de Kotodama (Palavra)", "Zagred"),
-        ("Tokyo Revengers", "o nome do meio-irmão mais velho de Hinata e Naoto que não precisou voltar no tempo para instigar Kisaki", "Tetta Kisaki (e o segundo viajante do tempo original Shinichiro Sano)"),
-        ("Tokyo Revengers", "o nome da gangue de Mikey no arco final composta pelas três divindades (Brahman, Rokuhara e Kanto)", "Kanto Manji Gang"),
+        ("Tokyo Revengers", "quem foi o primeiro viajante do tempo original antes de passar o poder para Takemichi", "Shinichiro Sano"),
+        ("Tokyo Revengers", "o nome da gangue de Mikey no arco final após a dissolução da Toman e a Guerra das Três Divindades", "Kanto Manji Gang"),
         ("Mashle: Magia e Músculos", "o vilão principal pai de Mash que buscava fundir o coração de seus seis filhos para virar um deus", "Innocent Zero (Cyril Marcus)"),
-        ("Mashle: Magia e Músculos", "o filho mais velho de Innocent Zero considerado uma obra-prima com Magia de Espaço", "Doom (e o caçula prodígio Domina Blowelive)"),
+        ("Mashle: Magia e Músculos", "o filho mais velho de Innocent Zero que usa a espada Caladbolg e domina 100% da força", "Doom"),
         ("Slime (Tensura)", "os nomes das quatro cores dos Demônios Primordiais que passam a servir Rimuru", "Diablo (Noir/Preto), Testarossa (Blanc/Branco), Ultima (Violet/Roxo) e Carrera (Jaune/Amarelo)"),
         ("Slime (Tensura)", "o nome do Dragão Verdadeiro criador do mundo e pai de Milim Nava", "Veldanava"),
-        ("Slime (Tensura)", "o nome da entidade consciente que nasce quando Rimuru dá um nome para a habilidade Rafael", "Ciel (Manas: Ciel)"),
+        ("Slime (Tensura)", "o nome da entidade consciente Manas que nasce quando Rimuru dá um nome para a habilidade Rafael", "Ciel"),
         ("Cyberpunk: Edgerunners", "a dupla de estúdio japonês e diretor responsável pela criação do anime para a CD Projekt Red", "Studio Trigger, dirigido por Hiroyuki Imaishi"),
         ("Cyberpunk: Edgerunners", "o nome da música de Rosa Walton que virou o hino emocional de David e Lucy na Lua", "I Really Want to Stay at Your House"),
         ("Dragon Ball", "o ano exato em que Akira Toriyama publicou o capítulo 1 do mangá Dragon Ball na Weekly Shonen Jump", "1984"),
-        ("Dragon Ball Z", "o nome da mãe biológica de Goku mostrada em Dragon Ball Minus e no filme de Broly", "Gine"),
+        ("Dragon Ball Z", "o nome da mãe biológica Saiyajin de Goku mostrada em Dragon Ball Minus e no filme de Broly", "Gine"),
         ("Dragon Ball Z", "o nome do avô adotivo terráqueo que encontrou Goku bebê na montanha Paozu", "Son Gohan (Avô Gohan)"),
         ("Dragon Ball Super", "o nome do Sumo Sacerdote pai de Whis e Vados e conselheiro de Zeno", "Daishinkan (Grand Priest)"),
         ("Dragon Ball Z", "o poder de luta exato que o rastreador de Raditz marcou ao medir o fazendeiro com espingarda no episódio 1", "Poder de luta igual a 5"),
@@ -493,48 +485,48 @@ def construir_bancos_completos():
         ("One Piece", "o soberano secreto que senta no Trono Vazio em Mary Geoise acima dos Cinco Anciões (Gorosei)", "Imu-sama"),
         ("One Piece", "a ilha final da Grand Line batizada por Gol D. Roger ao ler a história de Joy Boy", "Laugh Tale"),
         ("Attack on Titan", "o nome da fundadora original que entrou na árvore gigante e tocou a criatura da vida há 2.000 anos", "Ymir Fritz"),
-        ("Attack on Titan", "o sobrenome real da família real verdadeira que governava dentro das muralhas sob nome falso", "Família Reiss (verdadeira família real Fritz)"),
+        ("Attack on Titan", "o sobrenome da família que governava dentro das muralhas escondendo a linhagem real Fritz", "Família Reiss"),
         ("Attack on Titan", "o nome da cidade natal de Eren, Mikasa e Armin localizada no sul da Muralha Maria", "Distrito de Shiganshina"),
         ("Demon Slayer", "a flor rara que floresce apenas poucos dias por ano à luz do sol e que Muzan procurava à noite", "Lírio da Aranha Azul"),
         ("Demon Slayer", "a idade máxima que um espadachim que desperta a Marca do Caçador consegue viver (com exceção de Yoriichi)", "25 anos de idade"),
-        ("Demon Slayer", "o nome humano original de Muzan Kibutsuji ou a era japonesa em que foi transformado por um médico", "Era Heian (há mais de mil anos)"),
+        ("Demon Slayer", "o período histórico japonês em que Muzan Kibutsuji foi transformado em Oni há mais de mil anos", "Era Heian"),
         ("Jujutsu Kaisen", "o feiticeiro milenar que troca de corpos transplantando o cérebro e gerou Yuji Itadori", "Kenjaku"),
-        ("Jujutsu Kaisen", "o nome do Shikigami supremo não domado das Dez Sombras invocado por Megumi em Shibuya", "General Divino Oito Cabos Divergente Sila Mahoraga"),
+        ("Jujutsu Kaisen", "o nome completo do Shikigami supremo não domado das Dez Sombras invocado por Megumi em Shibuya", "General Divino Oito Cabos Divergente Sila Mahoraga"),
         ("Jujutsu Kaisen", "o cântico completo recitado por Satoru Gojo para amplificar o Vazio Roxo a 200%", "Nove Cordas, Luz Polarizada, Corvo e Shomyo, a Lacuna entre o Dentro e o Fora"),
         ("My Hero Academia", "o nome completo do primeiro portador do One For All, irmão mais novo do vilão All For One", "Yoichi Shigaraki"),
         ("My Hero Academia", "o verdadeiro nome civil de All Might", "Toshinori Yagi"),
-        ("Death Note", "o nome verdadeiro completo de L e a data de seu nascimento na enciclopédia How to Read 13", "L Lawliet"),
+        ("Death Note", "o nome verdadeiro completo de L revelado pelo autor Tsugumi Ohba no volume 13", "L Lawliet"),
         ("Death Note", "o nome do Shinigami que amava Misa Amane e se sacrificou matando L para salvar a vida dela", "Rem"),
         ("Fullmetal Alchemist", "a frase e a data exata gravadas na tampa interna do relógio de bolso de Alquimista Federal de Edward", "Don't Forget 3.Oct.11 (Não esqueça 3 de outubro de 1911)"),
         ("Fullmetal Alchemist", "o nome do país oriental de onde vieram Ling Yao, Lan Fan e a arte da Alkahestria", "Império de Xing"),
-        ("Hunter x Hunter", "o nome da habilidade de Nen de Kurapika que só pode ser usada contra a Trupe Fantasma sob pena de morte", "Chain Jail (Corrente de Prisão) e Emperor Time"),
+        ("Hunter x Hunter", "o nome da habilidade de Nen de Kurapika que só pode ser usada contra a Trupe Fantasma sob pena de morte", "Chain Jail (Corrente de Prisão)"),
         ("Hunter x Hunter", "o jogo de estratégia de tabuleiro do Leste Gorteau no qual Meruem jamais derrotou a cega Komugi", "Gungi"),
         ("Hunter x Hunter", "a irmã mais nova de Killua Zoldyck que abriga a entidade misteriosa capaz de realizar qualquer desejo", "Alluka Zoldyck (Nanika)"),
         ("Yu Yu Hakusho", "o nome do pai ancestral Youkai de Yusuke Urameshi que era um dos três reis do Makai", "Raizen"),
         ("Cavaleiros do Zodíaco", "o nome do autor do mangá original Saint Seiya publicado em 1986", "Masami Kurumada"),
-        ("Cavaleiros do Zodíaco", "o verdadeiro Cavaleiro de Ouro de Áries na Guerra Santa de 1743 e mestre de Shiryu", "Dohko de Libra (Mestre Ancião) e Shion de Áries"),
+        ("Cavaleiros do Zodíaco", "os dois sobreviventes da Guerra Santa anterior de 1743 que se tornaram o Mestre Ancião e o Grande Mestre", "Dohko de Libra e Shion de Áries"),
         ("One Punch Man", "o pseudônimo do autor original que criou a webcomic One Punch Man e Mob Psycho 100", "ONE (e redesenhado por Yusuke Murata)"),
         ("Chainsaw Man", "o autor do mangá Chainsaw Man, também criador de Fire Punch e Look Back", "Tatsuki Fujimoto"),
-        ("Chainsaw Man", "o Demônio Primordial sem olhos e com vários corpos de astronautas cortados ao meio no Inferno", "Demônio da Escuridão (Darkness Devil)"),
+        ("Chainsaw Man", "o Demônio Primordial que aparece com uma fila de astronautas cortados ao meio na escuridão do Inferno", "Demônio da Escuridão (Darkness Devil)"),
         ("Blue Lock", "o atacante francês número 1 do mundo no qual Jinpachi Ego se inspirou e que joga no Bastard München", "Noel Noa"),
-        ("Haikyuu!!", "o time profissional da Divisão 1 da V.League do Brasil ou Japão onde Hinata joga após treinar no Rio de Janeiro", "MSBY Black Jackals (após treinar vôlei de praia no Brasil)"),
+        ("Haikyuu!!", "o time profissional da Divisão 1 da V.League do Japão onde Hinata entra após treinar vôlei de praia no Brasil", "MSBY Black Jackals"),
         ("Evangelion", "de quem era a alma que habitava dentro do núcleo da Unidade Evangelion-01 de Shinji", "Yui Ikari (a mãe de Shinji)"),
-        ("Evangelion", "o significado literal da sigla alemã NERV na organização de Gendo Ikari", "Nervo (com o lema: Deus está em seu céu, tudo está bem com o mundo)"),
+        ("Evangelion", "o significado literal da palavra alemã NERV e seu lema completo", "Nervo (Deus está em seu céu, tudo está bem com o mundo)"),
         ("Code Geass", "o nome do plano final de Lelouch e Suzaku para concentrar todo o ódio do mundo nele mesmo", "Zero Requiem"),
         ("Steins;Gate", "o número exato da divergência da linha de mundo Steins Gate onde Kurisu e Mayuri sobrevivem", "1.048596%"),
         ("Berserk", "o nome que Griffith recebe ao renascer como o quinto membro da Mão de Deus durante o Eclipse", "Femto, o Falcão da Escuridão"),
         ("Berserk", "o nome do autor lendário de Berserk que dedicou mais de 30 anos de vida à obra", "Kentaro Miura"),
         ("Monster", "o nome do livro infantil ilustrado tcheco usado no seminário 511 Kinderheim que influenciou Johan Liebert", "O Monstro Sem Nome (de Emil Sebe / Franz Bonaparta)"),
-        ("Vinland Saga", "o navegador histórico real que encontrou a terra de Vinland na América do Norte", "Leif Erikson (e Thorfinn Karlsefni)"),
-        ("Dr. Stone", "a identidade misteriosa do 'Why-Man' na Lua que enviava o código Morse WHY", "Uma colônia de dispositivos alienígenas mecânicos parasitas (Medusas)"),
-        ("Frieren", "a Grande Maga lendária da era mítica que foi a mestra da própria Frieren há mil anos", "serie (e a mestra humana Flamme)"),
+        ("Vinland Saga", "o navegador nórdico histórico que falou para Thorfinn sobre a terra pacífica de Vinland", "Leif Erikson"),
+        ("Dr. Stone", "a verdadeira natureza do 'Why-Man' na Lua que enviava o código Morse WHY", "Uma colônia de dispositivos mecânicos parasitas inteligentes (Medusas)"),
+        ("Frieren", "a Grande Maga elfa da era mítica líder da Associação Mágica Continental e mestra de Flamme", "Serie"),
         ("Re:Zero", "o nome do Grande Espírito do Fogo na forma de gatinho cinza que acompanha Emilia", "Puck"),
         ("Overlord", "o nome do jogo DMMORPG de realidade virtual do ano 2138 que deu origem ao mundo de Ainz", "YGGDRASIL"),
         ("InuYasha", "o nome da autora consagrada de InuYasha, Ranma 1/2 e Urusei Yatsura", "Rumiko Takahashi"),
         ("Fairy Tail", "o verdadeiro significado do acrônimo E.N.D., o demônio mais forte do livro de Zeref", "Etherious Natsu Dragneel"),
-        ("The Seven Deadly Sins", "a entidade suprema do universo de Britannia que criou a Divindade Suprema e o Rei dos Demônios", "O Caos (selado dentro de Arthur Pendragon)"),
+        ("The Seven Deadly Sins", "a entidade suprema primordial que criou a Divindade Suprema, o Rei dos Demônios e a Árvore Sagrada", "O Caos"),
         ("Cowboy Bebop", "a frase final icônica que aparece no canto da tela no encerramento do último episódio", "You're Gonna Carry That Weight (Você vai carregar esse peso)"),
-        ("Akira", "o ano em que se passa a história de Kaneda e Tetsuo em Neo-Tokyo (e em que seriam as Olimpíadas)", "Ano de 2019"),
+        ("Akira", "o ano exato em que se passa a história de Kaneda e Tetsuo em Neo-Tokyo", "Ano de 2019"),
         ("Ghost in the Shell", "o nome da Major ciborgue protagonista da Seção 9 de Segurança Pública", "Major Motoko Kusanagi"),
         ("Hellsing Ultimate", "a identidade histórica real do vampiro supremo Alucard que serve a Integra Hellsing", "Conde Drácula (Vlad, o Empalador)"),
         ("JoJo's Bizarre Adventure", "o nome do Stand de DIO na Parte 3 capaz de parar o tempo por alguns segundos", "The World (Za Warudo)"),
@@ -542,9 +534,9 @@ def construir_bancos_completos():
         ("Gurren Lagann", "a frase clássica de Kamina para Simon sobre a sua broca", "A sua broca é a broca que vai perfurar os céus!"),
         ("Kill la Kill", "o nome da espada em forma de metade de tesoura vermelha empunhada por Ryuko Matoi", "Lâmina Decapitadora (Scissor Blade)"),
         ("Fate/stay night", "a verdadeira identidade histórica lendária da serva da classe Saber invocada por Shirou Emiya", "Rei Artur Pendragon (Artoria Pendragon)"),
-        ("Made in Abyss", "a maldição da 6ª Camada do Abismo que faz o explorador perder a humanidade (ou morrer)", "Perda da humanidade (transformação em Narehate) ou morte"),
+        ("Made in Abyss", "a maldição da 6ª Camada do Abismo que atinge quem tenta subir de volta", "Perda da humanidade (transformação em Narehate) ou morte"),
         ("The Promised Neverland", "os números de identificação tatuados no pescoço de Emma, Norman e Ray em Grace Field", "63194 (Emma), 22194 (Norman) e 81194 (Ray)"),
-        ("Tokyo Ghoul", "o que significa estalar o dedo indicador como Kaneki passou a fazer após a tortura de Yamori (Jason)", "Um hábito adquirido de Jason e contagem regressiva de 1000 menos 7"),
+        ("Tokyo Ghoul", "a conta matemática regressiva que Jason obrigava Kaneki a repetir durante a tortura", "1000 menos 7 (993, 986, 979...)"),
         ("Parasyte (Kiseijuu)", "o nome do parasita alienígena que se alojou na mão direita de Shinichi Izumi", "Migi (que significa Direita em japonês)"),
         ("Assassination Classroom", "a velocidade máxima em Mach que o professor polvo amarelo Koro-sensei consegue atingir", "Mach 20"),
         ("Haikyuu!!", "a frase escrita na faixa preta da torcida da escola Inarizaki dos irmãos Miya", "Não precisamos das memórias de ontem"),
@@ -552,12 +544,10 @@ def construir_bancos_completos():
         ("Hajime no Ippo", "o golpe assinatura de Ippo Makunouchi que gira o tronco em forma de oito infinito", "Dempsey Roll"),
         ("Baki", "a marca demoníaca que aparece nos músculos das costas dos membros puros da família Hanma", "As Costas de Ogro (Demon Back)"),
         ("Yu-Gi-Oh!", "o nome verdadeiro do Faraó do Antigo Egito cuja alma habitava o Enigma do Milênio", "Faraó Atem"),
-        ("Dragon Ball Z", "o nome verdadeiro humano dos Androides gêmeos Nº 17 e Nº 18 antes de serem modificados", "Lapis (Nº 17) e Lazuli (Nº 18)")
+        ("Dragon Ball Z", "os nomes verdadeiros humanos dos Androides gêmeos Nº 17 e Nº 18 antes de serem modificados", "Lapis (Nº 17) e Lazuli (Nº 18)")
     ]
 
-    # --------------------------------------------------------------------------
     # DEMAIS TEMAS (IGREJA, HERÓIS, DESENHOS, FRUTAS, COMIDAS, NOVELAS, FILMES, TRABALHOS)
-    # --------------------------------------------------------------------------
     igreja_facil = [
         ("o Natal", "o grande acontecimento celebrado em 25 de dezembro", "Nascimento de Jesus em Belém"),
         ("a Páscoa", "o acontecimento central da fé cristã", "Ressurreição de Jesus Cristo"),
@@ -1068,14 +1058,31 @@ def salvar_config(config_dict):
 
 config = carregar_config()
 
+# Inicialização de Estados da Sessão (Incluindo o Modo Mobile!)
+estados_iniciais = {
+    "pagina": "menu", "participante": "", "modo_jogo_ativo": None,
+    "dificuldade_ativa": "🟢 Fácil", "pergunta_idx": 0, "pontuacao": 0, "acertos": 0,
+    "total_acertos_partida": 0, "total_erros_partida": 0,
+    "inicio_partida": None, "tempo_final_congelado": None, "perguntas_sessao": [],
+    "respondido": False, "ultima_resposta_correta": None, "dado_girado": False,
+    "resultado_dado": None, "editando_idx": None, "tempo_restante": 30,
+    "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False,
+    "up_cnt": 0, "msg_upload_ok": "", "tema_gerir_selecionado": "⛪ Igreja",
+    "nivel_gerir_selecionado": "🟢 Fácil", "tema_img_cfg": "⛪ Igreja", "limpar_tela_jogo": False,
+    "modo_mobile": False, "forcar_paisagem_js": False
+}
+for chave, valor_padrao in estados_iniciais.items():
+    if chave not in st.session_state:
+        st.session_state[chave] = valor_padrao
+
 st.set_page_config(
     page_title=config.get("titulo_aba", "Super Quiz"),
     page_icon=config.get("icone_aba", "🎲"),
-    layout="wide"
+    layout="centered" if st.session_state.modo_mobile else "wide"
 )
 
 # ==============================================================================
-# GERADOR DE CSS DINÂMICO (CENTRALIZAÇÃO TOTAL)
+# GERADOR DE CSS DINÂMICO (ADAPTA AUTOMATICAMENTE PARA MODO MOBILE OU TELÃO!)
 # ==============================================================================
 def obter_modo_visual_atual():
     modo_ativo = st.session_state.get("modo_jogo_ativo")
@@ -1090,8 +1097,18 @@ def obter_paleta_ativa():
 def aplicar_estilos_dinamicos():
     paleta = obter_paleta_ativa()
     bg_css = f"background-color: {paleta['cor_fundo']};"
-    larg_max = config.get("largura_botao", 520)
+    is_mob = st.session_state.get("modo_mobile", False)
     
+    # Escalas inteligentes para Celular vs Telão
+    larg_max = 380 if is_mob else config.get("largura_botao", 520)
+    f_titulo = 28 if is_mob else config.get("tam_fonte_titulo", 46)
+    f_perg   = 21 if is_mob else config.get("tam_fonte_pergunta", 30)
+    f_opcoes = 18 if is_mob else config.get("tam_fonte_opcoes", 24)
+    f_placar = 15 if is_mob else config.get("tam_fonte_placar", 20)
+    f_botao  = 17 if is_mob else config.get("tam_fonte_botao", 22)
+    pad_btn  = 11 if is_mob else config.get("altura_botao", 16)
+    pad_card = 16 if is_mob else 28
+
     if config.get("usar_fundo_img") and os.path.exists(config.get("imagem_fundo", "")):
         try:
             with open(config["imagem_fundo"], "rb") as f:
@@ -1112,13 +1129,18 @@ def aplicar_estilos_dinamicos():
             color: {paleta['cor_texto']};
             transition: background-color 0.4s ease;
         }}
+        .block-container {{
+            padding-top: {'1.5rem' if is_mob else '2.5rem'} !important;
+            padding-left: {'0.8rem' if is_mob else '3rem'} !important;
+            padding-right: {'0.8rem' if is_mob else '3rem'} !important;
+        }}
         audio {{
             display: none !important;
             width: 0 !important;
             height: 0 !important;
         }}
         .placar-topo {{
-            font-size: {config['tam_fonte_placar']}px !important;
+            font-size: {f_placar}px !important;
             font-weight: bold !important;
             color: {paleta['cor_destaque']} !important;
             text-align: center !important;
@@ -1126,45 +1148,56 @@ def aplicar_estilos_dinamicos():
             width: 100% !important;
         }}
         .placar-alerta {{
-            font-size: {config['tam_fonte_placar'] + 2}px !important;
+            font-size: {f_placar + 2}px !important;
             font-weight: bold !important;
             color: #FF4B4B !important;
             text-align: center !important;
             display: block !important;
             width: 100% !important;
         }}
+        .placar-mobile-box {{
+            background-color: rgba(0,0,0,0.35);
+            border: 1px solid {paleta['cor_destaque']};
+            border-radius: 12px;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: {paleta['cor_destaque']};
+        }}
         .badge-wrapper {{
             width: 100% !important;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
-            margin: 12px auto !important;
+            margin: 8px auto !important;
             text-align: center !important;
         }}
         .badge-modo {{
             background-color: {paleta['cor_botao']};
             color: {paleta['cor_destaque']};
-            padding: 8px 22px;
+            padding: {'6px 14px' if is_mob else '8px 22px'};
             border-radius: 25px;
             border: 2px solid {paleta['cor_destaque']};
             font-weight: bold;
-            font-size: 19px;
+            font-size: {'14px' if is_mob else '19px'};
             display: inline-block;
             text-align: center !important;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }}
         .main-card {{
             background-color: {paleta['cor_card']};
-            padding: 28px;
+            padding: {pad_card}px;
             border-radius: 14px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.45);
-            margin-bottom: 22px;
+            margin-bottom: 16px;
             border: 2px solid {paleta['cor_borda_botao']};
             text-align: center !important;
         }}
         .main-card h3 {{
-            font-size: {config['tam_fonte_pergunta']}px !important;
-            line-height: 1.4 !important;
+            font-size: {f_perg}px !important;
+            line-height: 1.35 !important;
             color: {paleta['cor_texto']} !important;
             margin: 0 !important;
             text-align: center !important;
@@ -1172,35 +1205,35 @@ def aplicar_estilos_dinamicos():
         div[data-testid="stTextInput"], div[data-testid="stSelectbox"] {{
             max-width: {larg_max}px !important;
             width: 100% !important;
-            margin: 0 auto 12px auto !important;
+            margin: 0 auto 10px auto !important;
         }}
         div[data-testid="stTextInput"] label, div[data-testid="stSelectbox"] label {{
             width: 100% !important;
             display: flex !important;
             justify-content: center !important;
             text-align: center !important;
-            font-size: 18px !important;
+            font-size: {'15px' if is_mob else '18px'} !important;
             font-weight: bold !important;
-            margin-bottom: 6px !important;
+            margin-bottom: 4px !important;
         }}
         div[data-testid="stTextInput"] label p, div[data-testid="stSelectbox"] label p {{
-            font-size: 18px !important;
+            font-size: {'15px' if is_mob else '18px'} !important;
             font-weight: bold !important;
             text-align: center !important;
             width: 100% !important;
         }}
         div[data-testid="stTextInput"] input {{
             text-align: center !important;
-            font-size: 20px !important;
+            font-size: {'17px' if is_mob else '20px'} !important;
             font-weight: 600 !important;
         }}
         .stRadio div[role="radiogroup"] label div p {{
-            font-size: {config['tam_fonte_opcoes']}px !important;
+            font-size: {f_opcoes}px !important;
             font-weight: 700 !important;
             color: {paleta['cor_texto']} !important;
         }}
         .stRadio div[role="radiogroup"] label {{
-            padding: 10px 0px !important;
+            padding: {'6px 0px' if is_mob else '10px 0px'} !important;
         }}
         div.stButton, [data-testid="stButton"], .stElementContainer:has(button) {{
             display: flex !important;
@@ -1216,17 +1249,27 @@ def aplicar_estilos_dinamicos():
             border-radius: {config['raio_borda_botao']}px !important;
             width: 100% !important;
             max-width: {larg_max}px !important;
-            padding: {config['altura_botao']}px !important;
+            padding: {pad_btn}px !important;
             border: 2px solid {paleta['cor_borda_botao']} !important;
-            font-size: {config['tam_fonte_botao']}px !important;
+            font-size: {f_botao}px !important;
             display: block !important;
-            margin: 8px auto !important;
+            margin: 6px auto !important;
             text-align: center !important;
             transition: all 0.2s ease !important;
         }}
         div.stButton > button:hover, [data-testid="stButton"] > button:hover {{
             filter: brightness(1.2) !important;
             border-color: {paleta['cor_destaque']} !important;
+        }}
+        /* BOTÕES COMPACTOS DA BARRA DE DISPOSITIVO NO TOPO */
+        .st-key-btn_toggle_mob button, .st-key-btn_girar_paisagem button {{
+            font-size: 14px !important;
+            padding: 6px 12px !important;
+            max-width: 240px !important;
+            margin: 2px auto !important;
+            border-radius: 20px !important;
+            background-color: rgba(255,255,255,0.12) !important;
+            border: 1px solid {paleta['cor_destaque']} !important;
         }}
         .st-key-btn_ir_dado, .st-key-btn_ir_dado > div,
         .st-key-btn_iniciar_quiz_sel, .st-key-btn_iniciar_quiz_sel > div {{
@@ -1239,16 +1282,19 @@ def aplicar_estilos_dinamicos():
             background-color: #F4D35E !important;
             color: #0B2545 !important;
             border: 3px solid #FFFFFF !important;
-            font-size: {config['tam_fonte_botao'] + 2}px !important;
+            font-size: {f_botao + 1}px !important;
             max-width: {larg_max}px !important;
             width: 100% !important;
-            margin: 10px auto !important;
+            margin: 8px auto !important;
             box-shadow: 0 0 20px rgba(244, 211, 94, 0.7) !important;
         }}
         .st-key-sair_sis button {{
             background-color: #E74C3C !important;
             border: none !important;
             color: #FFFFFF !important;
+        }}
+        h1 {{
+            font-size: {f_titulo}px !important;
         }}
         h1, h2, h3, h4, p, label {{
             color: {paleta['cor_texto']} !important;
@@ -1257,20 +1303,22 @@ def aplicar_estilos_dinamicos():
     """, unsafe_allow_html=True)
 
 # ==============================================================================
-# IMAGEM DINÂMICA DA COLUNA DIREITA
+# IMAGEM DINÂMICA DA COLUNA DIREITA (TAMANHO REDUZIDO NO MODO MOBILE!)
 # ==============================================================================
 def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=None):
     modo = modo_especifico if modo_especifico in INFO_MODOS else obter_modo_visual_atual()
     info = INFO_MODOS[modo]
+    is_mob = st.session_state.get("modo_mobile", False)
     
-    largura = largura_custom if largura_custom is not None else config.get("tamanho_imagem", 360)
+    largura_padrao = 220 if is_mob else config.get("tamanho_imagem", 360)
+    largura = largura_custom if largura_custom is not None else largura_padrao
     borda = borda_custom if borda_custom is not None else config.get("borda_imagem", 14)
     titulo_topo = config.get("titulos_temas", {}).get(modo, info["titulo_card"])
     arq_img = info["img_padrao"]
 
     html_bloco = "<div style='text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center;'>"
     if titulo_topo.strip():
-        html_bloco += f"<h3 style='margin-bottom: 14px; color: {info['cor_texto']}; text-align: center;'>{titulo_topo}</h3>"
+        html_bloco += f"<h4 style='margin-bottom: 10px; color: {info['cor_texto']}; text-align: center;'>{titulo_topo}</h4>"
 
     if os.path.exists(arq_img):
         try:
@@ -1278,7 +1326,7 @@ def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=
                 b64_img = base64.b64encode(f.read()).decode("utf-8")
             html_bloco += (
                 f"<img src='data:image/png;base64,{b64_img}' "
-                f"style='width: {largura}px; max-width: 100%; height: auto; "
+                f"style='width: {largura}px; max-width: 90%; height: auto; "
                 f"margin: 0 auto; display: block; border-radius: {borda}px; "
                 f"border: 3px solid {info['cor_destaque']}; "
                 f"box-shadow: 0 8px 25px rgba(0,0,0,0.5);' />"
@@ -1286,15 +1334,18 @@ def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=
         except Exception:
             pass
     else:
+        min_h = 200 if is_mob else 330
+        tam_ico = 70 if is_mob else 115
+        tam_tit = 20 if is_mob else 26
         html_bloco += (
-            f"<div style='width: {largura}px; max-width: 100%; min-height: 330px; margin: 0 auto; "
+            f"<div style='width: {largura}px; max-width: 92%; min-height: {min_h}px; margin: 0 auto; "
             f"background: radial-gradient(circle at top, {info['cor_botao']} 0%, {info['cor_card']} 60%, {info['cor_fundo']} 100%); "
             f"border-radius: {borda}px; border: 3px solid {info['cor_destaque']}; "
             f"box-shadow: 0 10px 28px rgba(0,0,0,0.55); display: flex; flex-direction: column; "
-            f"align-items: center; justify-content: center; padding: 28px 20px; box-sizing: border-box;'>"
-            f"<div style='font-size: 115px; line-height: 1.1; margin-bottom: 16px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));'>{info['icone']}</div>"
-            f"<div style='font-size: 26px; font-weight: 800; color: {info['cor_destaque']}; margin-bottom: 10px; text-align: center;'>{modo}</div>"
-            f"<div style='font-size: 16px; color: {info['cor_texto']}; opacity: 0.9; text-align: center; line-height: 1.4;'>{info['sub_card']}</div>"
+            f"align-items: center; justify-content: center; padding: 18px 14px; box-sizing: border-box;'>"
+            f"<div style='font-size: {tam_ico}px; line-height: 1.1; margin-bottom: 10px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));'>{info['icone']}</div>"
+            f"<div style='font-size: {tam_tit}px; font-weight: 800; color: {info['cor_destaque']}; margin-bottom: 6px; text-align: center;'>{modo}</div>"
+            f"<div style='font-size: 14px; color: {info['cor_texto']}; opacity: 0.9; text-align: center; line-height: 1.3;'>{info['sub_card']}</div>"
             f"</div>"
         )
 
@@ -1302,7 +1353,7 @@ def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=
     st.markdown(html_bloco, unsafe_allow_html=True)
 
 # ==============================================================================
-# FUNÇÕES DE DADOS (ATUALIZA AUTOMATICAMENTE PARA A VERSÃO V5 COM 400 PERGUNTAS ÚNICAS DE ANIME!)
+# FUNÇÕES DE DADOS
 # ==============================================================================
 def copiar_bancos_padrao():
     copia = {}
@@ -1323,7 +1374,6 @@ def carregar_dados():
         try:
             with open(ARQUIVO_DADOS, "r", encoding="utf-8") as f:
                 dados = json.load(f)
-                # Verifica a flag v5 (que garante os 400 fatos únicos de Animes sem repetição!)
                 if not dados.get("animes_400_unicos_v5", False):
                     precisa_salvar = True
                 elif "bancos_perguntas" in dados and isinstance(dados["bancos_perguntas"], dict):
@@ -1465,7 +1515,7 @@ def renderizar_dado_3d(numero_final=None, animar=False):
     elif animar:
         badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>🎲 Lançando o dado...</div>"
     else:
-        badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>Clique no botão abaixo para jogar o dado!</div>"
+        badge_html = "<div class='resultado-texto' style='color: #8DA9C4;'>Toque abaixo para jogar o dado!</div>"
 
     html_code = f"""
     <!DOCTYPE html>
@@ -1480,11 +1530,11 @@ def renderizar_dado_3d(numero_final=None, animar=False):
         .palco-dado {{
             background: radial-gradient(circle, {paleta['cor_card']} 0%, {paleta['cor_fundo']} 90%);
             border: 3px solid {'#2ECC71' if (numero_final and not animar) else paleta['cor_destaque']};
-            border-radius: 20px; width: 92%; max-width: 520px; height: 320px;
+            border-radius: 20px; width: 94%; max-width: 500px; height: 310px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; margin: 0 auto;
         }}
-        .scene {{ width: 130px; height: 130px; perspective: 750px; margin-top: 25px; }}
+        .scene {{ width: 130px; height: 130px; perspective: 750px; margin-top: 20px; }}
         .cube {{
             width: 130px; height: 130px; position: relative;
             transform-style: preserve-3d; transform: {transform_final}; transition: transform 0.5s ease;
@@ -1514,10 +1564,10 @@ def renderizar_dado_3d(numero_final=None, animar=False):
         .bottom {{ transform: rotateX(-90deg) translateZ(65px); }}
         .shadow {{
             width: 115px; height: 26px; background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%; filter: blur(7px); margin-top: 38px;
+            border-radius: 50%; filter: blur(7px); margin-top: 32px;
         }}
         .resultado-texto {{
-            margin-top: 18px; font-size: 26px; font-weight: 800;
+            margin-top: 16px; font-size: 22px; font-weight: 800;
             color: {paleta['cor_destaque']}; text-shadow: 0 2px 8px rgba(0,0,0,0.5);
             text-align: center; padding: 0 10px;
         }}
@@ -1542,23 +1592,7 @@ def renderizar_dado_3d(numero_final=None, animar=False):
     </body>
     </html>
     """
-    components.html(html_code, height=345)
-
-# Inicialização de Estados da Sessão
-estados_iniciais = {
-    "pagina": "menu", "participante": "", "modo_jogo_ativo": None,
-    "dificuldade_ativa": "🟢 Fácil", "pergunta_idx": 0, "pontuacao": 0, "acertos": 0,
-    "total_acertos_partida": 0, "total_erros_partida": 0,
-    "inicio_partida": None, "tempo_final_congelado": None, "perguntas_sessao": [],
-    "respondido": False, "ultima_resposta_correta": None, "dado_girado": False,
-    "resultado_dado": None, "editando_idx": None, "tempo_restante": 30,
-    "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False,
-    "up_cnt": 0, "msg_upload_ok": "", "tema_gerir_selecionado": "⛪ Igreja",
-    "nivel_gerir_selecionado": "🟢 Fácil", "tema_img_cfg": "⛪ Igreja", "limpar_tela_jogo": False
-}
-for chave, valor_padrao in estados_iniciais.items():
-    if chave not in st.session_state:
-        st.session_state[chave] = valor_padrao
+    components.html(html_code, height=330)
 
 aplicar_estilos_dinamicos()
 
@@ -1579,6 +1613,45 @@ def tocar_audio_invisivel(caminho_arquivo, loop=False):
 def soltar_baloes():
     if config.get("ativar_baloes", True):
         st.balloons()
+
+# ==============================================================================
+# BARRA RÁPIDA NO TOPO: ALTERNAR MODO MOBILE (VERTICAL) E MODO PAISAGEM (TELÃO)
+# ==============================================================================
+col_bar1, col_bar2 = st.columns([1, 1])
+with col_bar1:
+    txt_toggle_mob = "🖥️ Mudar para Modo Telão / Paisagem" if st.session_state.modo_mobile else "📱 Mudar para Versão Celular (Vertical)"
+    if st.button(txt_toggle_mob, key="btn_toggle_mob"):
+        st.session_state.modo_mobile = not st.session_state.modo_mobile
+        st.rerun()
+
+with col_bar2:
+    if st.button("🔄 Tela Cheia / Girar Paisagem", key="btn_girar_paisagem"):
+        st.session_state.modo_mobile = False
+        st.session_state.forcar_paisagem_js = True
+        st.rerun()
+
+if st.session_state.get("forcar_paisagem_js", False):
+    st.session_state.forcar_paisagem_js = False
+    components.html("""
+        <script>
+        (async function() {
+            try {
+                const docEl = window.parent.document.documentElement;
+                if (docEl.requestFullscreen) {
+                    await docEl.requestFullscreen();
+                } else if (docEl.webkitRequestFullscreen) {
+                    await docEl.webkitRequestFullscreen();
+                }
+                if (window.parent.screen && window.parent.screen.orientation && window.parent.screen.orientation.lock) {
+                    await window.parent.screen.orientation.lock('landscape');
+                }
+            } catch (err) {
+                console.log("Rotação automática depende do desbloqueio do aparelho:", err);
+            }
+        })();
+        </script>
+    """, height=0)
+    st.toast("🔄 Modo Paisagem ativado! Se estiver no celular, vire o aparelho na horizontal.", icon="📱")
 
 # ==============================================================================
 # SLOTS DE CONTEÚDO INDEPENDENTES
@@ -1602,47 +1675,60 @@ if st.session_state.pagina == "menu":
     slot_jogo.empty()
     with slot_outros.container():
         st.session_state.modo_jogo_ativo = None
-        st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
         st.markdown(
-            f"<h1 style='text-align: center; font-size: {config['tam_fonte_titulo']}px;'>{config['txt_titulo_menu']}</h1>",
+            f"<h1 style='text-align: center;'>{config['txt_titulo_menu']}</h1>",
             unsafe_allow_html=True
         )
         st.markdown(
-            f"<h4 style='text-align: center; opacity: 0.85; margin-bottom: 35px;'>{config['txt_subtitulo_menu']}</h4>",
+            f"<h4 style='text-align: center; opacity: 0.85; margin-bottom: 25px;'>{config['txt_subtitulo_menu']}</h4>",
             unsafe_allow_html=True
         )
         
-        col1, col2, col3 = st.columns([1.2, 1.6, 1.2])
-        with col2:
+        if st.session_state.modo_mobile:
             if st.button(config["txt_btn_jogar"], use_container_width=True):
                 st.session_state.modo_jogo_ativo = LISTA_MODOS_JOGO[0]
                 ir_para_pagina("selecionar_participante")
-                
             if st.button(config["txt_btn_participantes"], use_container_width=True):
                 ir_para_pagina("cadastrar_participantes")
-                
             if st.button(config["txt_btn_perguntas"], use_container_width=True):
                 ir_para_pagina("gerir_perguntas")
-                
             if st.button(config["txt_btn_historico"], use_container_width=True):
                 ir_para_pagina("historico")
-                
             if st.button(config["txt_btn_config"], use_container_width=True):
                 ir_para_pagina("configuracoes")
-                
             if st.button(config["txt_btn_sair"], key="sair_sis", use_container_width=True):
                 st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
+        else:
+            col1, col2, col3 = st.columns([1.2, 1.6, 1.2])
+            with col2:
+                if st.button(config["txt_btn_jogar"], use_container_width=True):
+                    st.session_state.modo_jogo_ativo = LISTA_MODOS_JOGO[0]
+                    ir_para_pagina("selecionar_participante")
+                if st.button(config["txt_btn_participantes"], use_container_width=True):
+                    ir_para_pagina("cadastrar_participantes")
+                if st.button(config["txt_btn_perguntas"], use_container_width=True):
+                    ir_para_pagina("gerir_perguntas")
+                if st.button(config["txt_btn_historico"], use_container_width=True):
+                    ir_para_pagina("historico")
+                if st.button(config["txt_btn_config"], use_container_width=True):
+                    ir_para_pagina("configuracoes")
+                if st.button(config["txt_btn_sair"], key="sair_sis", use_container_width=True):
+                    st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE
+# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE (ADAPTÁVEL MOBILE / TELÃO)
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     slot_jogo.empty()
     slot_outros.empty()
     with slot_selecao.container():
-        st.markdown("<h2 style='text-align: center; margin-bottom: 25px;'>👤 Participante & Modo de Jogo</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; margin-bottom: 18px;'>👤 Participante & Modo de Jogo</h2>", unsafe_allow_html=True)
         
-        col_esq, col_dir = st.columns([1.8, 1.2])
+        if st.session_state.modo_mobile:
+            col_esq = st.container()
+            col_dir = st.container()
+        else:
+            col_esq, col_dir = st.columns([1.8, 1.2])
         
         with col_esq:
             nome_digitado = st.text_input("1️⃣ Digite o nome do Participante:", key="input_nome_part_sel")
@@ -1652,10 +1738,9 @@ elif st.session_state.pagina == "selecionar_participante":
                 key="sel_lista_part_sel"
             ) if participantes else "-- Selecione da lista --"
             
-            st.write("")
             idx_modo_atual = LISTA_MODOS_JOGO.index(st.session_state.modo_jogo_ativo) if st.session_state.modo_jogo_ativo in LISTA_MODOS_JOGO else 0
             modo_escolhido = st.selectbox(
-                "2️⃣ Escolha o Modo de Jogo (A cor da tela e a imagem à direita mudam na hora!):",
+                "2️⃣ Escolha o Modo de Jogo:",
                 LISTA_MODOS_JOGO,
                 index=idx_modo_atual,
                 key="sel_modo_jogo_sel"
@@ -1677,8 +1762,8 @@ elif st.session_state.pagina == "selecionar_participante":
                 st.session_state.dificuldade_ativa = dif_escolhida
                 pts_partida = int(pts_base_cfg * MULTIPLICADOR_PONTOS.get(dif_escolhida, 1.0))
                 qtd_disp = len(bancos_perguntas.get(modo_escolhido, {}).get(dif_escolhida, []))
-                resumo_badge = f"🎯 {modo_escolhido} ({dif_escolhida}) — {qtd_disp} perguntas | ⭐ {pts_partida} pts/acerto"
-                txt_botao_ini = f"▶️ Iniciar Quiz: {modo_escolhido} ({dif_escolhida})"
+                resumo_badge = f"🎯 {modo_escolhido} ({dif_escolhida}) — {qtd_disp} perguntas | ⭐ {pts_partida} pts"
+                txt_botao_ini = f"▶️ Iniciar: {modo_escolhido} ({dif_escolhida})"
             else:
                 dif_escolhida = None
                 st.session_state.dificuldade_ativa = None
@@ -1687,7 +1772,7 @@ elif st.session_state.pagina == "selecionar_participante":
                     qtd_disp = contar_todas_perguntas(bancos_perguntas)
                 else:
                     qtd_disp = len(bancos_perguntas.get(modo_escolhido, []))
-                resumo_badge = f"🎯 Tema selecionado: {modo_escolhido} — {qtd_disp} perguntas disponíveis!"
+                resumo_badge = f"🎯 Tema: {modo_escolhido} — {qtd_disp} perguntas!"
                 txt_botao_ini = f"▶️ Iniciar Quiz: {modo_escolhido}"
                 
             st.markdown(
@@ -1695,7 +1780,6 @@ elif st.session_state.pagina == "selecionar_participante":
                 unsafe_allow_html=True
             )
             
-            st.write("")
             if st.button(txt_botao_ini, key="btn_iniciar_quiz_sel", use_container_width=True):
                 nome_final = ""
                 if escolha_lista != "-- Selecione da lista --":
@@ -1780,7 +1864,7 @@ elif st.session_state.pagina == "selecionar_participante":
             mostrar_painel_tema(modo_especifico=modo_escolhido)
 
 # ==============================================================================
-# 3. TELA DO JOGO
+# 3. TELA DO JOGO (LAYOUT RESPONSIVO PARA CELULAR VERTICAL OU TELÃO PAISAGEM!)
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     slot_selecao.empty()
@@ -1806,33 +1890,47 @@ elif st.session_state.pagina == "jogo":
         if not st.session_state.respondido:
             tocar_audio_invisivel(SOM_TIC_TAK, loop=True)
 
-        col_jogo_esq, col_jogo_dir = st.columns([2.1, 0.9])
-        
-        with col_jogo_dir:
-            mostrar_painel_tema()
+        # No modo mobile, usa coluna única direta para caber tudo na tela do celular sem espremer!
+        if st.session_state.modo_mobile:
+            col_jogo_esq = st.container()
+            col_jogo_dir = None
+        else:
+            col_jogo_esq, col_jogo_dir = st.columns([2.1, 0.9])
+            with col_jogo_dir:
+                mostrar_painel_tema()
 
         with col_jogo_esq:
             p = st.session_state.perguntas_sessao[p_idx]
             tempo_total_fmt = formatar_tempo_partida(obter_tempo_decorrido())
             txt_dif_badge = f" ({dif_atual})" if dif_atual else ""
+            icone_trofeu = "🏆" if st.session_state.dado_disponivel else ""
             
             st.markdown(
-                f"<div class='badge-wrapper'><div class='badge-modo'>Modo: {st.session_state.modo_jogo_ativo}{txt_dif_badge} &nbsp;|&nbsp; Pergunta {p_idx + 1} de {total_p}</div></div>",
+                f"<div class='badge-wrapper'><div class='badge-modo'>{st.session_state.modo_jogo_ativo}{txt_dif_badge} &nbsp;|&nbsp; Q{p_idx + 1}/{total_p}</div></div>",
                 unsafe_allow_html=True
             )
             
-            c1, c2, c3, c4, c5 = st.columns([1.3, 0.9, 1.1, 0.9, 1.4])
-            c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
-            placeholder_tempo = c2.empty()
-            c3.markdown(f"<span class='placar-topo'>⏱️ {tempo_total_fmt}</span>", unsafe_allow_html=True)
-            c4.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao}</span>", unsafe_allow_html=True)
-            
-            icone_trofeu = "🏆" if st.session_state.dado_disponivel else ""
-            c5.markdown(
-                f"<span class='placar-topo'>✅{st.session_state.total_acertos_partida} ❌{st.session_state.total_erros_partida} | 🎯{st.session_state.acertos}/{meta_dado}{icone_trofeu}</span>",
-                unsafe_allow_html=True
-            )
-            st.divider()
+            if st.session_state.modo_mobile:
+                placeholder_tempo = st.empty()
+                st.markdown(
+                    f"<div class='placar-mobile-box'>"
+                    f"👤 {st.session_state.participante} &nbsp;|&nbsp; ⭐ {st.session_state.pontuacao} &nbsp;|&nbsp; "
+                    f"✅{st.session_state.total_acertos_partida} ❌{st.session_state.total_erros_partida} &nbsp;|&nbsp; "
+                    f"🎯{st.session_state.acertos}/{meta_dado}{icone_trofeu} &nbsp;|&nbsp; ⏱️{tempo_total_fmt}"
+                    f"</div>",
+                    unsafe_allow_html=True
+                )
+            else:
+                c1, c2, c3, c4, c5 = st.columns([1.3, 0.9, 1.1, 0.9, 1.4])
+                c1.markdown(f"<span class='placar-topo'>👤 {st.session_state.participante}</span>", unsafe_allow_html=True)
+                placeholder_tempo = c2.empty()
+                c3.markdown(f"<span class='placar-topo'>⏱️ {tempo_total_fmt}</span>", unsafe_allow_html=True)
+                c4.markdown(f"<span class='placar-topo'>⭐ {st.session_state.pontuacao}</span>", unsafe_allow_html=True)
+                c5.markdown(
+                    f"<span class='placar-topo'>✅{st.session_state.total_acertos_partida} ❌{st.session_state.total_erros_partida} | 🎯{st.session_state.acertos}/{meta_dado}{icone_trofeu}</span>",
+                    unsafe_allow_html=True
+                )
+                st.divider()
 
             st.markdown(f"<div class='main-card'><h3>Q{p_idx + 1}: {p['pergunta']}</h3></div>", unsafe_allow_html=True)
             
@@ -1844,7 +1942,6 @@ elif st.session_state.pagina == "jogo":
                     key=f"resp_{p_idx}",
                     label_visibility="collapsed"
                 )
-                st.write("")
                 
                 aviso_selecao = st.empty()
                 
@@ -1865,7 +1962,6 @@ elif st.session_state.pagina == "jogo":
                             st.session_state.total_erros_partida += 1
                         st.rerun()
                 
-                st.write("")
                 if st.button("🚪 Parar e Finalizar Partida", key=f"sair_jogo_{p_idx}", use_container_width=True):
                     st.session_state.respondido = False
                     st.session_state.tempo_final_congelado = obter_tempo_decorrido()
@@ -1873,7 +1969,7 @@ elif st.session_state.pagina == "jogo":
 
                 if st.session_state.tempo_restante > 0:
                     classe_cor = "placar-alerta" if st.session_state.tempo_restante <= config.get("tempo_alerta", 5) else "placar-topo"
-                    placeholder_tempo.markdown(f"<span class='{classe_cor}'>⏳ {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
+                    placeholder_tempo.markdown(f"<span class='{classe_cor}'>⏳ Tempo: {st.session_state.tempo_restante}s</span>", unsafe_allow_html=True)
                     time.sleep(1)
                     st.session_state.tempo_restante -= 1
                     st.rerun()
@@ -1890,7 +1986,7 @@ elif st.session_state.pagina == "jogo":
                         st.session_state.total_erros_partida += 1
                     st.rerun()
             else:
-                placeholder_tempo.markdown("<span class='placar-topo'>⏳ Fim</span>", unsafe_allow_html=True)
+                placeholder_tempo.markdown("<span class='placar-topo'>⏳ Fim do Tempo</span>", unsafe_allow_html=True)
                 
                 if st.session_state.ultima_resposta_correta:
                     st.success(f"🎉 Resposta CORRETA! (+{pts_acerto} pontos)")
@@ -1898,8 +1994,6 @@ elif st.session_state.pagina == "jogo":
                 else:
                     st.error(f"❌ Resposta INCORRETA! A correta era: **{p['resposta']}**")
                     tocar_audio_invisivel(SOM_ERRO)
-                
-                st.write("")
                 
                 if st.session_state.dado_disponivel:
                     if not st.session_state.baloes_mostrados:
@@ -1909,7 +2003,7 @@ elif st.session_state.pagina == "jogo":
                     if st.session_state.ultima_resposta_correta:
                         st.markdown(
                             f"<h3 style='text-align: center; color: {paleta['cor_destaque']};'>🏆 DADO PREMIADO LIBERADO ({st.session_state.acertos} ACERTOS)!<br>"
-                            f"<span style='font-size: 20px; opacity: 0.85;'>Quer continuar respondendo o desafio ou encerrar para girar o dado agora?</span></h3>",
+                            f"<span style='font-size: 18px; opacity: 0.85;'>Quer continuar respondendo ou encerrar para girar o dado agora?</span></h3>",
                             unsafe_allow_html=True
                         )
                     else:
@@ -1947,14 +2041,13 @@ elif st.session_state.pagina == "jogo":
                         else:
                             st.rerun()
                 
-                st.write("")
                 if st.button("🚪 Parar e Finalizar Partida", key=f"sair_jogo_resp_{p_idx}", use_container_width=True):
                     st.session_state.respondido = False
                     st.session_state.tempo_final_congelado = obter_tempo_decorrido()
                     ir_para_pagina("fim")
 
 # ==============================================================================
-# 4. SALA DO DADO PREMIADO (SEM BOTÃO DE VOLTAR PRO QUIZ — VAI PRO RESUMO FINAL!)
+# 4. SALA DO DADO PREMIADO
 # ==============================================================================
 elif st.session_state.pagina == "dado":
     slot_selecao.empty()
@@ -1962,62 +2055,58 @@ elif st.session_state.pagina == "dado":
     with slot_outros.container():
         dif_str = f" - {st.session_state.dificuldade_ativa}" if st.session_state.get("dificuldade_ativa") else ""
         st.markdown(f"<h1 style='text-align: center;'>{config['txt_sala_dado']}</h1>", unsafe_allow_html=True)
-        st.markdown(f"<h3 style='text-align: center; opacity: 0.85;'>{st.session_state.participante} ({st.session_state.modo_jogo_ativo}{dif_str}) — {config['txt_sub_dado']}</h3>", unsafe_allow_html=True)
-        st.write("")
+        st.markdown(f"<h4 style='text-align: center; opacity: 0.85;'>{st.session_state.participante} ({st.session_state.modo_jogo_ativo}{dif_str}) — {config['txt_sub_dado']}</h4>", unsafe_allow_html=True)
         
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            placeholder_dado = st.empty()
+        placeholder_dado = st.empty()
+        
+        if not st.session_state.dado_girado:
+            with placeholder_dado.container():
+                renderizar_dado_3d(numero_final=None, animar=False)
+                
+            if st.button("🎲 JOGAR O DADO AGORA", key="btn_ir_dado", use_container_width=True):
+                resultado_final = random.randint(1, 6)
+                tocar_audio_invisivel(SOM_DADO)
+                
+                with placeholder_dado.container():
+                    renderizar_dado_3d(numero_final=resultado_final, animar=True)
+                
+                time.sleep(3.7)
+                
+                st.session_state.resultado_dado = resultado_final
+                st.session_state.dado_girado = True
+                
+                tempo_gasto_fmt = formatar_tempo_partida(obter_tempo_decorrido())
+                total_resp = st.session_state.total_acertos_partida + st.session_state.total_erros_partida
+                precisao = int((st.session_state.total_acertos_partida / total_resp) * 100) if total_resp > 0 else 0
+                reg = (
+                    f"Participante: {st.session_state.participante} | "
+                    f"Modo: {st.session_state.modo_jogo_ativo}{dif_str} | "
+                    f"Pontos: {st.session_state.pontuacao} | "
+                    f"Acertos: {st.session_state.total_acertos_partida} | "
+                    f"Erros: {st.session_state.total_erros_partida} | "
+                    f"Precisão: {precisao}% | "
+                    f"Tempo: {tempo_gasto_fmt} | "
+                    f"Dado: Saiu {resultado_final}"
+                )
+                historico.append(reg)
+                salvar_dados(bancos_perguntas, participantes, historico)
+                st.session_state.historico_salvo_partida = True
+                st.rerun()
+        else:
+            res = st.session_state.resultado_dado
+            with placeholder_dado.container():
+                renderizar_dado_3d(numero_final=res, animar=False)
             
-            if not st.session_state.dado_girado:
-                with placeholder_dado.container():
-                    renderizar_dado_3d(numero_final=None, animar=False)
-                    
-                if st.button("🎲 JOGAR O DADO AGORA", key="btn_ir_dado", use_container_width=True):
-                    resultado_final = random.randint(1, 6)
-                    tocar_audio_invisivel(SOM_DADO)
-                    
-                    with placeholder_dado.container():
-                        renderizar_dado_3d(numero_final=resultado_final, animar=True)
-                    
-                    time.sleep(3.7)
-                    
-                    st.session_state.resultado_dado = resultado_final
-                    st.session_state.dado_girado = True
-                    
-                    tempo_gasto_fmt = formatar_tempo_partida(obter_tempo_decorrido())
-                    total_resp = st.session_state.total_acertos_partida + st.session_state.total_erros_partida
-                    precisao = int((st.session_state.total_acertos_partida / total_resp) * 100) if total_resp > 0 else 0
-                    reg = (
-                        f"Participante: {st.session_state.participante} | "
-                        f"Modo: {st.session_state.modo_jogo_ativo}{dif_str} | "
-                        f"Pontos: {st.session_state.pontuacao} | "
-                        f"Acertos: {st.session_state.total_acertos_partida} | "
-                        f"Erros: {st.session_state.total_erros_partida} | "
-                        f"Precisão: {precisao}% | "
-                        f"Tempo: {tempo_gasto_fmt} | "
-                        f"Dado: Saiu {resultado_final}"
-                    )
-                    historico.append(reg)
-                    salvar_dados(bancos_perguntas, participantes, historico)
-                    st.session_state.historico_salvo_partida = True
-                    st.rerun()
-            else:
-                res = st.session_state.resultado_dado
-                with placeholder_dado.container():
-                    renderizar_dado_3d(numero_final=res, animar=False)
+            tocar_audio_invisivel(SOM_ACERTO)
+            soltar_baloes()
                 
-                tocar_audio_invisivel(SOM_ACERTO)
-                soltar_baloes()
-                    
-                st.success(f"O participante {st.session_state.participante} tirou o número {res} no dado e ganhou o prêmio!")
-                st.write("")
-                
-                if st.button("🏁 Encerrar Partida e Ver Resumo Final", key="btn_ir_dado", use_container_width=True):
-                    st.session_state.dado_girado = False
-                    if st.session_state.tempo_final_congelado is None:
-                        st.session_state.tempo_final_congelado = obter_tempo_decorrido()
-                    ir_para_pagina("fim")
+            st.success(f"O participante {st.session_state.participante} tirou o número {res} no dado e ganhou o prêmio!")
+            
+            if st.button("🏁 Encerrar Partida e Ver Resumo Final", key="btn_ir_dado", use_container_width=True):
+                st.session_state.dado_girado = False
+                if st.session_state.tempo_final_congelado is None:
+                    st.session_state.tempo_final_congelado = obter_tempo_decorrido()
+                ir_para_pagina("fim")
 
 # ==============================================================================
 # 5. TELA FINAL / AGRADECIMENTO
@@ -2051,40 +2140,36 @@ elif st.session_state.pagina == "fim":
             st.session_state.historico_salvo_partida = True
             
         st.markdown(f"<h1 style='text-align: center;'>{config['txt_titulo_fim']}</h1>", unsafe_allow_html=True)
-        st.markdown(f"<h2 style='text-align: center;'>Participante: {st.session_state.participante} ({modo_fim}{dif_str})</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='text-align: center;'>Participante: {st.session_state.participante} ({modo_fim}{dif_str})</h3>", unsafe_allow_html=True)
         st.markdown(
-            f"<h3 style='text-align: center; color: {paleta['cor_destaque']};'>"
+            f"<h4 style='text-align: center; color: {paleta['cor_destaque']};'>"
             f"⭐ {st.session_state.pontuacao} Pontos &nbsp;|&nbsp; "
             f"✅ {st.session_state.total_acertos_partida} Acertos &nbsp;|&nbsp; "
             f"❌ {st.session_state.total_erros_partida} Erros &nbsp;|&nbsp; "
             f"🎯 {precisao}% Precisão &nbsp;|&nbsp; "
             f"⏱️ Tempo: {tempo_final_fmt}"
-            f"</h3>",
+            f"</h4>",
             unsafe_allow_html=True
         )
-        st.write("")
         
         mostrar_painel_tema(modo_especifico=modo_fim)
         
         frase_do_tema = config.get("msgs_finais_temas", {}).get(modo_fim, INFO_MODOS[modo_fim]["msg_final"])
         st.markdown(
-            f"<p style='text-align: center; font-style: italic; font-size: 24px; font-weight: 600; "
-            f"color: {paleta['cor_destaque']} !important; margin-top: 18px;'>{frase_do_tema}</p>",
+            f"<p style='text-align: center; font-style: italic; font-size: 20px; font-weight: 600; "
+            f"color: {paleta['cor_destaque']} !important; margin-top: 15px;'>{frase_do_tema}</p>",
             unsafe_allow_html=True
         )
-        st.write("")
         
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            if st.session_state.dado_disponivel:
-                if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado", use_container_width=True):
-                    st.session_state.dado_disponivel = False
-                    st.session_state.dado_girado = False
-                    ir_para_pagina("dado")
-                    
-            if st.button("🏠 Voltar ao Menu Inicial", use_container_width=True):
-                st.session_state.modo_jogo_ativo = None
-                ir_para_pagina("menu")
+        if st.session_state.dado_disponivel:
+            if st.button("🎲 IR PARA O DADO PREMIADO AGORA!", key="btn_ir_dado", use_container_width=True):
+                st.session_state.dado_disponivel = False
+                st.session_state.dado_girado = False
+                ir_para_pagina("dado")
+                
+        if st.button("🏠 Voltar ao Menu Inicial", use_container_width=True):
+            st.session_state.modo_jogo_ativo = None
+            ir_para_pagina("menu")
 
 # ==============================================================================
 # 6. CADASTRAR PARTICIPANTES
@@ -2110,13 +2195,11 @@ elif st.session_state.pagina == "cadastrar_participantes":
         st.markdown("<h3 style='text-align: center; margin-top: 20px;'>Participantes Atuais:</h3>", unsafe_allow_html=True)
         if participantes:
             for p in list(participantes):
-                col_p1, col_p2, col_p3 = st.columns([1, 2, 1])
-                with col_p2:
-                    st.markdown(f"<h4 style='text-align: center;'>👤 {p}</h4>", unsafe_allow_html=True)
-                    if st.button(f"🗑️ Remover {p}", key=f"del_part_{p}"):
-                        participantes.remove(p)
-                        salvar_dados(bancos_perguntas, participantes, historico)
-                        st.rerun()
+                st.markdown(f"<h4 style='text-align: center;'>👤 {p}</h4>", unsafe_allow_html=True)
+                if st.button(f"🗑️ Remover {p}", key=f"del_part_{p}"):
+                    participantes.remove(p)
+                    salvar_dados(bancos_perguntas, participantes, historico)
+                    st.rerun()
         else:
             st.info("Nenhum participante cadastrado.")
 
@@ -2135,18 +2218,28 @@ elif st.session_state.pagina == "historico":
         if top5:
             st.markdown("<h3 style='text-align: center; color: #F4D35E;'>🥇 Pódio dos Melhores Jogadores</h3>", unsafe_allow_html=True)
             medalhas = ["🥇 1º", "🥈 2º", "🥉 3º", "🏅 4º", "🏅 5º"]
-            cols_rk = st.columns(len(top5))
-            for idx_r, reg_r in enumerate(top5):
-                with cols_rk[idx_r]:
+            if st.session_state.modo_mobile:
+                for idx_r, reg_r in enumerate(top5):
                     st.markdown(
-                        f"<div class='main-card' style='padding: 15px;'>"
-                        f"<h4 style='text-align: center; color: #F4D35E !important;'>{medalhas[idx_r]}</h4>"
-                        f"<h3 style='text-align: center;'>{reg_r['nome']}</h3>"
-                        f"<p style='text-align: center; font-weight: bold; font-size: 20px;'>⭐ {reg_r['pontos']} pts</p>"
-                        f"<p style='text-align: center; font-size: 14px; opacity: 0.85;'>{reg_r['modo']}</p>"
+                        f"<div class='main-card' style='padding: 12px; margin-bottom: 10px;'>"
+                        f"<h4 style='text-align: center; color: #F4D35E !important;'>{medalhas[idx_r]} — {reg_r['nome']} (⭐ {reg_r['pontos']} pts)</h4>"
+                        f"<p style='text-align: center; font-size: 13px; margin: 0;'>{reg_r['modo']}</p>"
                         f"</div>",
                         unsafe_allow_html=True
                     )
+            else:
+                cols_rk = st.columns(len(top5))
+                for idx_r, reg_r in enumerate(top5):
+                    with cols_rk[idx_r]:
+                        st.markdown(
+                            f"<div class='main-card' style='padding: 15px;'>"
+                            f"<h4 style='text-align: center; color: #F4D35E !important;'>{medalhas[idx_r]}</h4>"
+                            f"<h3 style='text-align: center;'>{reg_r['nome']}</h3>"
+                            f"<p style='text-align: center; font-weight: bold; font-size: 20px;'>⭐ {reg_r['pontos']} pts</p>"
+                            f"<p style='text-align: center; font-size: 14px; opacity: 0.85;'>{reg_r['modo']}</p>"
+                            f"</div>",
+                            unsafe_allow_html=True
+                        )
         
         st.divider()
         if historico:
@@ -2156,19 +2249,15 @@ elif st.session_state.pagina == "historico":
                 if st.checkbox(item, key=f"chk_hist_{idx}"):
                     itens_para_apagar.append(item)
             
-            st.write("")
-            col_h1, col_h2 = st.columns([1, 1])
-            with col_h1:
-                if itens_para_apagar and st.button("🗑️ Apagar Selecionados"):
-                    for it in itens_para_apagar:
-                        historico.remove(it)
-                    salvar_dados(bancos_perguntas, participantes, historico)
-                    st.rerun()
-            with col_h2:
-                if st.button("🗑️ Limpar Todo o Histórico"):
-                    historico.clear()
-                    salvar_dados(bancos_perguntas, participantes, historico)
-                    st.rerun()
+            if itens_para_apagar and st.button("🗑️ Apagar Selecionados"):
+                for it in itens_para_apagar:
+                    historico.remove(it)
+                salvar_dados(bancos_perguntas, participantes, historico)
+                st.rerun()
+            if st.button("🗑️ Limpar Todo o Histórico"):
+                historico.clear()
+                salvar_dados(bancos_perguntas, participantes, historico)
+                st.rerun()
         else:
             st.info("Ainda não existem registos no histórico.")
 
@@ -2179,31 +2268,26 @@ elif st.session_state.pagina == "gerir_perguntas":
     slot_selecao.empty()
     slot_jogo.empty()
     with slot_outros.container():
-        st.markdown("<h2 style='text-align: center;'>📝 Gestão de Perguntas por Tema & Dificuldade (2.100 Perguntas)</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>📝 Gestão de Perguntas (2.100 Perguntas)</h2>", unsafe_allow_html=True)
         
-        col_topo_esq, col_topo_meio, col_topo_dir = st.columns([1, 1, 1])
-        with col_topo_esq:
-            if st.button("⬅️ Voltar ao Menu", key="btn_voltar_perg_topo", use_container_width=True):
-                st.session_state.editando_idx = None
-                st.session_state.modo_jogo_ativo = None
-                ir_para_pagina("menu")
-        with col_topo_meio:
-            if st.button("➕ Nova Pergunta neste Banco", key="btn_nova_perg_topo", use_container_width=True):
-                st.session_state.editando_idx = -1
-                st.rerun()
-        with col_topo_dir:
-            if st.button("🔄 Restaurar 100 Perguntas deste Banco", key="btn_reset_tema", use_container_width=True):
-                tema_atual = st.session_state.tema_gerir_selecionado
-                niv_atual = st.session_state.nivel_gerir_selecionado
-                if tema_atual in TEMAS_COM_DIFICULDADE:
-                    bancos_perguntas[tema_atual][niv_atual] = list(BANCOS_PADRAO[tema_atual][niv_atual])
-                else:
-                    bancos_perguntas[tema_atual] = list(BANCOS_PADRAO[tema_atual])
-                salvar_dados(bancos_perguntas, participantes, historico)
-                st.success("As 100 perguntas deste banco foram restauradas!")
-                st.rerun()
+        if st.button("⬅️ Voltar ao Menu", key="btn_voltar_perg_topo", use_container_width=True):
+            st.session_state.editando_idx = None
+            st.session_state.modo_jogo_ativo = None
+            ir_para_pagina("menu")
+        if st.button("➕ Nova Pergunta neste Banco", key="btn_nova_perg_topo", use_container_width=True):
+            st.session_state.editando_idx = -1
+            st.rerun()
+        if st.button("🔄 Restaurar 100 Perguntas deste Banco", key="btn_reset_tema", use_container_width=True):
+            tema_atual = st.session_state.tema_gerir_selecionado
+            niv_atual = st.session_state.nivel_gerir_selecionado
+            if tema_atual in TEMAS_COM_DIFICULDADE:
+                bancos_perguntas[tema_atual][niv_atual] = list(BANCOS_PADRAO[tema_atual][niv_atual])
+            else:
+                bancos_perguntas[tema_atual] = list(BANCOS_PADRAO[tema_atual])
+            salvar_dados(bancos_perguntas, participantes, historico)
+            st.success("As 100 perguntas deste banco foram restauradas!")
+            st.rerun()
 
-        st.write("")
         temas_disponiveis = list(BANCOS_PADRAO.keys())
         idx_t = temas_disponiveis.index(st.session_state.tema_gerir_selecionado) if st.session_state.tema_gerir_selecionado in temas_disponiveis else 0
         tema_sel_gerir = st.selectbox("📂 1. Selecione o Modo de Jogo:", temas_disponiveis, index=idx_t)
@@ -2305,7 +2389,7 @@ elif st.session_state.pagina == "configuracoes":
     slot_selecao.empty()
     slot_jogo.empty()
     with slot_outros.container():
-        st.markdown("<h2 style='text-align: center;'>⚙️ Painel de Configurações (Imagens por Tema, Regras & Textos)</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>⚙️ Painel de Configurações</h2>", unsafe_allow_html=True)
         if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_topo"):
             st.session_state.msg_upload_ok = ""
             st.session_state.modo_jogo_ativo = None
@@ -2316,14 +2400,14 @@ elif st.session_state.pagina == "configuracoes":
             st.session_state.msg_upload_ok = ""
 
         aba_img, aba_regras_tam, aba_textos, aba_sons = st.tabs([
-            "🖼️ 1. Imagens & Frase de cada Tema",
+            "🖼️ 1. Imagens & Frases",
             "🎯 2. Regras & Tamanhos",
             "✍️ 3. Textos do Menu",
             "🔊 4. Sons & Restauro"
         ])
         
         with aba_img:
-            col_im1, col_im2 = st.columns([1.5, 1])
+            col_im1, col_im2 = st.columns([1.5, 1]) if not st.session_state.modo_mobile else (st.container(), st.container())
             with col_im1:
                 st.markdown("<h3 style='text-align: center;'>🖼️ Personalizar Imagem e Frase Final de cada Tema</h3>", unsafe_allow_html=True)
                 idx_tm = LISTA_MODOS_JOGO.index(st.session_state.tema_img_cfg) if st.session_state.tema_img_cfg in LISTA_MODOS_JOGO else 0
@@ -2389,7 +2473,7 @@ elif st.session_state.pagina == "configuracoes":
                     st.rerun()
 
             with col_im2:
-                st.markdown("<h4 style='text-align: center;'>🖼️ Pré-visualização da Coluna Direita</h4>", unsafe_allow_html=True)
+                st.markdown("<h4 style='text-align: center;'>🖼️ Pré-visualização</h4>", unsafe_allow_html=True)
                 mostrar_painel_tema(modo_especifico=tema_cfg_sel, largura_custom=tamanho_img_val, borda_custom=borda_img_val)
                 st.markdown(
                     f"<p style='text-align: center; font-style: italic; margin-top: 15px;'>\"{msg_final_tema_atual}\"</p>",
@@ -2404,10 +2488,10 @@ elif st.session_state.pagina == "configuracoes":
                 tempo_alerta_val = st.number_input("Alerta Vermelho nos últimos (seg):", 1, 30, int(config.get("tempo_alerta", 5)))
             with cr2:
                 acertos_dado_val = st.number_input("Acertos para liberar o Dado:", 1, 20, int(config.get("acertos_para_dado", 3)))
-                pts_acerto_val = st.number_input("Pontos Base por Acerto (Fácil=1x, Normal=1.5x, Hard=2.5x, Impossível=5x):", 10, 1000, int(config.get("pontos_por_acerto", 100)), 10)
+                pts_acerto_val = st.number_input("Pontos Base por Acerto:", 10, 1000, int(config.get("pontos_por_acerto", 100)), 10)
 
             st.divider()
-            st.markdown("<h3 style='text-align: center;'>📏 Ajuste de Tamanho de Letras e Botões</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: center;'>📏 Ajuste de Tamanho (Modo Telão/PC)</h3>", unsafe_allow_html=True)
             ct1, ct2 = st.columns(2)
             with ct1:
                 larg_btn_val = st.slider("Largura Máxima dos Botões e Caixas (px):", 300, 900, int(config.get("largura_botao", 520)), 10)
@@ -2478,45 +2562,42 @@ elif st.session_state.pagina == "configuracoes":
                 st.rerun()
 
         st.write("---")
-        col_bot1, col_bot2 = st.columns([1, 1])
-        with col_bot1:
-            if st.button("💾 SALVAR CONFIGURAÇÕES", key="btn_ir_dado", use_container_width=True):
-                config.update({
-                    "tema_menu_inicial": tema_menu_val,
-                    "usar_fundo_img": usar_bg_img,
-                    "opacidade_fundo": float(opacidade_bg_val),
-                    "largura_botao": int(larg_btn_val),
-                    "altura_botao": int(alt_btn_val),
-                    "tam_fonte_botao": int(tam_f_btn_val),
-                    "tam_fonte_titulo": int(tam_f_tit_val),
-                    "tam_fonte_pergunta": int(tam_f_perg_val),
-                    "tam_fonte_opcoes": int(tam_f_opc_val),
-                    "txt_titulo_menu": txt_tit_menu_val,
-                    "txt_subtitulo_menu": txt_sub_menu_val,
-                    "txt_sala_dado": txt_sala_dado_val,
-                    "txt_sub_dado": txt_sub_dado_val,
-                    "txt_titulo_fim": txt_tit_fim_val,
-                    "txt_btn_jogar": txt_b_jogar_val,
-                    "txt_btn_participantes": txt_b_part_val,
-                    "txt_btn_perguntas": txt_b_perg_val,
-                    "txt_btn_historico": txt_b_hist_val,
-                    "txt_btn_config": txt_b_cfg_val,
-                    "txt_btn_sair": txt_b_sair_val,
-                    "tamanho_imagem": int(tamanho_img_val),
-                    "borda_imagem": int(borda_img_val),
-                    "tempo_pergunta": int(tempo_perg_val),
-                    "tempo_alerta": int(tempo_alerta_val),
-                    "acertos_para_dado": int(acertos_dado_val),
-                    "pontos_por_acerto": int(pts_acerto_val),
-                    "ativar_sons": bool(ativar_sons_val),
-                    "ativar_baloes": bool(ativar_baloes_val)
-                })
-                salvar_config(config)
-                st.session_state.msg_upload_ok = "✅ Configurações salvas com sucesso!"
-                st.rerun()
-                
-        with col_bot2:
-            if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_rodape", use_container_width=True):
-                st.session_state.msg_upload_ok = ""
-                st.session_state.modo_jogo_ativo = None
-                ir_para_pagina("menu")
+        if st.button("💾 SALVAR CONFIGURAÇÕES", key="btn_ir_dado", use_container_width=True):
+            config.update({
+                "tema_menu_inicial": tema_menu_val,
+                "usar_fundo_img": usar_bg_img,
+                "opacidade_fundo": float(opacidade_bg_val),
+                "largura_botao": int(larg_btn_val),
+                "altura_botao": int(alt_btn_val),
+                "tam_fonte_botao": int(tam_f_btn_val),
+                "tam_fonte_titulo": int(tam_f_tit_val),
+                "tam_fonte_pergunta": int(tam_f_perg_val),
+                "tam_fonte_opcoes": int(tam_f_opc_val),
+                "txt_titulo_menu": txt_tit_menu_val,
+                "txt_subtitulo_menu": txt_sub_menu_val,
+                "txt_sala_dado": txt_sala_dado_val,
+                "txt_sub_dado": txt_sub_dado_val,
+                "txt_titulo_fim": txt_tit_fim_val,
+                "txt_btn_jogar": txt_b_jogar_val,
+                "txt_btn_participantes": txt_b_part_val,
+                "txt_btn_perguntas": txt_b_perg_val,
+                "txt_btn_historico": txt_b_hist_val,
+                "txt_btn_config": txt_b_cfg_val,
+                "txt_btn_sair": txt_b_sair_val,
+                "tamanho_imagem": int(tamanho_img_val),
+                "borda_imagem": int(borda_img_val),
+                "tempo_pergunta": int(tempo_perg_val),
+                "tempo_alerta": int(tempo_alerta_val),
+                "acertos_para_dado": int(acertos_dado_val),
+                "pontos_por_acerto": int(pts_acerto_val),
+                "ativar_sons": bool(ativar_sons_val),
+                "ativar_baloes": bool(ativar_baloes_val)
+            })
+            salvar_config(config)
+            st.session_state.msg_upload_ok = "✅ Configurações salvas com sucesso!"
+            st.rerun()
+            
+        if st.button("⬅️ Voltar ao Menu Principal", key="btn_voltar_cfg_rodape", use_container_width=True):
+            st.session_state.msg_upload_ok = ""
+            st.session_state.modo_jogo_ativo = None
+            ir_para_pagina("menu")
