@@ -1,5 +1,5 @@
 # ==============================================================================
-# SUPER QUIZ MULTI-TEMAS (COM MODO MOBILE / PAISAGEM E 2.100 PERGUNTAS) 📱🖥️🎲
+# SUPER QUIZ MULTI-TEMAS (BOTÃO ÚNICO MOBILE/DESKTOP NO MENU INICIAL) 📱🖥️🎲
 # ==============================================================================
 
 import streamlit as st
@@ -1058,7 +1058,7 @@ def salvar_config(config_dict):
 
 config = carregar_config()
 
-# Inicialização de Estados da Sessão (Incluindo o Modo Mobile!)
+# Inicialização de Estados da Sessão
 estados_iniciais = {
     "pagina": "menu", "participante": "", "modo_jogo_ativo": None,
     "dificuldade_ativa": "🟢 Fácil", "pergunta_idx": 0, "pontuacao": 0, "acertos": 0,
@@ -1069,7 +1069,7 @@ estados_iniciais = {
     "baloes_mostrados": False, "dado_disponivel": False, "historico_salvo_partida": False,
     "up_cnt": 0, "msg_upload_ok": "", "tema_gerir_selecionado": "⛪ Igreja",
     "nivel_gerir_selecionado": "🟢 Fácil", "tema_img_cfg": "⛪ Igreja", "limpar_tela_jogo": False,
-    "modo_mobile": False, "forcar_paisagem_js": False
+    "modo_mobile": False
 }
 for chave, valor_padrao in estados_iniciais.items():
     if chave not in st.session_state:
@@ -1082,7 +1082,7 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# GERADOR DE CSS DINÂMICO (ADAPTA AUTOMATICAMENTE PARA MODO MOBILE OU TELÃO!)
+# GERADOR DE CSS DINÂMICO (ADAPTA AUTOMATICAMENTE PARA MODO MOBILE OU DESKTOP!)
 # ==============================================================================
 def obter_modo_visual_atual():
     modo_ativo = st.session_state.get("modo_jogo_ativo")
@@ -1099,7 +1099,6 @@ def aplicar_estilos_dinamicos():
     bg_css = f"background-color: {paleta['cor_fundo']};"
     is_mob = st.session_state.get("modo_mobile", False)
     
-    # Escalas inteligentes para Celular vs Telão
     larg_max = 380 if is_mob else config.get("largura_botao", 520)
     f_titulo = 28 if is_mob else config.get("tam_fonte_titulo", 46)
     f_perg   = 21 if is_mob else config.get("tam_fonte_pergunta", 30)
@@ -1261,15 +1260,16 @@ def aplicar_estilos_dinamicos():
             filter: brightness(1.2) !important;
             border-color: {paleta['cor_destaque']} !important;
         }}
-        /* BOTÕES COMPACTOS DA BARRA DE DISPOSITIVO NO TOPO */
-        .st-key-btn_toggle_mob button, .st-key-btn_girar_paisagem button {{
-            font-size: 14px !important;
-            padding: 6px 12px !important;
+        /* BOTÃO ÚNICO ALTERNADOR MOBILE/DESKTOP NO MENU INICIAL */
+        .st-key-btn_toggle_mob button {{
+            font-size: 15px !important;
+            padding: 8px 18px !important;
             max-width: 240px !important;
-            margin: 2px auto !important;
-            border-radius: 20px !important;
-            background-color: rgba(255,255,255,0.12) !important;
-            border: 1px solid {paleta['cor_destaque']} !important;
+            margin: 0 auto 12px auto !important;
+            border-radius: 25px !important;
+            background-color: rgba(255,255,255,0.14) !important;
+            border: 2px solid {paleta['cor_destaque']} !important;
+            color: {paleta['cor_destaque']} !important;
         }}
         .st-key-btn_ir_dado, .st-key-btn_ir_dado > div,
         .st-key-btn_iniciar_quiz_sel, .st-key-btn_iniciar_quiz_sel > div {{
@@ -1303,7 +1303,7 @@ def aplicar_estilos_dinamicos():
     """, unsafe_allow_html=True)
 
 # ==============================================================================
-# IMAGEM DINÂMICA DA COLUNA DIREITA (TAMANHO REDUZIDO NO MODO MOBILE!)
+# IMAGEM DINÂMICA DA COLUNA DIREITA
 # ==============================================================================
 def mostrar_painel_tema(modo_especifico=None, largura_custom=None, borda_custom=None):
     modo = modo_especifico if modo_especifico in INFO_MODOS else obter_modo_visual_atual()
@@ -1615,45 +1615,6 @@ def soltar_baloes():
         st.balloons()
 
 # ==============================================================================
-# BARRA RÁPIDA NO TOPO: ALTERNAR MODO MOBILE (VERTICAL) E MODO PAISAGEM (TELÃO)
-# ==============================================================================
-col_bar1, col_bar2 = st.columns([1, 1])
-with col_bar1:
-    txt_toggle_mob = "🖥️ Mudar para Modo Telão / Paisagem" if st.session_state.modo_mobile else "📱 Mudar para Versão Celular (Vertical)"
-    if st.button(txt_toggle_mob, key="btn_toggle_mob"):
-        st.session_state.modo_mobile = not st.session_state.modo_mobile
-        st.rerun()
-
-with col_bar2:
-    if st.button("🔄 Tela Cheia / Girar Paisagem", key="btn_girar_paisagem"):
-        st.session_state.modo_mobile = False
-        st.session_state.forcar_paisagem_js = True
-        st.rerun()
-
-if st.session_state.get("forcar_paisagem_js", False):
-    st.session_state.forcar_paisagem_js = False
-    components.html("""
-        <script>
-        (async function() {
-            try {
-                const docEl = window.parent.document.documentElement;
-                if (docEl.requestFullscreen) {
-                    await docEl.requestFullscreen();
-                } else if (docEl.webkitRequestFullscreen) {
-                    await docEl.webkitRequestFullscreen();
-                }
-                if (window.parent.screen && window.parent.screen.orientation && window.parent.screen.orientation.lock) {
-                    await window.parent.screen.orientation.lock('landscape');
-                }
-            } catch (err) {
-                console.log("Rotação automática depende do desbloqueio do aparelho:", err);
-            }
-        })();
-        </script>
-    """, height=0)
-    st.toast("🔄 Modo Paisagem ativado! Se estiver no celular, vire o aparelho na horizontal.", icon="📱")
-
-# ==============================================================================
 # SLOTS DE CONTEÚDO INDEPENDENTES
 # ==============================================================================
 slot_selecao = st.empty()
@@ -1668,13 +1629,20 @@ def ir_para_pagina(nova_pagina):
     st.rerun()
 
 # ==============================================================================
-# 1. MENU PRINCIPAL
+# 1. MENU PRINCIPAL (COM O BOTÃO ÚNICO DE ALTERNAR MOBILE / DESKTOP!)
 # ==============================================================================
 if st.session_state.pagina == "menu":
     slot_selecao.empty()
     slot_jogo.empty()
     with slot_outros.container():
         st.session_state.modo_jogo_ativo = None
+        
+        # Botão único que alterna entre Mobile e Desktop (quando clica, muda o texto no mesmo lugar!)
+        txt_toggle_mob = "🖥️ Mudar para Desktop" if st.session_state.modo_mobile else "📱 Mudar para Mobile"
+        if st.button(txt_toggle_mob, key="btn_toggle_mob"):
+            st.session_state.modo_mobile = not st.session_state.modo_mobile
+            st.rerun()
+
         st.markdown(
             f"<h1 style='text-align: center;'>{config['txt_titulo_menu']}</h1>",
             unsafe_allow_html=True
@@ -1716,7 +1684,7 @@ if st.session_state.pagina == "menu":
                     st.warning("Para fechar o sistema no navegador, basta fechar esta aba ou janela.")
 
 # ==============================================================================
-# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE (ADAPTÁVEL MOBILE / TELÃO)
+# 2. SELECIONAR PARTICIPANTE + MODO + DIFICULDADE (ADAPTÁVEL MOBILE / DESKTOP)
 # ==============================================================================
 elif st.session_state.pagina == "selecionar_participante":
     slot_jogo.empty()
@@ -1864,7 +1832,7 @@ elif st.session_state.pagina == "selecionar_participante":
             mostrar_painel_tema(modo_especifico=modo_escolhido)
 
 # ==============================================================================
-# 3. TELA DO JOGO (LAYOUT RESPONSIVO PARA CELULAR VERTICAL OU TELÃO PAISAGEM!)
+# 3. TELA DO JOGO
 # ==============================================================================
 elif st.session_state.pagina == "jogo":
     slot_selecao.empty()
@@ -1890,7 +1858,6 @@ elif st.session_state.pagina == "jogo":
         if not st.session_state.respondido:
             tocar_audio_invisivel(SOM_TIC_TAK, loop=True)
 
-        # No modo mobile, usa coluna única direta para caber tudo na tela do celular sem espremer!
         if st.session_state.modo_mobile:
             col_jogo_esq = st.container()
             col_jogo_dir = None
@@ -2491,7 +2458,7 @@ elif st.session_state.pagina == "configuracoes":
                 pts_acerto_val = st.number_input("Pontos Base por Acerto:", 10, 1000, int(config.get("pontos_por_acerto", 100)), 10)
 
             st.divider()
-            st.markdown("<h3 style='text-align: center;'>📏 Ajuste de Tamanho (Modo Telão/PC)</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: center;'>📏 Ajuste de Tamanho (Modo Desktop)</h3>", unsafe_allow_html=True)
             ct1, ct2 = st.columns(2)
             with ct1:
                 larg_btn_val = st.slider("Largura Máxima dos Botões e Caixas (px):", 300, 900, int(config.get("largura_botao", 520)), 10)
